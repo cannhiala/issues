@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser')
@@ -9,7 +10,7 @@ app.use(cors())
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 
-let routes = require('./api/routes')//importing route
+let routes = require('./api/routes') //importing route
 routes(app)
 
 app.use(function(req, res) {
@@ -17,5 +18,6 @@ app.use(function(req, res) {
 })
 
 server.listen(port);
-
+//console.log(process.env)
 console.log('RESTfull API server started on: ' + port);
+console.log('RESTfull API server started on: ' + process.env.PORT);
