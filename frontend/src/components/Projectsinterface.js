@@ -3,7 +3,7 @@ import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
 import axios from 'axios'
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
-
+import './Projectsinterface_Style.css';
 
 function Userinterface () {
   // User login
@@ -48,6 +48,12 @@ function Userinterface () {
       }).catch((err) => { console.log('Axios Error:', err); })
   }
 
+  const viewIssuesLink = function(cell, row) {
+      return '<div><a href=issues/'+ row.project_id +'>View Issues</a></div>'
+  }
+  const projectKeyLink = function(cell, row) {
+      return '<div><a href=pdetail/'+ row.key +'>'+ row.key +'</a></div>'
+  }
 
   return (
     <div className="container">
@@ -109,8 +115,8 @@ function Userinterface () {
             id="inputStartDateFrom"
             className="col-sm-12 form-control"
             name="startDateFrom"
-            //selected={searchCondition.s_p_startdate_from}
-            //onChange={e => setSearchCondition({...searchCondition, s_p_startdate_from: e})}
+            selected={searchCondition.s_p_startdate_from}
+            onChange={e => setSearchCondition({...searchCondition, s_p_startdate_from: e})}
             dateFormat="MM/dd/yyy"
              />
           </div>
@@ -153,47 +159,16 @@ function Userinterface () {
           <button type="submit" className="btn btn-primary" onClick={onSearch} name="btnSearch">Search</button>
         </form>
       </div>
-        <table id="projects" className="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
-          <thead>
-            <tr>
-              <th class="th-sm">Action</th>
-              <th>Project Key</th>
-              <th>Project Name</th>
-              <th>Project Status</th>
-              <th>Project Type</th>
-              <th>Progess</th>
-              <th>Owner</th>
-              <th>Start Date</th>
-              <th>End Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            {
-              projects.map((obj, key) => (
-                <tr  key={key}>
-                  <td>View issues</td>
-                  <td>{obj.key}</td>
-                  <td>{obj.name}</td>
-                  <td>{obj.status}</td>
-                  <td>{obj.project_type_name}</td>
-                  <td>{obj.progress}%</td>
-                  <td>{obj.owner_fullname}</td>
-                  <td>{obj.start_date}</td>
-                  <td>{obj.end_date}</td>
-                </tr>
-              ))
-          }
-          </tbody>
-        </table>
-          <BootstrapTable data={ projects } >
-              <TableHeaderColumn dataField='key' isKey={ true } dataSort={ true }>Project Key</TableHeaderColumn>
-              <TableHeaderColumn dataField='name' dataSort={ true }>Project Name</TableHeaderColumn>
-              <TableHeaderColumn dataField='status' dataSort={ true }>Project Status</TableHeaderColumn>
-              <TableHeaderColumn dataField='project_type_name' dataSort={ true }>Project Type</TableHeaderColumn>
-              <TableHeaderColumn dataField='progress' dataSort={ true }>Progess</TableHeaderColumn>
-              <TableHeaderColumn dataField='owner_fullname' dataSort={ true }>Owner</TableHeaderColumn>
-              <TableHeaderColumn dataField='start_date' dataSort={ true }>Start Date</TableHeaderColumn>
-              <TableHeaderColumn dataField='end_date' dataSort={ true }>End Date</TableHeaderColumn>
+          <BootstrapTable data={ projects } trClassName='table table-striped table-bordered table-sm' pagination = {true}>
+              <TableHeaderColumn width={'11%'} dataField='project_id' dataFormat={viewIssuesLink} dataSort={ false }>Action</TableHeaderColumn>
+              <TableHeaderColumn width={'11%'} dataField='key' isKey={ true } dataFormat={projectKeyLink} dataSort={ true }>Project Key</TableHeaderColumn>
+              <TableHeaderColumn width={'15%'} dataField='name' dataSort={ true }>Project Name</TableHeaderColumn>
+              <TableHeaderColumn width={'13%'} dataField='status' dataSort={ true }>Project Status</TableHeaderColumn>
+              <TableHeaderColumn width={'12%'} dataField='project_type_name' dataSort={ true }>Project Type</TableHeaderColumn>
+              <TableHeaderColumn width={'9%'} dataField='progress' dataSort={ true }>Progess</TableHeaderColumn>
+              <TableHeaderColumn width={'15%'} dataField='owner_fullname' dataSort={ true }>Owner</TableHeaderColumn>
+              <TableHeaderColumn width={'11%'} dataField='start_date' dataSort={ true }>Start Date</TableHeaderColumn>
+              <TableHeaderColumn width={'11%'} dataField='end_date' dataSort={ true }>End Date</TableHeaderColumn>
           </BootstrapTable>
     </div>
   )
