@@ -2,7 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 //import './index.css';
 //import App from './App';
-import Projects from './components/Projectsinterface';
+//import Projects from './components/ProjectDetail';
+//import Projects from './components/Projects';
+import Projects from './components/CreateProject';
 import * as serviceWorker from './serviceWorker';
 
 

@@ -5,5 +5,9 @@ module.exports = function(app) {
 
 	app.route('/projects').get(projectCtrl.getProject);
 	app.route('/owner').get(projectCtrl.getOwner);
+	app.route('/projectDetail').get(projectCtrl.getProjectDetail);
+	app.route('/members').get(projectCtrl.getMembers);
+	app.route('/projectTypes').get(projectCtrl.getProjectType);
+	app.route('/users').get(projectCtrl.getUsers);
 
 };
