@@ -2,14 +2,13 @@
 
 module.exports = function(app) {
 	let projectCtrl = require('./controllers/ProjectsController');
+	let loginCtrl = require('./controllers/LoginController');
+	let myProjectCtrl = require('./controllers/MyProjectController');
+	let myIssueCtrl = require('./controllers/MyIssueController');
 
-	app.route('/projects').get(projectCtrl.getProject);
-	app.route('/owner').get(projectCtrl.getOwner);
-	app.route('/projectDetail').get(projectCtrl.getProjectDetail);
-	app.route('/projectInfor').get(projectCtrl.getProjectInfor);
-	app.route('/members').get(projectCtrl.getMembers);
-	app.route('/projectTypes').get(projectCtrl.getProjectType);
-	app.route('/users').get(projectCtrl.getUsers);
-	app.route('/addUser').post(projectCtrl.addUser);
+	app.route('/projects').get(projectCtrl.get);
+	app.route('/login').post(loginCtrl.post);
+	app.route('/myProject').get(myProjectCtrl.get);
+	app.route('/myIssue').get(myIssueCtrl.get);
 
 };

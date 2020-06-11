@@ -1,33 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-//import './index.css';
-//import App from './App';
-import ProjectDetail from './components/ProjectDetail';
-import Projects from './components/Projects';
-import CreateProject from './components/CreateProject';
+import './index.css';
+import Login from './Login';
 import * as serviceWorker from './serviceWorker';
 
-
 ReactDOM.render(
-  <Router>
-    <div>
-      <Switch>
-        <Route exact path="/projects">
-          <Projects />
-        </Route>
-        <Route exact path="/projects/:succes/:pId">
-          <Projects />
-        </Route>
-        <Route path="/pDetail/:pId">
-          <ProjectDetail />
-        </Route>
-          <Route path="/newProject">
-          <CreateProject />
-        </Route>
-      </Switch>
-    </div>
-  </Router>,
+  <React.StrictMode>
+    <Login />
+  </React.StrictMode>,
   document.getElementById('root')
 );
 
