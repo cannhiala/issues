@@ -3,18 +3,27 @@ import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
 import axios from 'axios'
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
+import {  NavLink, useParams } from "react-router-dom"
+import Modal from 'react-bootstrap/Modal'
 import './Projects_Style.css';
 
 function Project () {
-  // User login
-  //const userid = useContext(UserIDContext);
+  // session from context
   const userid = 1;
-  const [projects, setProjects] = useState([])
-  const [projectStatus, setProjectStatus] = useState([{key: 'Open', name: 'Open'}, {key: 'Closed', name: 'Closed'}])
-  console.log(projectStatus);
-  const [owner, setOwner] = useState([])
-  const [searchCondition, setSearchCondition] = useState({userIdLogin: userid, s_p_key: '', s_p_name : '', s_p_status: 'ALL', s_p_owner_id: 'ALL', s_p_startdate_from: '', s_p_startdate_to: '', s_p_enddate_from: '', s_p_enddate_to: ''})
 
+  // parameter check in these case: inserted, updated, deleted successfull. to show popup message.
+  let { succes } = useParams();
+  let { pId } = useParams();
+  const [showISuccessPopup, setIShowSuccessPopup] = useState(false);
+  const [showUSuccessPopup, setUShowSuccessPopup] = useState(false);
+  const [showDSuccessPopup, setDShowSuccessPopup] = useState(false);
+  const [projectInfor, setProjectInfor] = useState({pKey: '', pName: ''})
+
+  //
+  const [projects, setProjects] = useState([])
+  const [owner, setOwner] = useState([])
+  const [projectStatus, setProjectStatus] = useState([{key: 'Open', name: 'Open'}, {key: 'Closed', name: 'Closed'}])
+  const [searchCondition, setSearchCondition] = useState({userIdLogin: userid, s_p_key: '', s_p_name : '', s_p_status: 'ALL', s_p_owner_id: 'ALL', s_p_startdate_from: '', s_p_startdate_to: '', s_p_enddate_from: '', s_p_enddate_to: ''})
 
   useEffect(() => {
      axios.get('http://localhost:3001/projects?userIdLogin=1&s_p_key='+searchCondition.s_p_key+'&s_p_name='+searchCondition.s_p_name+'&s_p_status='+searchCondition.s_p_status+'&s_p_owner_id='+searchCondition.s_p_owner_id+'&s_p_startdate_from='+searchCondition.s_p_startdate_from+'&s_p_startdate_to='+searchCondition.s_p_startdate_to+'&s_p_enddate_from='+searchCondition.s_p_enddate_from +'&s_p_enddate_to='+searchCondition.s_p_enddate_to+'').then(
@@ -34,6 +43,27 @@ function Project () {
      }).catch((err) => { console.log('Axios Error:', err); })
   }, []);
 
+  useEffect(() => {
+    if (succes === 'isucces' || succes === 'usucces' || succes === 'dsucces') {
+      axios.get('http://localhost:3001/projectInfor?pId='+ pId).then(
+          (res) => {
+            console.log('Get projectInfor:',res);
+            console.log('projectInfor data:',res.data);
+            setProjectInfor({pKey: res.data[0].key, pName: res.data[0].name});
+            console.log('projectInfor projectInfor:' +  projectInfor.pKey);
+      }).catch((err) => { console.log('Axios Error:', err); })
+    }
+    switch (succes) {
+      case 'isucces': return setIShowSuccessPopup(true)
+      case 'usucces': return setUShowSuccessPopup(true)
+      case 'dsucces': return setDShowSuccessPopup(true)
+    }
+  }, []);
+  const onIShowSuccessClose = () => setIShowSuccessPopup(false);
+  const onUShowSuccessClose = () => setUShowSuccessPopup(false);
+  const onDShowSuccessClose = () => setDShowSuccessPopup(false);
+
+
   const onSearch  = function (e) {
     e.preventDefault()
       console.log('hand Estimate');
@@ -50,7 +80,8 @@ function Project () {
       return '<div><a href=issues/'+ row.project_id +'>View Issues</a></div>'
   }
   const projectKeyLink = function(cell, row) {
-      return '<div><a href=pdetail/'+ row.key +'>'+ row.key +'</a></div>'
+      let strLink = "/pDetail/" + row.project_id
+      return <NavLink exact to={strLink}> {row.key} </NavLink>
   }
 
   const progress = function(cell, row) {
@@ -63,6 +94,27 @@ function Project () {
       <h1>Projects</h1>
     </div>
     <div className="modal-body">
+      <Modal show={showISuccessPopup} onHide={onIShowSuccessClose} animation={false}>
+        <Modal.Header closeButton>
+          <Modal.Title>Inserted Success</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Project: {projectInfor.pName} ({projectInfor.pKey}) had inserted successfull !</Modal.Body>
+      </Modal>
+
+      <Modal show={showUSuccessPopup} onHide={onUShowSuccessClose} animation={false}>
+        <Modal.Header closeButton>
+          <Modal.Title>Updated Success</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Project: {projectInfor.pName} ({projectInfor.pKey}) had updated successfull !</Modal.Body>
+      </Modal>
+
+      <Modal show={showDSuccessPopup} onHide={onDShowSuccessClose} animation={false}>
+        <Modal.Header closeButton>
+          <Modal.Title>Deleted Success</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Project: {projectInfor.pName} ({projectInfor.pKey}) had deleted successfull !</Modal.Body>
+      </Modal>
+
       <form onSubmit={onSearch}>
         <div className="form-group row">
           <label htmlFor="inputKey" className="col-sm-2 col-form-label">Project Key</label>
@@ -88,7 +140,7 @@ function Project () {
         				<option value="ALL">ALL</option>
                 {
                   projectStatus.map((obj, key) => (
-        				        <option value={obj.key} Key={key}>{obj.name}</option>
+        				        <option value={obj.key} key={key}>{obj.name}</option>
                   ))
                 }
 
@@ -104,7 +156,7 @@ function Project () {
         				<option value="ALL">ALL</option>
                 {
                   owner.map((obj, key) => (
-        				        <option value={obj.user_id} Key={key}>{obj.owner_fullname}</option>
+        				        <option value={obj.user_id} key={key}>{obj.owner_fullname}</option>
                   ))
                 }
 

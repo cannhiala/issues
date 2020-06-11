@@ -1,10 +1,13 @@
 import React, {useState, useEffect} from 'react'
+import {  useParams } from "react-router-dom"
+import { useHistory } from "react-router-dom";
 import axios from 'axios'
 
 function ProjectDetail () {
-  // User login
-  //const userid = useContext(UserIDContext);
-  let pId = 1;
+
+  let history = useHistory();
+
+  let { pId } = useParams();
   const [projectDetail, setProjectDetail] = useState([])
   const [members, setMembers] = useState([])
 
@@ -16,7 +19,7 @@ function ProjectDetail () {
            setProjectDetail(res.data);
            console.log('projectDetail data:', projectDetail);
      }).catch((err) => { console.log('Axios Error:', err); })
-  }, []);
+  }, [pId]);
 
   useEffect(() => {
      axios.get('http://localhost:3001/members?pId='+ pId).then(
@@ -37,7 +40,7 @@ function ProjectDetail () {
   }
   const onBack  = function (e) {
     e.preventDefault()
-    console.log('hand Estimate');
+    history.push("/projects");
   }
 
   return (

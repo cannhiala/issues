@@ -3,19 +3,19 @@ import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
+import { useHistory } from "react-router-dom";
 import axios from 'axios'
 
 function CreateProject () {
   // User login
   //const userid = useContext(UserIDContext);
-  let pId = 1;
+  let history = useHistory();
   let username = 'Tang Van Can';
   const [user, setUser] = useState([])
   const [projectType, setProjectType] = useState([])
   const [userAutocomplete, setUserAutocomplete] = useState({userid: 0, fullname: 0})
-  const [project, setProject] = useState({p_key: '', p_name: '', p_description: '', p_status: 'Open', p_type_id: '', p_total_issues: 0, p_progress: 0, p_startdate: '', p_enddate: ''})
+  const [project, setProject] = useState({p_key: '001', p_name: '', p_description: '', p_status: 'Open', p_type_id: '', p_total_issues: 0, p_progress: 0, p_startdate: '', p_enddate: ''})
+  const [members, setMembers] = useState([])
 
   useEffect(() => {
      axios.get('http://localhost:3001/projectTypes').then(
@@ -37,11 +37,30 @@ function CreateProject () {
 
   const onSave  = function (e) {
     e.preventDefault()
-    console.log('hand Estimate');
+    axios.post('http://localhost:3001/addUser', project).then(
+          (res) => {
+            //setMessage('Insert successfull !')
+            console.log('Axios:',res);
+            console.log('Axios data:',res.data);
+            history.push("projects/isucces/");
+      }).catch((err) => { console.log('Axios Error:', err); })
+    //console.log('hand Estimate');
   }
+
   const onBack  = function (e) {
     e.preventDefault()
-    console.log('hand Estimate');
+    history.push("/projects");
+  }
+
+  const onAddUser  = function (e) {
+    e.preventDefault()
+    setMembers(oldArray => [...oldArray, userAutocomplete]);
+    console.log('onAddUser members ' +  JSON.stringify(members));
+  }
+
+  const onRemoveUser  = function (index) {
+    console.log('onRemoveUser index ' +  index);
+    console.log('onRemoveUser members ' +  JSON.stringify(members));
   }
 
   return (
@@ -50,12 +69,14 @@ function CreateProject () {
         <h1>Create Project</h1>
       </div>
       <div className="modal-body">
+        <form onSubmit={onSave}>
         <div className="form-group row">
-          <button type="submit" className="btn btn-primary" onClick={onSave} name="btnDelProject">Save</button>&nbsp;&nbsp;
+          <button type="submit" className="btn btn-primary" name="btnDelProject">Save</button>&nbsp;&nbsp;
           <button type="submit" className="btn btn-primary" onClick={onBack} name="btnBack">Back</button>
         </div>
         <div className="form-group row">
-          <label htmlFor="inputKey" className="col-sm-2 col-form-label">Project Key</label>
+          <label htmlFor="inputKey" className="col-sm-2 col-form-label">Project Key:</label>
+          <label htmlFor="inputKey" className="col-sm-1 col-form-label">Pr-</label>
           <input type="text"
           value={project.p_key}
           onChange={e => setProject({...project, p_key: e.target.value})}
@@ -63,7 +84,7 @@ function CreateProject () {
         </div>
 
         <div className="form-group row">
-          <label htmlFor="inputName" className="col-sm-2 col-form-label">Prject Name</label>
+          <label htmlFor="inputName" className="col-sm-2 col-form-label">Prject Name:</label>
           <input type="text"
           value={project.p_name}
           onChange={e => setProject({...project, p_name: e.target.value})}
@@ -78,11 +99,10 @@ function CreateProject () {
               className="col-sm-4 form-control"
               name="projectType"
               value={project.p_type_id}
-              onChange={e => setProject({...project, p_type_id: e.target.value})}
-              defaultValue={'ALL'}>
+              onChange={e => setProject({...project, p_type_id: e.target.value})}>
                 {
                   projectType.map((obj, key) => (
-                        <option value={obj.project_type_id} Key={key}>{obj.name}</option>
+                        <option value={obj.project_type_id} key={key}>{obj.name}</option>
                   ))
                 }
 
@@ -133,6 +153,17 @@ function CreateProject () {
           		<TextField {...params} label="input user" variant="outlined" fullWidth />
           	)}
           />
+          <button type="button" className="btn btn-primary" onClick={onAddUser} name="btnBack">Add User</button>
+          <br/>
+          <label className="col-sm-10 col-form-label">
+            {
+              members.map((objm, key) => (
+              <p key={key}>
+                {objm.fullname} <button type="button" onClick={onRemoveUser(members.indexOf(objm))}>remove user</button>
+              </p>
+            ))
+            }
+          </label>
         </div>
         <div className="form-group row" >
           <label htmlFor="inputDescription" className="col-sm-2 col-form-label">Description:</label>
@@ -141,6 +172,7 @@ function CreateProject () {
           onChange={e => setProject({...project, p_description: e.target.value})}
           className="col-sm-6 form-control" id="inputDescription"/>
         </div>
+      </form>
       </div>
     </div>
   )
