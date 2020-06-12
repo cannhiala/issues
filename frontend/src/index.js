@@ -6,6 +6,7 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import ProjectDetail from './components/ProjectDetail';
 import Projects from './components/Projects';
 import CreateProject from './components/CreateProject';
+import IssueSearchForm from './components/Issues/IssueSearchForm'
 import * as serviceWorker from './serviceWorker';
 
 
@@ -24,6 +25,9 @@ ReactDOM.render(
         </Route>
           <Route path="/newProject">
           <CreateProject />
+        </Route>
+		<Route exact path="/issues">
+          <IssueSearchForm />
         </Route>
       </Switch>
     </div>
