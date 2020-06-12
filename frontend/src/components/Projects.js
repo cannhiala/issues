@@ -6,10 +6,14 @@ import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import {  NavLink, useParams } from "react-router-dom"
 import Modal from 'react-bootstrap/Modal'
 import './Projects_Style.css';
+import { useHistory } from "react-router-dom";
+import Moment from 'moment'
+import Menu from './Menu';
 
 function Project () {
   // session from context
   const userid = 1;
+  let history = useHistory();
 
   // parameter check in these case: inserted, updated, deleted successfull. to show popup message.
   let { succes } = useParams();
@@ -65,9 +69,22 @@ function Project () {
 
 
   const onSearch  = function (e) {
-    e.preventDefault()
-      console.log('hand Estimate');
-      axios.get('http://localhost:3001/projects?userIdLogin='+searchCondition.userIdLogin+'&s_p_key='+searchCondition.s_p_key+'&s_p_name='+searchCondition.s_p_name+'&s_p_status='+searchCondition.s_p_status+'&s_p_owner_id='+searchCondition.s_p_owner_id+'&s_p_startdate_to='+searchCondition.s_p_startdate_to+'&s_p_startdate_from='+searchCondition.s_p_startdate_from+'&s_p_enddate_to='+searchCondition.s_p_enddate_to+'&s_p_enddate_from='+searchCondition.s_p_enddate_from+'').then(
+      e.preventDefault()
+
+      let startDateF = ((searchCondition.s_p_startdate_from !== '') ? Moment(searchCondition.s_p_startdate_from).format('YYYY/MM/DD') : '')
+      let startDateT = ((searchCondition.s_p_startdate_to !== '') ? Moment(searchCondition.s_p_startdate_to).format('YYYY/MM/DD') : '')
+      let endDateF = ((searchCondition.s_p_enddate_from !== '') ? Moment(searchCondition.s_p_enddate_from).format('YYYY/MM/DD') : '')
+      let endDateT = ((searchCondition.s_p_enddate_to !== '') ? Moment(searchCondition.s_p_enddate_to).format('YYYY/MM/DD') : '')
+
+      axios.get('http://localhost:3001/projects?userIdLogin='+searchCondition.userIdLogin
+      +'&s_p_key='+searchCondition.s_p_key
+      +'&s_p_name='+searchCondition.s_p_name
+      +'&s_p_status='+searchCondition.s_p_status
+      +'&s_p_owner_id='+searchCondition.s_p_owner_id
+      +'&s_p_startdate_from='+ startDateF
+      +'&s_p_startdate_to='+ startDateT
+      +'&s_p_enddate_from='+ endDateF
+      +'&s_p_enddate_to='+ endDateT+'').then(
           (res) => {
             //setMessage('Insert successfull !')
             console.log('Search Projects:',res);
@@ -88,11 +105,14 @@ function Project () {
       return '<div>'+ row.progress +'% </div>'
   }
 
+  const onCreateProject = function (e) {
+      history.replace("/newProject");
+  }
   return (
     <div className="container">
-    <div className="modal-header">
-      <h1>Projects</h1>
-    </div>
+    <Menu/>
+    <h2>Projects</h2>
+    <hr/>
     <div className="modal-body">
       <Modal show={showISuccessPopup} onHide={onIShowSuccessClose} animation={false}>
         <Modal.Header closeButton>
@@ -116,7 +136,7 @@ function Project () {
       </Modal>
 
       <form onSubmit={onSearch}>
-        <div className="form-group row">
+        <div className="form-group form-inline col-md-12">
           <label htmlFor="inputKey" className="col-sm-2 col-form-label">Project Key</label>
           <input type="text"
           value={searchCondition.s_p_key}
@@ -128,7 +148,7 @@ function Project () {
           onChange={e => setSearchCondition({...searchCondition, s_p_name: e.target.value})}
           className="col-sm-6 form-control" id="inputName"/>
         </div>
-        <div className="form-group row">
+        <div className="form-group form-inline col-md-12">
           <label htmlFor="inputStatus" className="col-sm-2 col-form-label">Project Status</label>
           <select id="inputStatus"
               className="col-sm-2 form-control"
@@ -162,45 +182,48 @@ function Project () {
 
         		</select>
         </div>
-        <div className="form-group row">
-          <label htmlFor="inputStartDateFrom" className="col-sm-2 col-form-label">Start Date</label>
+        <div className="form-group form-inline col-md-12">
+          <label htmlFor="inputStartDateFrom" className="col-sm-2 col-md-2 col-form-label">Start Date</label>
             <DatePicker
             id="inputStartDateFrom"
-            className="col-sm-12 form-control"
+            className="form-control"
             name="startDateFrom"
             selected={searchCondition.s_p_startdate_from}
-            onChange={e => setSearchCondition({...searchCondition, s_p_startdate_from: e})}
+            onChange={startDateFrom => setSearchCondition({...searchCondition, s_p_startdate_from: startDateFrom})}
             dateFormat="MM/dd/yyy"/>
-          <label htmlFor="inputStartDateTo" className="col-sm-1 col-form-label">~</label>
+            &nbsp;&nbsp; ~ 	&nbsp;&nbsp;
             <DatePicker
             id="inputStartDateTo"
-            className="col-sm-12 form-control"
+            className="form-control"
             name="startDateTo"
-            //value={searchCondition.s_p_startdate_to}
-            //onChange={e => setSearchCondition({...searchCondition, s_p_startdate_to: e})}
+            selected={searchCondition.s_p_startdate_to}
+            onChange={startdateto => setSearchCondition({...searchCondition, s_p_startdate_to: startdateto})}
             dateFormat="MM/dd/yyy" />
         </div>
-        <div className="form-group row">
-          <label htmlFor="inputEndDateFrom" className="col-sm-2 col-form-label">End Date</label>
+        <div className="form-group form-inline col-md-12 col-lg-12">
+          <label htmlFor="inputEndDateFrom" className="col-sm-2 col-md-2 col-form-label">End Date</label>
             <DatePicker
             id="inputEndDateFrom"
-            className="col-sm-12 form-control"
+            className="form-control"
             name="startDateFrom"
-            //value={searchCondition.s_p_enddate_from}
-            //onChange={e => setSearchCondition({...searchCondition, s_p_enddate_from: e})}
+            selected={searchCondition.s_p_enddate_from}
+            onChange={enddatefrom => setSearchCondition({...searchCondition, s_p_enddate_from: enddatefrom})}
             dateFormat="MM/dd/yyy" />
-          <label htmlFor="inputEndDateTo" className="col-sm-1 col-form-label">~</label>
+            &nbsp;&nbsp; ~ 	&nbsp;&nbsp;
             <DatePicker
-            id="inputEndDateTo"
-            className="col-sm-12 form-control"
+            className="form-control"
             name="startDateTo"
-            //value={searchCondition.s_p_enddate_to}
-            //onChange={e => setSearchCondition({...searchCondition, s_p_enddate_to: e})}
+            selected={searchCondition.s_p_enddate_to}
+            onChange={enddateto => setSearchCondition({...searchCondition, s_p_enddate_to: enddateto})}
             dateFormat="MM/dd/yyy" />
         </div>
           <button type="submit" className="btn btn-primary" onClick={onSearch} name="btnSearch">Search</button>
         </form>
       </div>
+          <button type="Button" className="btn btn-primary pull-right" onClick={onCreateProject} name="btnCreateProject">Create Project</button>
+          <br/>
+          <br/>
+          <br/>
           <BootstrapTable data={ projects } trClassName='table table-striped table-bordered table-sm' pagination = {true}>
               <TableHeaderColumn width={'11%'} dataField='project_id' dataFormat={viewIssuesLink} dataSort={ false }>Action</TableHeaderColumn>
               <TableHeaderColumn width={'11%'} dataField='key' isKey={ true } dataFormat={projectKeyLink} dataSort={ true }>Project Key</TableHeaderColumn>

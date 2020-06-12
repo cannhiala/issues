@@ -65,9 +65,8 @@ function ProjectDetail () {
 
   return (
     <div className="container">
-      <div className="modal-header">
-        <h1>Project Detail</h1>
-      </div>
+      <h2>Project Detail</h2>
+      <hr/>
 
       <Modal show={showDelConfirmPopup} onHide={onDelConfirmClose} animation={false}>
         <Modal.Header closeButton>

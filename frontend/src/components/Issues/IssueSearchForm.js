@@ -1,10 +1,11 @@
-import React, { useState, useContext, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table'
 import { Container, Row, Col, Form, Button } from 'react-bootstrap'
 import DatePicker from 'react-datepicker'
 import Moment from 'moment'
 import './../../../node_modules/react-datepicker/dist/react-datepicker.css'
 import './../../../node_modules/react-bootstrap-table/dist/react-bootstrap-table-all.min.css'
+import Menu from './../Menu';
 
 function IssueSearchForm() {
 
@@ -124,6 +125,7 @@ function IssueSearchForm() {
 
     return (
         <div>
+        <Menu/>
             <Form onSubmit={filterIssue}>
                 <Container fluid>
                     <Row>

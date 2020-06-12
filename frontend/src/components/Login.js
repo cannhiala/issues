@@ -7,6 +7,7 @@ import { useHistory } from "react-router-dom";
 
 export const UsernNameContext = React.createContext()
 export const UserIDContext = React.createContext()
+export const AuthenContext = React.createContext()
 
 function Login (props) {
   let history = useHistory();
@@ -30,7 +31,7 @@ function Login (props) {
                 } else {
                   setUser({userid: res.data[0].USERID, username: res.data[0].user_name, password: res.data[0].pass_word, role: res.data[0].role})
                   userHasAuthenticated(true)
-                  history.push("/home");
+                  history.replace("/home");
                 }
               } else {
                 const error = new Error(res.error)
@@ -94,11 +95,13 @@ function Login (props) {
               </>
           ) : (
               <>
-                <UsernNameContext.Provider value={user.username}>
-                  <UserIDContext.Provider value={user.userid}>
-                     <App />
-                  </UserIDContext.Provider>
-                </UsernNameContext.Provider>
+                  <UsernNameContext.Provider value={user.username}>
+                    <UserIDContext.Provider value={user.userid}>
+                      <AuthenContext.Provider value={isAuthenticated}>
+                        <App />
+                      </AuthenContext.Provider>
+                    </UserIDContext.Provider>
+                  </UsernNameContext.Provider>
               </>
           )
       )}
