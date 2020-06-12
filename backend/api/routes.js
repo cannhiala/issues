@@ -1,9 +1,19 @@
 'use strict';
 
 module.exports = function(app) {
+	let loginCtrl = require('./controllers/LoginController');
+	let homeCtrl = require('./controllers/HomeController');
 	let projectCtrl = require('./controllers/ProjectsController');
 	let issueCtrl = require('./controllers/IssuesController');
 
+	//Login&Home route
+	//create by ThanhTV
+	app.route('/login').post(loginCtrl.login);
+	app.route('/myProject').get(homeCtrl.myproject);
+	app.route('/myIssue').get(homeCtrl.myissue);
+
+	//projects route
+	//create by CanTV
 	app.route('/projects').get(projectCtrl.getProject);
 	app.route('/owner').get(projectCtrl.getOwner);
 	app.route('/projectDetail').get(projectCtrl.getProjectDetail);
