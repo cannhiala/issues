@@ -40,9 +40,9 @@ function IssueSearchForm() {
     const [issueList, setIssueList] = useState([])
 
     const filter = function () {
-        let filterParams = new URLSearchParams
+        let filterParams = new URLSearchParams()
         for (let key in searchCondition) {
-            if (searchCondition[key] == "")
+            if (searchCondition[key] === "")
                 continue
             if (key.indexOf("Date") > 0)
                 filterParams.append(key, Moment(searchCondition[key]).format('YYYY-MM-DD'))
@@ -103,8 +103,19 @@ function IssueSearchForm() {
                     setAssignee([])
                 })
 
-        filter()
-    }, [])
+            fetch("http://localhost:3001/issueFilter?sAssigneeSelected=" + initState.userLoginId,
+            {
+                method: "GET"
+            })
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    setIssueList(result[0])
+                },
+                (error) => {
+                    setIssueList([])
+                })
+    }, [initState.userLoginId])
 
     const filterIssue = function (e) {
         e.preventDefault()
