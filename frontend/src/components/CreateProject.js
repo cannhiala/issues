@@ -7,8 +7,7 @@ import { useHistory } from "react-router-dom";
 import axios from 'axios'
 
 function CreateProject () {
-  // User login
-  //const userid = useContext(UserIDContext);
+
   let history = useHistory();
   let username = 'Tang Van Can';
   const [user, setUser] = useState([])
@@ -36,15 +35,36 @@ function CreateProject () {
   }, []);
 
   const onSave  = function (e) {
-    e.preventDefault()
-    axios.post('http://localhost:3001/addUser', project).then(
+    if (project.p_key.trim() === '') {
+        alert('Please input project key !');
+        return false;
+    }
+    if ( project.p_name.trim() === '') {
+        alert('Please input project name !');
+        return false;
+    } else {
+       //onCheckProjectKey();
+    }
+
+     axios.post('http://localhost:3001/addUser', project).then(
           (res) => {
             //setMessage('Insert successfull !')
             console.log('Axios:',res);
             console.log('Axios data:',res.data);
-            history.push("projects/isucces/");
+          //  history.push("projects/isucces/");
       }).catch((err) => { console.log('Axios Error:', err); })
-    //console.log('hand Estimate');
+  }
+
+  const onCheckProjectKey  = function (e) {
+    axios.get('http://localhost:3001/checkPKey?pkey='+project.p_key).then(
+          (res) => {
+            if(res.status === 200) {
+                console.log('PROJECT PROJECT KEY success:',res.data)
+            } else {
+              const error = new Error(res.error)
+              console.log('Check PROJECT KEY Error:', error);
+            }
+      }).catch((err) => { console.log('Check PROJECT KEY Error:', err); })
   }
 
   const onBack  = function (e) {

@@ -1,6 +1,8 @@
 import React, {useState, useEffect} from 'react'
 import {  useParams } from "react-router-dom"
-import { useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom"
+import Modal from 'react-bootstrap/Modal'
+import Button from 'react-bootstrap/Button'
 import axios from 'axios'
 
 function ProjectDetail () {
@@ -10,6 +12,7 @@ function ProjectDetail () {
   let { pId } = useParams();
   const [projectDetail, setProjectDetail] = useState([])
   const [members, setMembers] = useState([])
+  const [showDelConfirmPopup, setShowDelConfirmPopup] = useState(false);
 
   useEffect(() => {
      axios.get('http://localhost:3001/projectDetail?pId='+ pId).then(
@@ -34,10 +37,27 @@ function ProjectDetail () {
     e.preventDefault()
     console.log('hand Estimate');
   }
-  const onDelProject  = function (e) {
-    e.preventDefault()
-    console.log('hand Estimate');
+  const onDelConfirmPopup  = function (e) {
+    setShowDelConfirmPopup(true);
+    //history.push("/projects/dsucces/");
   }
+
+  const onDelProject  = function (e) {
+    axios.put('http://localhost:3001/delProject', {pId}).then(
+          (res) => {
+            if(res.status === 200) {
+                console.log('DELETE PROJECT success:',res.data)
+                history.push("/projects/dsucces/"+pId);
+            } else {
+              const error = new Error(res.error)
+              //throw error
+              console.log(error);
+            }
+      }).catch((err) => { console.log('DELETE PROJECT Error:', err); })
+      setShowDelConfirmPopup(false);
+  }
+  const onDelConfirmClose = () => setShowDelConfirmPopup(false);
+
   const onBack  = function (e) {
     e.preventDefault()
     history.push("/projects");
@@ -49,12 +69,27 @@ function ProjectDetail () {
         <h1>Project Detail</h1>
       </div>
 
+      <Modal show={showDelConfirmPopup} onHide={onDelConfirmClose} animation={false}>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirm</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Do you want to delete this project !</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={onDelProject}>
+              Yes
+            </Button>
+            <Button variant="primary" onClick={onDelConfirmClose}>
+              No
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
         {
           projectDetail.map((obj, key) => (
             <div className="modal-body">
               <div className="form-group row">
                 <button type="submit" className="btn btn-primary" onClick={onEditProject} name="btnEditProject">Edit Project</button>&nbsp;&nbsp;
-                <button type="submit" className="btn btn-primary" onClick={onDelProject} name="btnDelProject">Delete Project</button>&nbsp;&nbsp;
+                <button type="submit" className="btn btn-primary" onClick={onDelConfirmPopup} name="btnDelProject">Delete Project</button>&nbsp;&nbsp;
                 <button type="submit" className="btn btn-primary" onClick={onBack} name="btnBack">Back</button>
               </div>
               <div className="form-group row">
