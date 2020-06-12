@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
+import {Switch, Route, Redirect } from "react-router-dom";
 import Menu from './components/Menu'
 import Login, { UserIDContext } from './components/Login'
 import Home from './components/Home/Homeinterface';
@@ -10,15 +10,13 @@ import IssueSearchForm from './components/Issues/IssueSearchForm'
 
 
 function App() {
-
-  const userId = useContext(UserIDContext);
   const [isAuthenticated, userHasAuthenticated] = useState(false)
 
-  console.log('isAuthenticated: ', isAuthenticated)
-  
+
+
   return (
     <div className="container">
-      {!isAuthenticated ? <Redirect to="/login" /> : <Menu />}
+      
       <Switch>
         <Route exact path='/login'>
           <Login isAuthenticated={isAuthenticated} />

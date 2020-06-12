@@ -30,15 +30,14 @@ module.exports = {
                   if (data.s_p_name !== '') {sql = sql + ' AND tt.`name` like  "%'+ data.s_p_name +'%" ' }
                   if (data.s_p_status !== '' && data.s_p_status !== 'ALL') {sql = sql + ' AND tt.`status` like  "%'+ data.s_p_status +'%" ' }
                   if (data.s_p_owner_id !== '' && data.s_p_owner_id !== 'ALL') {sql = sql + ' AND tt.`user_id` = '+ data.s_p_owner_id +' AND tt.`owner` = 1 ' }
-                  if (data.s_p_startdate_from !== '') {
-                    let temp_startdate_from = new Date(data.s_p_startdate_from)
-                    //console.log('====== ' + DATE_FORMAT(temp_startdate_from, '%d/%m/%Y'));
-                    sql = sql + ' AND tt.`start_date` >= '+ data.s_p_startdate_from +' ' }
-                  if (data.s_p_startdate_to !== '') {
-                    sql = sql + ' AND tt.`start_date` <= '+ data.s_p_startdate_to +' '
-                  }
-                  if (data.s_p_enddate_from !== '') {sql = sql + ' AND tt.`end_date` >='+ data.s_p_enddate_from +' ' }
-                  if (data.s_p_enddate_to !== '') {sql = sql + ' AND tt.`end_date` <='+ data.s_p_enddate_to +' ' }
+                  console.log("==========s_p_startdate_from======" + data.s_p_startdate_from);
+                  if (data.s_p_startdate_from !== '') {sql = sql + ' AND tt.`start_date` >=" '+ data.s_p_startdate_from +'" ' }
+                  console.log("==========s_p_startdate_to======" + data.s_p_startdate_to);
+                  if (data.s_p_startdate_to !== '') {sql = sql + ' AND tt.`start_date` <= "'+ data.s_p_startdate_to +'" '}
+                  console.log("==========s_p_enddate_from======" + data.s_p_enddate_from);
+                  if (data.s_p_enddate_from !== '') {sql = sql + ' AND tt.`end_date` >="'+ data.s_p_enddate_from +'" ' }
+                  console.log("==========s_p_enddate_to======" + data.s_p_enddate_to);
+                  if (data.s_p_enddate_to !== '') {sql = sql + ' AND tt.`end_date` <="'+ data.s_p_enddate_to +'" ' }
                   sql = sql + ' ORDER BY tt.`update_on` ASC ';
                   //console.log("SQL here  ===  : " + sql);
         db.query(sql, (err, response) => {
