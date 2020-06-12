@@ -2,11 +2,14 @@ import React, { useState } from "react"
 import axios from 'axios'
 import './style.css';
 import Homeinterface from './Home/Homeinterface';
+import App from './../App';
+import { useHistory } from "react-router-dom";
 
 export const UsernNameContext = React.createContext()
 export const UserIDContext = React.createContext()
 
-function Login () {
+function Login (props) {
+  let history = useHistory();
   const [user, setUser] = useState({userid: 0, username: '', password: '', role: 0})
   const [isAuthenticated, userHasAuthenticated] = useState(false)
   const [err, setErr] = useState('')
@@ -27,6 +30,7 @@ function Login () {
                 } else {
                   setUser({userid: res.data[0].USERID, username: res.data[0].user_name, password: res.data[0].pass_word, role: res.data[0].role})
                   userHasAuthenticated(true)
+                  history.push("/home");
                 }
               } else {
                 const error = new Error(res.error)
@@ -84,7 +88,7 @@ function Login () {
               <>
                 <UsernNameContext.Provider value={user.username}>
                   <UserIDContext.Provider value={user.userid}>
-                    <Homeinterface />
+                    <App />
                   </UserIDContext.Provider>
                 </UsernNameContext.Provider>
               </>
@@ -92,7 +96,7 @@ function Login () {
               <>
                 <UsernNameContext.Provider value={user.username}>
                   <UserIDContext.Provider value={user.userid}>
-                     <Homeinterface />
+                     <App />
                   </UserIDContext.Provider>
                 </UsernNameContext.Provider>
               </>
