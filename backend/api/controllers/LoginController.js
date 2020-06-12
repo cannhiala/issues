@@ -5,10 +5,10 @@ const mysql = require('mysql')
 const db = require('./../db')
 
 module.exports = {
-    post: (req, res) => {
+	login: (req, res) => {
       let data = req.body
       console.log(data)
-        let sql = 'SELECT * FROM est_user where USERNAME="' + data.username + '" and PASSWORD="' + data.password + '"'
+        let sql = 'SELECT * FROM users where user_name="' + data.username + '" and pass_word="' + data.password + '"'
         db.query(sql, (err, response) => {
             if (err) throw err
             res.json(response)
