@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 //import './index.css';
 //import App from './App';
+import Login from './components/Login'
 import ProjectDetail from './components/ProjectDetail';
 import Projects from './components/Projects';
 import CreateProject from './components/CreateProject';
@@ -14,6 +15,9 @@ ReactDOM.render(
   <Router>
     <div>
       <Switch>
+        <Route exact path="/">
+          <Login />
+        </Route>
         <Route exact path="/projects">
           <Projects />
         </Route>
@@ -23,10 +27,10 @@ ReactDOM.render(
         <Route path="/pDetail/:pId">
           <ProjectDetail />
         </Route>
-          <Route path="/newProject">
+        <Route path="/newProject">
           <CreateProject />
         </Route>
-		<Route exact path="/issues">
+        <Route exact path="/issues">
           <IssueSearchForm />
         </Route>
       </Switch>
