@@ -7,6 +7,7 @@ import { setUserSession } from './../utils/Common';
 
 export const UsernNameContext = React.createContext()
 export const UserIDContext = React.createContext()
+export const AuthenContext = React.createContext()
 
 function Login(props) {
   let history = useHistory();
@@ -23,6 +24,7 @@ function Login(props) {
       e.preventDefault()
       //console.log(JSON.stringify({user}))
       axios.post('http://localhost:3001/login', user).then(
+<<<<<<< HEAD
         (res) => {
           if (res.status === 200) {
             if (res.data.length === 0) {
@@ -40,6 +42,23 @@ function Login(props) {
           }
         }).catch((err) => { console.log('Axios Error:', err); })
     }
+=======
+            (res) => {
+              if(res.status === 200) {
+                if(res.data.length === 0) {
+                  setErr('Username or Password is invalid')
+                } else {
+                  setUser({userid: res.data[0].USERID, username: res.data[0].user_name, password: res.data[0].pass_word, role: res.data[0].role})
+                  userHasAuthenticated(true)
+                  history.replace("/home");
+                }
+              } else {
+                const error = new Error(res.error)
+                throw error
+              }
+          }).catch((err) => { console.log('Axios Error:', err); })
+      }
+>>>>>>> 0c18affe7e5074a769da2124a0a4c3adbb254def
   }
 
   const onLogout = function (e) {
@@ -96,11 +115,21 @@ function Login(props) {
             </>
           ) : (
               <>
+<<<<<<< HEAD
                 <UsernNameContext.Provider value={user.username}>
                   <UserIDContext.Provider value={user.userid}>
                     <Menu />
                   </UserIDContext.Provider>
                 </UsernNameContext.Provider>
+=======
+                  <UsernNameContext.Provider value={user.username}>
+                    <UserIDContext.Provider value={user.userid}>
+                      <AuthenContext.Provider value={isAuthenticated}>
+                        <App />
+                      </AuthenContext.Provider>
+                    </UserIDContext.Provider>
+                  </UsernNameContext.Provider>
+>>>>>>> 0c18affe7e5074a769da2124a0a4c3adbb254def
               </>
             )
         )}

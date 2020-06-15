@@ -1,5 +1,6 @@
 import React, {useContext} from 'react'
 import {UsernNameContext} from './Login'
+import {  NavLink } from "react-router-dom"
 
 function Menu () {
 
@@ -10,9 +11,9 @@ function Menu () {
       <nav class="navbar navbar-inverse">
         <div class="container-fluid">
             <ul class="nav navbar-nav">
-              <li class="active"><a href="#">Home</a></li>
-              <li><a href="#">Projects</a></li>
-              <li><a href="#">Issues</a></li>
+              <li class="active"><NavLink exact to="/home"> Home </NavLink></li>
+              <li><NavLink exact to="/projects"> Projects </NavLink></li>
+              <li><NavLink exact to="/issues"> Issues </NavLink></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="#"><span class="glyphicon glyphicon-user"></span> {username}</a></li>

@@ -30,15 +30,14 @@ module.exports = {
                   if (data.s_p_name !== '') {sql = sql + ' AND tt.`name` like  "%'+ data.s_p_name +'%" ' }
                   if (data.s_p_status !== '' && data.s_p_status !== 'ALL') {sql = sql + ' AND tt.`status` like  "%'+ data.s_p_status +'%" ' }
                   if (data.s_p_owner_id !== '' && data.s_p_owner_id !== 'ALL') {sql = sql + ' AND tt.`user_id` = '+ data.s_p_owner_id +' AND tt.`owner` = 1 ' }
-                  if (data.s_p_startdate_from !== '') {
-                    let temp_startdate_from = new Date(data.s_p_startdate_from)
-                    //console.log('====== ' + DATE_FORMAT(temp_startdate_from, '%d/%m/%Y'));
-                    sql = sql + ' AND tt.`start_date` >= '+ data.s_p_startdate_from +' ' }
-                  if (data.s_p_startdate_to !== '') {
-                    sql = sql + ' AND tt.`start_date` <= '+ data.s_p_startdate_to +' '
-                  }
-                  if (data.s_p_enddate_from !== '') {sql = sql + ' AND tt.`end_date` >='+ data.s_p_enddate_from +' ' }
-                  if (data.s_p_enddate_to !== '') {sql = sql + ' AND tt.`end_date` <='+ data.s_p_enddate_to +' ' }
+                  console.log("==========s_p_startdate_from======" + data.s_p_startdate_from);
+                  if (data.s_p_startdate_from !== '') {sql = sql + ' AND tt.`start_date` >=" '+ data.s_p_startdate_from +'" ' }
+                  console.log("==========s_p_startdate_to======" + data.s_p_startdate_to);
+                  if (data.s_p_startdate_to !== '') {sql = sql + ' AND tt.`start_date` <= "'+ data.s_p_startdate_to +'" '}
+                  console.log("==========s_p_enddate_from======" + data.s_p_enddate_from);
+                  if (data.s_p_enddate_from !== '') {sql = sql + ' AND tt.`end_date` >="'+ data.s_p_enddate_from +'" ' }
+                  console.log("==========s_p_enddate_to======" + data.s_p_enddate_to);
+                  if (data.s_p_enddate_to !== '') {sql = sql + ' AND tt.`end_date` <="'+ data.s_p_enddate_to +'" ' }
                   sql = sql + ' ORDER BY tt.`update_on` ASC ';
                   //console.log("SQL here  ===  : " + sql);
         db.query(sql, (err, response) => {
@@ -81,7 +80,7 @@ module.exports = {
         let sql = 'SELECT distinct u.`user_id`, u.`first_name`, u.`last_name`, CONCAT_WS(\' \', u.first_name, u.last_name) AS owner_fullname '+
                   'FROM `issuestracking`.`users` u, `issuestracking`.`members` m '+
                   'WHERE u.`user_id` = m.`user_id` ' +
-                  'AND m.`owner` = 1 AND u.`is_deleted` = 1;'
+                  'AND m.`owner` = 1 AND u.`is_deleted` = 1 AND m.`is_deleted` = 1'
         db.query(sql, (err, response) => {
             if (err) console.log(err);
             res.json(response)
@@ -127,11 +126,39 @@ module.exports = {
     // insert new project
     addUser: (req, res) => {
         let data = req.body;
-        let sql = 'INSERT INTO projects SET ?'
-        db.query(sql, [data], (err, response) => {
+        let sql = 'INSERT INTO `issuestracking`.`projects` '+
+                  '(`key`, `name`, `description`, `status`, `project_type_id`, `total_issues`, `progress`, `start_date`, `end_date`, `create_on`, `update_on`, `is_deleted`) ' +
+                  'VALUES (?, ?, ?, \'OPEN\', ? , 0, 0,  ?, ?, now() , now() , 1); '
+        db.query(sql, [data.p_key, data.p_name, data.p_description, data.p_type_id, data.p_startdate, data.p_enddate], (err, response) => {
             if (err) console.log(err);
             console.log(data);
             res.json({message: '   Insert success!'})
+        })
+    },
+
+    // insert new project
+    delProject: (req, res) => {
+        let data = req.body
+        let delStatus = false
+        let sqlProjects = 'Update projects p SET p.is_deleted = 2 WHERE p.project_id ='+ data.pId
+        let sqlMembers = 'Update members m SET m.is_deleted = 2 WHERE m.project_id ='+ data.pId
+        db.query(sqlProjects + ';' + sqlMembers, [data], (err, response) => {
+            if (err) console.log(err);
+            console.log(data);
+            res.json(response)
+            //res.json({message: ' Update success!'})
+        })
+    },
+
+    // check projectkey is exist
+    getProjectKey: (req, res) => {
+        let data = req.query
+        //console.log('getProjectKey ======' + JSON.stringify(data));
+        let sql = 'SELECT p.key FROM projects p where p.key = "Pr-'+ data.pkey +'"'
+        db.query(sql, (err, response) => {
+            if (err) console.log(err);
+            console.log('getProjectKey ======' + JSON.stringify(response));
+            res.json(response)
         })
     }
 }

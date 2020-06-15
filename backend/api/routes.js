@@ -23,6 +23,8 @@ module.exports = function(app) {
 	app.route('/projectTypes').get(projectCtrl.getProjectType);
 	app.route('/users').get(projectCtrl.getUsers);
 	app.route('/addUser').post(projectCtrl.addUser);
+	app.route('/delProject').put(projectCtrl.delProject);
+	app.route('/checkPKey').get(projectCtrl.getProjectKey);
 	
 	//issues route
 	//create by Quanha

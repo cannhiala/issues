@@ -5,10 +5,10 @@ import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { useHistory } from "react-router-dom";
 import axios from 'axios'
+import Menu from './Menu';
 
 function CreateProject () {
-  // User login
-  //const userid = useContext(UserIDContext);
+
   let history = useHistory();
   let username = 'Tang Van Can';
   const [user, setUser] = useState([])
@@ -36,15 +36,36 @@ function CreateProject () {
   }, []);
 
   const onSave  = function (e) {
-    e.preventDefault()
-    axios.post('http://localhost:3001/addUser', project).then(
+    if (project.p_key.trim() === '') {
+        alert('Please input project key !');
+        return false;
+    }
+    if ( project.p_name.trim() === '') {
+        alert('Please input project name !');
+        return false;
+    } else {
+       //onCheckProjectKey();
+    }
+
+     axios.post('http://localhost:3001/addUser', project).then(
           (res) => {
             //setMessage('Insert successfull !')
             console.log('Axios:',res);
             console.log('Axios data:',res.data);
-            history.push("projects/isucces/");
+          //  history.push("projects/isucces/");
       }).catch((err) => { console.log('Axios Error:', err); })
-    //console.log('hand Estimate');
+  }
+
+  const onCheckProjectKey  = function (e) {
+    axios.get('http://localhost:3001/checkPKey?pkey='+project.p_key).then(
+          (res) => {
+            if(res.status === 200) {
+                console.log('PROJECT PROJECT KEY success:',res.data)
+            } else {
+              const error = new Error(res.error)
+              console.log('Check PROJECT KEY Error:', error);
+            }
+      }).catch((err) => { console.log('Check PROJECT KEY Error:', err); })
   }
 
   const onBack  = function (e) {
@@ -65,16 +86,16 @@ function CreateProject () {
 
   return (
     <div className="container">
-      <div className="modal-header">
-        <h1>Create Project</h1>
-      </div>
+    <Menu/>
+      <h2>Create Project</h2>
+      <hr/>
       <div className="modal-body">
         <form onSubmit={onSave}>
-        <div className="form-group row">
+        <div className="form-group  form-inline col-md-12">
           <button type="submit" className="btn btn-primary" name="btnDelProject">Save</button>&nbsp;&nbsp;
           <button type="submit" className="btn btn-primary" onClick={onBack} name="btnBack">Back</button>
         </div>
-        <div className="form-group row">
+        <div className="form-group  form-inline col-md-12">
           <label htmlFor="inputKey" className="col-sm-2 col-form-label">Project Key:</label>
           <label htmlFor="inputKey" className="col-sm-1 col-form-label">Pr-</label>
           <input type="text"
@@ -83,7 +104,7 @@ function CreateProject () {
           className="col-sm-2 form-control" id="inputKey"/>
         </div>
 
-        <div className="form-group row">
+        <div className="form-group form-inline col-md-12">
           <label htmlFor="inputName" className="col-sm-2 col-form-label">Prject Name:</label>
           <input type="text"
           value={project.p_name}
@@ -91,7 +112,7 @@ function CreateProject () {
           className="col-sm-6 form-control" id="inputName"/>
         </div>
 
-        <div className="form-group row" >
+        <div className="form-group  form-inline col-md-12" >
           <label htmlFor="inputStatus" className="col-sm-2 col-form-label">Project Status:</label>
           <label className="col-sm-2 col-form-label">Open</label>
           <label htmlFor="inputType" className="col-sm-2 col-form-label">Project Type:</label>
@@ -109,34 +130,38 @@ function CreateProject () {
             </select>
         </div>
 
-        <div className="form-group row" >
+        <div className="form-group form-inline col-sm-12 col-md-12 col-lg-12" >
           <label htmlFor="inputStartDate" className="col-sm-2 col-form-label">Start Date:</label>
+          <div className="col-sm-4">
             <DatePicker
             id="inputStartDate"
-            className="col-sm-10 form-control"
+            className="form-control"
             name="startDate"
             selected={project.p_startdate}
             onChange={e => setProject({...project, p_startdate: e})}
             dateFormat="MM/dd/yyy"/>
-
+          </div>
           <label htmlFor="inputEndDate" className="col-sm-2 col-form-label">End Date:</label>
+          <div className="col-sm-4">
             <DatePicker
             id="inputEndDate"
-            className="col-sm-10 form-control"
+            className="form-control"
             name="endDate"
             selected={project.p_enddate}
             onChange={e => setProject({...project, p_enddate: e})}
             dateFormat="MM/dd/yyy"/>
+          </div>
         </div>
 
-        <div className="form-group row" >
+        <div className="form-group  form-inline col-md-12" >
           <label className="col-sm-2 col-form-label">Owner:</label>
           <label className="col-sm-10 col-form-label">{username}</label>
         </div>
 
-        {userAutocomplete.userid}
-        <div htmlFor="inputMember" className="form-group row" >
+
+        <div htmlFor="inputMember" className="form-group  form-inline col-md-12" >
           <label className="col-sm-2 col-form-label">Members:</label>
+          <div className="col-sm-5">
           <Autocomplete className="pding"
           	id="combo-box-demo"
           	options={user}
@@ -151,11 +176,11 @@ function CreateProject () {
           	style={{ width: 300 }}
           	renderInput={params => (
           		<TextField {...params} label="input user" variant="outlined" fullWidth />
-          	)}
-          />
-          <button type="button" className="btn btn-primary" onClick={onAddUser} name="btnBack">Add User</button>
+          	)}/>
+           </div>
+           <button type="button" className="btn btn-primary" onClick={onAddUser} name="btnBack">Add User</button>
           <br/>
-          <label className="col-sm-10 col-form-label">
+          <label className="col-form-label">
             {
               members.map((objm, key) => (
               <p key={key}>
@@ -165,7 +190,7 @@ function CreateProject () {
             }
           </label>
         </div>
-        <div className="form-group row" >
+        <div className="form-group  form-inline col-md-12" >
           <label htmlFor="inputDescription" className="col-sm-2 col-form-label">Description:</label>
           <textarea  type="text" rows="4" cols="50"
           value={project.p_description}

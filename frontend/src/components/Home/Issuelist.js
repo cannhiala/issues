@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import { Button, Table} from 'react-bootstrap';
+import { Table} from 'react-bootstrap';
 
 
 
@@ -9,10 +9,10 @@ import { Button, Table} from 'react-bootstrap';
         super(props);
         this.state = {
           emps: [],
-        }  
-        
+        }
+
       }
-    
+
     getIssues() {
       axios.get('http://localhost:3001/myIssue')
       .then(res => {
@@ -20,54 +20,54 @@ import { Button, Table} from 'react-bootstrap';
         this.setState({ emps });
         console.log(res.data);
           })
-    }    
-    
+    }
+
     componentDidMount() {
         this.getIssues();
     }
 
 
-    render(){         
-      const{error,emps}=this.state;  
-      if(error){  
-          return(  
-              <div>Error:{error.message}</div>  
-          )  
-      }  
-      else  
-      {  
-          return(  
-        <div>      
-                <Table class="table-responsive col-md-6">  
-                  <thead className="btn-secondary">  
-                    <tr>  
+    render(){
+      const{error,emps}=this.state;
+      if(error){
+          return(
+              <div>Error:{error.message}</div>
+          )
+      }
+      else
+      {
+          return(
+        <div>
+                <Table class="table-responsive col-md-6">
+                  <thead className="btn-secondary">
+                    <tr>
                       <th>IssueType</th>
                       <th>IssueId</th>
-                      <th>IssueName</th> 
+                      <th>IssueName</th>
                       <th>IssueStatus</th>
                       <th>IssuePriority</th>
                       <th>ProjectName</th>
                       <th>DueDate</th>
-                    </tr>  
-                  </thead>  
-                  <tbody>  
-                    {emps.map(emp => (  
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {emps.map(emp => (
                       <tr key={emp.id}>
-                        <td>{emp.issuetype}</td>  
+                        <td>{emp.issuetype}</td>
                         <td>{emp.issueid}</td>
                         <td>{emp.issuename}</td>
                         <td>{emp.issuestatus}</td>
                         <td>{emp.issuepriority}</td>
                         <td>{emp.projectname}</td>
                         <td>{emp.duedate}</td>
-                      </tr>  
-                    ))}  
-                  </tbody>  
-                </Table>  
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
               </div>
-            )  
-      }  
-  }  
-}  
+            )
+      }
+  }
+}
 
     export default Issuelist;

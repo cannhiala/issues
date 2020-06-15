@@ -6,22 +6,26 @@ import { Button, Table} from 'react-bootstrap';
 function Homeinterface () {
   return (
     <div>
+<<<<<<< HEAD
+=======
+    <Menu/>
+>>>>>>> 0c18affe7e5074a769da2124a0a4c3adbb254def
       <h2>HOME</h2>
       <hr></hr>
         <div id="block_container">
         <div id="1">
-        <h4>My Project</h4> 
+        <h4>My Project</h4>
         <Table>
           <th><Homelist /></th>
         </Table>
-        </div>  
+        </div>
             &emsp;
             &emsp;
             &emsp;
             &emsp;
             <div id="2">
-          <h4>My Issue</h4> 
-          <Table>  
+          <h4>My Issue</h4>
+          <Table>
           <th><Issuelist /></th>
         </Table>
         </div>
