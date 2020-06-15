@@ -2,13 +2,10 @@ import React, {useContext} from 'react'
 import Homelist from './Homelist';
 import Issuelist from './Issuelist';
 import { Button, Table} from 'react-bootstrap';
-import Menu from '../Menu';
 
 function Homeinterface () {
   return (
     <div>
-      <Menu />
-
       <h2>HOME</h2>
       <hr></hr>
         <div id="block_container">
