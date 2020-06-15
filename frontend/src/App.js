@@ -17,7 +17,6 @@ import IssueSearchForm from './components/Issues/IssueSearchForm'
 
 
 function App() {
-  const [isAuthen, setAuth] = useState(true)
 
   useEffect(() => {
     const token = getToken()
@@ -27,27 +26,43 @@ function App() {
 
     axios.get(`http://localhost:3001/verifyToken?token=${token}`).then(response => {
       setUserSession(response.data.token, response.data.user);
-      setAuth(true);
     }).catch(error => {
       removeUserSession();
-      setAuth(false);
     });
   })
 
   return (
     <div className="container">
-      {
-        isAuthen ? <Menu /> : <div className="navMenu"></div>
-      }
       <Switch>
         <PublicRoute path='/login' component={Login} />
-        <PrivateRoute exact path='/' component={Home} />
-        <PrivateRoute exact path='/home' component={Home} />
-        <PrivateRoute exact path='/projects' component={Projects} />
-        <PrivateRoute exact path='/projects/:succes/:pId' component={Projects} />
-        <PrivateRoute exact path='/pDetail/:pId' component={ProjectDetail} />
-        <PrivateRoute exact path='/newProject' component={CreateProject} />
-        <PrivateRoute exact path='/issues' component={IssueSearchForm} />
+        <PrivateRoute exact path='/'>
+          <Menu />
+          <Home />
+        </PrivateRoute>
+        <PrivateRoute exact path='/home'>
+          <Menu />
+          <Home />
+        </PrivateRoute>
+        <PrivateRoute exact path='/projects'>
+          <Menu />
+          <Projects />
+        </PrivateRoute>
+        <PrivateRoute exact path='/projects/:succes/:pId'>
+          <Menu />
+          <Projects />
+        </PrivateRoute>
+        <PrivateRoute exact path='/pDetail/:pId'>
+          <Menu />
+          <ProjectDetail />
+        </PrivateRoute>
+        <PrivateRoute exact path='/newProject'>
+          <Menu />
+          <CreateProject />
+        </PrivateRoute>
+        <PrivateRoute exact path='/issues'>
+          <Menu />
+          <IssueSearchForm />
+        </PrivateRoute>
       </Switch>
     </div>
   );
