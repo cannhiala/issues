@@ -125,14 +125,31 @@ module.exports = {
 
     // insert new project
     addUser: (req, res) => {
-        let data = req.body;
-        let sql = 'INSERT INTO `issuestracking`.`projects` '+
-                  '(`key`, `name`, `description`, `status`, `project_type_id`, `total_issues`, `progress`, `start_date`, `end_date`, `create_on`, `update_on`, `is_deleted`) ' +
-                  'VALUES (?, ?, ?, \'OPEN\', ? , 0, 0,  ?, ?, now() , now() , 1); '
-        db.query(sql, [data.p_key, data.p_name, data.p_description, data.p_type_id, data.p_startdate, data.p_enddate], (err, response) => {
+        let data = req.body
+        let project = data.project
+        let members = data.members
+        let owner_id = data.owner
+        console.log(JSON.stringify(data));
+        console.log("============project: " + JSON.stringify(data.project));
+        console.log("============members: " + JSON.stringify(data.members));
+        console.log("============Owner: " + JSON.stringify(data.owner));
+
+        let insProject = 'INSERT INTO `issuestracking`.`projects` '+
+                   '(`key`, `name`, `description`, `status`, `project_type_id`, `total_issues`, `progress`, `start_date`, `end_date`, `create_on`, `update_on`, `is_deleted`) ' +
+                   'VALUES ("'+ project.p_key + '", "'+ project.p_name + '", "'+ project.p_description + '", \'OPEN\', '+project.p_type_id+' , 0, 0,  "'+project.p_startdate+'", "'+project.p_enddate+'", now() , now() , 1); '
+        let insMember = '';
+        for (let key in members) {
+          insMember += 'INSERT INTO `issuestracking`.`members` '+
+                        '(`project_id`, `user_id`, `owner`, `create_on`, `is_deleted`) ' +
+                        'VALUES ((SELECT project_id FROM projects p WHERE p.key="'+ project.p_key + '"), '+members[key].userid+', 2, now(), 1); '
+        }
+        insMember += 'INSERT INTO `issuestracking`.`members` '+
+                      '(`project_id`, `user_id`, `owner`, `create_on`, `is_deleted`) ' +
+                      'VALUES ((SELECT project_id FROM projects p WHERE p.key="'+ project.p_key + '"), '+owner_id+', 1, now(), 1); '
+        db.query(insProject + insMember, [], (err, response) => {
             if (err) console.log(err);
             console.log(data);
-            res.json({message: '   Insert success!'})
+            res.json({message: '  Insert success!'})
         })
     },
 

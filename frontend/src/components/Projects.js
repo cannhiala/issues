@@ -2,13 +2,13 @@ import React, {useState, useEffect} from 'react'
 import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
 import axios from 'axios'
-import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
+import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table'
 import {  NavLink, useParams } from "react-router-dom"
 import Modal from 'react-bootstrap/Modal'
-import './Projects_Style.css';
-import { useHistory } from "react-router-dom";
+import './Projects_Style.css'
+import { useHistory } from "react-router-dom"
 import Moment from 'moment'
-import Menu from './Menu';
+import Menu from './Menu'
 
 function Project () {
   // session from context
@@ -140,27 +140,27 @@ function Project () {
           <label htmlFor="inputKey" className="col-sm-2 col-form-label">Project Key</label>
           <input type="text"
           value={searchCondition.s_p_key}
-          onChange={e => setSearchCondition({...searchCondition, s_p_key: e.target.value})}
+          onChange={pKey => setSearchCondition({...searchCondition, s_p_key: pKey.target.value})}
           className="col-sm-2 form-control" id="inputKey"/>
           <label htmlFor="inputName" className="col-sm-2 col-form-label">Prject Name</label>
           <input type="text"
           value={searchCondition.s_p_name}
-          onChange={e => setSearchCondition({...searchCondition, s_p_name: e.target.value})}
+          onChange={pName => setSearchCondition({...searchCondition, s_p_name: pName.target.value})}
           className="col-sm-6 form-control" id="inputName"/>
         </div>
-        <div className="form-group form-inline col-md-12">
+        <div className="form-group form-inline col-md-12 col-lg-12">
           <label htmlFor="inputStatus" className="col-sm-2 col-form-label">Project Status</label>
           <select id="inputStatus"
               className="col-sm-2 form-control"
               name="projectStatus"
               value={searchCondition.s_p_status}
-              onChange={e => setSearchCondition({...searchCondition, s_p_status: e.target.value})}
+              onChange={pStatus => setSearchCondition({...searchCondition, s_p_status: pStatus.target.value})}
               defaultValue={'ALL'}
               >
         				<option value="ALL">ALL</option>
                 {
-                  projectStatus.map((obj, key) => (
-        				        <option value={obj.key} key={key}>{obj.name}</option>
+                  projectStatus.map((objStatus, key) => (
+        				        <option value={objStatus.key} key={key}>{objStatus.name}</option>
                   ))
                 }
 
@@ -170,20 +170,21 @@ function Project () {
               className="col-sm-2 form-control"
               name="projectOwner"
               value={searchCondition.s_p_owner_id}
-              onChange={e => setSearchCondition({...searchCondition, s_p_owner_id: e.target.value})}
+              onChange={pOwner => setSearchCondition({...searchCondition, s_p_owner_id: pOwner.target.value})}
               defaultValue={'ALL'}
               >
         				<option value="ALL">ALL</option>
                 {
-                  owner.map((obj, key) => (
-        				        <option value={obj.user_id} key={key}>{obj.owner_fullname}</option>
+                  owner.map((objOwner, key) => (
+        				        <option value={objOwner.user_id} key={key}>{objOwner.owner_fullname}</option>
                   ))
                 }
 
         		</select>
         </div>
-        <div className="form-group form-inline col-md-12">
+        <div className="form-group form-inline col-md-12 col-lg-12">
           <label htmlFor="inputStartDateFrom" className="col-sm-2 col-md-2 col-form-label">Start Date</label>
+          <div className="form-group">
             <DatePicker
             id="inputStartDateFrom"
             className="form-control"
@@ -191,7 +192,9 @@ function Project () {
             selected={searchCondition.s_p_startdate_from}
             onChange={startDateFrom => setSearchCondition({...searchCondition, s_p_startdate_from: startDateFrom})}
             dateFormat="MM/dd/yyy"/>
-            &nbsp;&nbsp; ~ 	&nbsp;&nbsp;
+          </div>
+          &nbsp;&nbsp; ~ 	&nbsp;&nbsp;
+          <div className="form-group">
             <DatePicker
             id="inputStartDateTo"
             className="form-control"
@@ -199,9 +202,11 @@ function Project () {
             selected={searchCondition.s_p_startdate_to}
             onChange={startdateto => setSearchCondition({...searchCondition, s_p_startdate_to: startdateto})}
             dateFormat="MM/dd/yyy" />
+          </div>
         </div>
         <div className="form-group form-inline col-md-12 col-lg-12">
           <label htmlFor="inputEndDateFrom" className="col-sm-2 col-md-2 col-form-label">End Date</label>
+          <div className="form-group">
             <DatePicker
             id="inputEndDateFrom"
             className="form-control"
@@ -209,13 +214,16 @@ function Project () {
             selected={searchCondition.s_p_enddate_from}
             onChange={enddatefrom => setSearchCondition({...searchCondition, s_p_enddate_from: enddatefrom})}
             dateFormat="MM/dd/yyy" />
+          </div>
             &nbsp;&nbsp; ~ 	&nbsp;&nbsp;
+          <div className="form-group">
             <DatePicker
             className="form-control"
             name="startDateTo"
             selected={searchCondition.s_p_enddate_to}
             onChange={enddateto => setSearchCondition({...searchCondition, s_p_enddate_to: enddateto})}
             dateFormat="MM/dd/yyy" />
+          </div>
         </div>
           <button type="submit" className="btn btn-primary" onClick={onSearch} name="btnSearch">Search</button>
         </form>
