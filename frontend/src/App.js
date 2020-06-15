@@ -14,8 +14,6 @@ import CreateProject from './components/CreateProject'
 import IssueSearchForm from './components/Issues/IssueSearchForm'
 
 
-
-
 function App() {
 
   useEffect(() => {
