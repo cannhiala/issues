@@ -5,7 +5,6 @@ import DatePicker from 'react-datepicker'
 import Moment from 'moment'
 import './../../../node_modules/react-datepicker/dist/react-datepicker.css'
 import './../../../node_modules/react-bootstrap-table/dist/react-bootstrap-table-all.min.css'
-import Menu from './../Menu';
 
 function IssueSearchForm() {
 
@@ -104,7 +103,7 @@ function IssueSearchForm() {
                     setAssignee([])
                 })
 
-            fetch("http://localhost:3001/issueFilter?sAssigneeSelected=" + initState.userLoginId,
+        fetch("http://localhost:3001/issueFilter?sAssigneeSelected=" + initState.userLoginId,
             {
                 method: "GET"
             })
@@ -125,7 +124,6 @@ function IssueSearchForm() {
 
     return (
         <div>
-        <Menu/>
             <Form onSubmit={filterIssue}>
                 <Container fluid>
                     <Row>

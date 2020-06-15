@@ -6,10 +6,6 @@ import { Button, Table} from 'react-bootstrap';
 function Homeinterface () {
   return (
     <div>
-<<<<<<< HEAD
-=======
-    <Menu/>
->>>>>>> 0c18affe7e5074a769da2124a0a4c3adbb254def
       <h2>HOME</h2>
       <hr></hr>
         <div id="block_container">
