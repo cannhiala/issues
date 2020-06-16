@@ -16,6 +16,8 @@ import IssueSearchForm from './components/Issues/IssueSearchForm'
 
 function App() {
 
+  const [userFullName, setName] = useState("")
+
   useEffect(() => {
     const token = getToken()
     if (!token) {
@@ -30,7 +32,7 @@ function App() {
   })
 
   return (
-    <div className="container-fluid">
+    <div>
       <Switch>
         <PublicRoute path='/login' component={Login} />
         <PrivateRoute exact path='/'>
