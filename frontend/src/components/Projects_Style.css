@@ -5,3 +5,8 @@
 .form-inline .form-control {
   width: 200px !important;
 } */
+
+/* Modified pop backdrop style */
+.modal-backdrop.show {
+    opacity: 0.5;
+}

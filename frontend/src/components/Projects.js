@@ -9,18 +9,19 @@ import './Projects_Style.css'
 import { useHistory } from "react-router-dom"
 import Moment from 'moment'
 import Menu from './Menu'
+import { getUser } from './../utils/Common'
 
 function Project () {
   // session from context
-  const userid = 1;
-  let history = useHistory();
+  const userid = getUser().userId
+  let history = useHistory()
 
   // parameter check in these case: inserted, updated, deleted successfull. to show popup message.
-  let { succes } = useParams();
-  let { pId } = useParams();
-  const [showISuccessPopup, setIShowSuccessPopup] = useState(false);
-  const [showUSuccessPopup, setUShowSuccessPopup] = useState(false);
-  const [showDSuccessPopup, setDShowSuccessPopup] = useState(false);
+  let { succes } = useParams()
+  let { pId } = useParams()
+  const [showISuccessPopup, setIShowSuccessPopup] = useState(false)
+  const [showUSuccessPopup, setUShowSuccessPopup] = useState(false)
+  const [showDSuccessPopup, setDShowSuccessPopup] = useState(false)
   const [projectInfor, setProjectInfor] = useState({pKey: '', pName: ''})
 
   //
@@ -30,42 +31,42 @@ function Project () {
   const [searchCondition, setSearchCondition] = useState({userIdLogin: userid, s_p_key: '', s_p_name : '', s_p_status: 'ALL', s_p_owner_id: 'ALL', s_p_startdate_from: '', s_p_startdate_to: '', s_p_enddate_from: '', s_p_enddate_to: ''})
 
   useEffect(() => {
-     axios.get('http://localhost:3001/projects?userIdLogin=1&s_p_key='+searchCondition.s_p_key+'&s_p_name='+searchCondition.s_p_name+'&s_p_status='+searchCondition.s_p_status+'&s_p_owner_id='+searchCondition.s_p_owner_id+'&s_p_startdate_from='+searchCondition.s_p_startdate_from+'&s_p_startdate_to='+searchCondition.s_p_startdate_to+'&s_p_enddate_from='+searchCondition.s_p_enddate_from +'&s_p_enddate_to='+searchCondition.s_p_enddate_to+'').then(
+     axios.get('http://localhost:3001/projects?userIdLogin='+userid+'&s_p_key='+searchCondition.s_p_key+'&s_p_name='+searchCondition.s_p_name+'&s_p_status='+searchCondition.s_p_status+'&s_p_owner_id='+searchCondition.s_p_owner_id+'&s_p_startdate_from='+searchCondition.s_p_startdate_from+'&s_p_startdate_to='+searchCondition.s_p_startdate_to+'&s_p_enddate_from='+searchCondition.s_p_enddate_from +'&s_p_enddate_to='+searchCondition.s_p_enddate_to+'').then(
          (res) => {
-           console.log('Init Projects:',res);
-           console.log('Init Projects data:',res.data);
-           setProjects(res.data);
-     }).catch((err) => { console.log('Axios Error:', err); })
-  }, []);
+           console.log('Init Projects:',res)
+           console.log('Init Projects data:',res.data)
+           setProjects(res.data)
+     }).catch((err) => { console.log('Axios Error:', err) })
+  }, [])
 
   useEffect(() => {
      axios.get('http://localhost:3001/owner').then(
          (res) => {
-           console.log('Get Owner:',res);
-           console.log('Owner data:',res.data);
-           setOwner(res.data);
-     }).catch((err) => { console.log('Axios Error:', err); })
-  }, []);
+           console.log('Get Owner:',res)
+           console.log('Owner data:',res.data)
+           setOwner(res.data)
+     }).catch((err) => { console.log('Axios Error:', err) })
+  }, [])
 
   useEffect(() => {
     if (succes === 'isucces' || succes === 'usucces' || succes === 'dsucces') {
       axios.get('http://localhost:3001/projectInfor?pId='+ pId).then(
           (res) => {
-            console.log('Get projectInfor:',res);
-            console.log('projectInfor data:',res.data);
-            setProjectInfor({pKey: res.data[0].key, pName: res.data[0].name});
-            console.log('projectInfor projectInfor:' +  projectInfor.pKey);
-      }).catch((err) => { console.log('Axios Error:', err); })
+            console.log('Get projectInfor:',res)
+            console.log('projectInfor data:',res.data)
+            setProjectInfor({pKey: res.data[0].key, pName: res.data[0].name})
+            console.log('projectInfor projectInfor:' +  projectInfor.pKey)
+      }).catch((err) => { console.log('Axios Error:', err) })
     }
     switch (succes) {
       case 'isucces': return setIShowSuccessPopup(true)
       case 'usucces': return setUShowSuccessPopup(true)
       case 'dsucces': return setDShowSuccessPopup(true)
     }
-  }, []);
-  const onIShowSuccessClose = () => setIShowSuccessPopup(false);
-  const onUShowSuccessClose = () => setUShowSuccessPopup(false);
-  const onDShowSuccessClose = () => setDShowSuccessPopup(false);
+  }, [])
+  const onIShowSuccessClose = () => setIShowSuccessPopup(false)
+  const onUShowSuccessClose = () => setUShowSuccessPopup(false)
+  const onDShowSuccessClose = () => setDShowSuccessPopup(false)
 
 
   const onSearch  = function (e) {
@@ -87,10 +88,10 @@ function Project () {
       +'&s_p_enddate_to='+ endDateT+'').then(
           (res) => {
             //setMessage('Insert successfull !')
-            console.log('Search Projects:',res);
-            console.log('Search Projects data:',res.data);
-            setProjects(res.data);
-      }).catch((err) => { console.log('Axios Error:', err); })
+            console.log('Search Projects:',res)
+            console.log('Search Projects data:',res.data)
+            setProjects(res.data)
+      }).catch((err) => { console.log('Axios Error:', err) })
   }
 
   const viewIssuesLink = function(cell, row) {
@@ -106,7 +107,7 @@ function Project () {
   }
 
   const onCreateProject = function (e) {
-      history.replace("/newProject");
+      history.replace("/newProject")
   }
   return (
     <div>
@@ -246,4 +247,4 @@ function Project () {
   )
 }
 
-export default Project;
+export default Project

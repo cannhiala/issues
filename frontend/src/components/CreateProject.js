@@ -8,14 +8,15 @@ import './CreateProject_Style.css'
 import axios from 'axios'
 import Menu from './Menu'
 import Moment from 'moment'
+import { getUser } from './../utils/Common'
 
 function CreateProject () {
 
-  let history = useHistory();
+  let history = useHistory()
 
   //get user infor from session(context)
-  let userid = 1;
-  let username = 'Tang Van Can';
+  let userid = getUser().userId
+  let username = getUser().name
   const [user, setUser] = useState([])
   const [projectType, setProjectType] = useState([])
   const [userAutocomplete, setUserAutocomplete] = useState({userid: 0, fullname: 0})
@@ -25,33 +26,33 @@ function CreateProject () {
   useEffect(() => {
      axios.get('http://localhost:3001/projectTypes').then(
          (res) => {
-           console.log('Get Member of project:',res);
-           console.log('Member data:',res.data[0]);
-           setProjectType(res.data);
-     }).catch((err) => { console.log('Axios Error:', err); })
-  }, []);
+           console.log('Get Member of project:',res)
+           console.log('Member data:',res.data[0])
+           setProjectType(res.data)
+     }).catch((err) => { console.log('Axios Error:', err) })
+  }, [])
 
   useEffect(() => {
-     axios.get('http://localhost:3001/users').then(
+     axios.get('http://localhost:3001/users?uId='+ userid).then(
          (res) => {
-           console.log('Get Member of project:',res);
-           console.log('Member data:',res.data[0]);
-           setUser(res.data);
-     }).catch((err) => { console.log('Axios Error:', err); })
-  }, []);
+           console.log('Get Member of project:',res)
+           console.log('Member data:',res.data[0])
+           setUser(res.data)
+     }).catch((err) => { console.log('Axios Error:', err) })
+  }, [])
 
   const onSave  = function (e) {
     e.preventDefault()
     if (project.p_key.trim() === '') {
-        alert('Please input project key !');
-        return false;
+        alert('Please input project key !')
+        return false
     } else {
-       //onCheckProjectKey();
+       //onCheckProjectKey()
     }
 
     if ( project.p_name.trim() === '') {
-        alert('Please input project name !');
-        return false;
+        alert('Please input project name !')
+        return false
     }
 
      axios.post('http://localhost:3001/addUser', {project: {
@@ -67,10 +68,16 @@ function CreateProject () {
                                                   members: members,
                                                   owner: userid}).then(
           (res) => {
-            console.log('Axios:',res);
-            console.log('Axios data:',res.data);
-            history.push("/projects/isucces/");
-      }).catch((err) => { console.log('Axios Error:', err); })
+            if (res.status === 200) {
+            console.log('INSERT Project success : ', res.data)
+            let pId = res.data[0].insertId
+              history.push("/projects/isucces/"+pId)
+          } else {
+            const error = new Error(res.error)
+            //throw error
+            console.log('INSERT Project eror: ', error)
+          }
+      }).catch((err) => { console.log('Axios Error:', err) })
   }
 
   const onCheckProjectKey  = function (e) {
@@ -80,25 +87,25 @@ function CreateProject () {
                 console.log('PROJECT PROJECT KEY success:',res.data)
             } else {
               const error = new Error(res.error)
-              console.log('Check PROJECT KEY Error:', error);
+              console.log('Check PROJECT KEY Error:', error)
             }
-      }).catch((err) => { console.log('Check PROJECT KEY Error:', err); })
+      }).catch((err) => { console.log('Check PROJECT KEY Error:', err) })
   }
 
   const onBack  = function (e) {
     e.preventDefault()
-    history.push("/projects");
+    history.push("/projects")
   }
 
   const onAddUser  = function (e) {
     let isUserExists = false
     e.preventDefault()
-    console.log("===============" + JSON.stringify(userAutocomplete));
+    console.log("===============" + JSON.stringify(userAutocomplete))
     if (userAutocomplete.userid === 0) {
       alert('Please choose new user !')
       return false
     } else {
-      let isUserExists = members.map(function(e) { return e.userid; }).indexOf(userAutocomplete.userid)
+      let isUserExists = members.map(function(e) { return e.userid }).indexOf(userAutocomplete.userid)
       if (isUserExists !== -1) {
         alert('User already exists. Please choose another user !')
         return false
@@ -107,7 +114,7 @@ function CreateProject () {
   }
 
   const onRemoveUser  = function (e, userId) {
-    const newMembers = members.filter(user => user.userid !== userId);
+    const newMembers = members.filter(user => user.userid !== userId)
     setMembers(newMembers)
   }
 
@@ -268,4 +275,4 @@ function CreateProject () {
   )
 }
 
-export default CreateProject;
+export default CreateProject

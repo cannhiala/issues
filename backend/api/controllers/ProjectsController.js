@@ -14,7 +14,7 @@ module.exports = {
                 	'LEFT JOIN project_types pt ON p.project_type_id = pt.project_type_id  '+
                 	'LEFT JOIN members m ON p.project_id = m.project_id  '+
                 	'LEFT JOIN users u ON m.user_id = u.user_id  '+
-                	'WHERE m.owner = 1 AND p.is_deleted = 1 AND m.is_deleted = 1 AND m.user_id = 1  '+
+                	'WHERE m.owner = 1 AND p.is_deleted = 1 AND m.is_deleted = 1 AND m.user_id = '+data.userIdLogin+' '+
                 	'UNION  '+
                 	'Select tbl2.*, u.user_id, m.owner, CONCAT_WS(\' \', u.first_name, u.last_name) AS owner_fullname  from  '+
                 		'(SELECT p.project_id, p.key, p.name, p.description, p.status, p.project_type_id, p.total_issues, p.progress, DATE_FORMAT(p.start_date, \'%d/%m/%Y\') as start_date, DATE_FORMAT(p.end_date, \'%d/%m/%Y\') as end_date, p.create_on, p.update_on, p.is_deleted,  pt.name as project_type_name  '+
@@ -22,7 +22,7 @@ module.exports = {
                 		'LEFT JOIN project_types pt ON p.project_type_id = pt.project_type_id  '+
                 		'LEFT JOIN members m ON p.project_id = m.project_id  '+
                 		'LEFT JOIN users u ON m.member_id = u.user_id  '+
-                		'WHERE m.owner = 2 AND p.is_deleted = 1 AND m.is_deleted = 1 AND m.user_id = 1) tbl2  '+
+                		'WHERE m.owner = 2 AND p.is_deleted = 1 AND m.is_deleted = 1 AND m.user_id = '+data.userIdLogin+') tbl2  '+
                 	'LEFT JOIN members m ON tbl2.project_id = m.project_id   '+
                 	'LEFT JOIN users u ON m.user_id = u.user_id  '+
                 	'WHERE m.owner = 1 AND m.is_deleted = 1 AND m.is_deleted = 1 ) tt WHERE 1=1 '
@@ -49,13 +49,13 @@ module.exports = {
     // get project detail
     getProjectDetail: (req, res) => {
         let data = req.query
-        let sql = 'Select tbl2.*, u.user_id, m.owner, CONCAT_WS(\' \', u.first_name, u.last_name) AS owner_fullname  from '+
+        let sql = 'Select DISTINCT tbl2.*, u.user_id, m.owner, CONCAT_WS(\' \', u.first_name, u.last_name) AS owner_fullname  from '+
                 		'(SELECT p.project_id, p.key, p.name, p.description, p.status, p.project_type_id, p.total_issues, p.progress, DATE_FORMAT(p.start_date, \'%d/%m/%Y\') as start_date, DATE_FORMAT(p.end_date, \'%d/%m/%Y\') as end_date, p.create_on, p.update_on, p.is_deleted,  pt.name as project_type_name  '+
                 		'FROM projects p '+
                 		'LEFT JOIN project_types pt ON p.project_type_id = pt.project_type_id '+
                 		'LEFT JOIN members m ON p.project_id = m.project_id  '+
                 		'LEFT JOIN users u ON m.member_id = u.user_id  '+
-                		'WHERE p.is_deleted = 1 AND m.is_deleted = 1 AND m.user_id = 1) tbl2  '+
+                		'WHERE p.is_deleted = 1 AND m.is_deleted = 1) tbl2  '+
                 	'LEFT JOIN members m ON tbl2.project_id = m.project_id  '+
                 	'LEFT JOIN users u ON m.user_id = u.user_id  '+
                 	'WHERE m.owner = 1 AND m.is_deleted = 1 AND m.is_deleted = 1  AND tbl2.project_id ='+ data.pId
@@ -114,9 +114,10 @@ module.exports = {
 
     // get all user
     getUsers: (req, res) => {
+        let data = req.query
         let sql = 'SELECT u.user_id, CONCAT_WS(\' \', u.first_name, u.last_name) AS fullname	'+
                   'FROM users u	'+
-                  'WHERE u.`is_deleted` = 1 ORDER BY fullname	'
+                  'WHERE u.`is_deleted` = 1 AND u.user_id != '+ data.uId +' ORDER BY fullname	'
         db.query(sql, (err, response) => {
             if (err) console.log(err);
             res.json(response)
@@ -148,8 +149,8 @@ module.exports = {
                       'VALUES ((SELECT project_id FROM projects p WHERE p.key="'+ project.p_key + '"), '+owner_id+', 1, now(), 1); '
         db.query(insProject + insMember, [], (err, response) => {
             if (err) console.log(err);
-            console.log(data);
-            res.json({message: '  Insert success!'})
+            console.log('Insert success!');
+            res.json(response)
         })
     },
 

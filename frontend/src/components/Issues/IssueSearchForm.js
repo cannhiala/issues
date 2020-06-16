@@ -5,6 +5,7 @@ import DatePicker from 'react-datepicker'
 import Moment from 'moment'
 import './../../../node_modules/react-datepicker/dist/react-datepicker.css'
 import './../../../node_modules/react-bootstrap-table/dist/react-bootstrap-table-all.min.css'
+import { getUser } from './../../utils/Common'
 
 function IssueSearchForm() {
 
@@ -14,7 +15,7 @@ function IssueSearchForm() {
             defaultSortName: 'update_on',
             defaultSortOrder: 'desc'
         },
-        userLoginId: 3,
+        userLoginId: getUser().userId,
         arrIssueStatus: [],
         arrAssignee: [],
         arrPriority: [],
