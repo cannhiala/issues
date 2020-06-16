@@ -248,7 +248,7 @@ function IssueSearchForm() {
                 <Container fluid>
                     <Row>
                         <Col>
-                            <Button variant="primary" type="Submit">Primary</Button>
+                            <Button variant="primary" type="Submit">Create issue</Button>
                         </Col>
                     </Row>
                 </Container>
