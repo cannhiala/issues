@@ -88,5 +88,45 @@ module.exports = {
                 })
         })
     },
+    issueGetListIssueCategories: (req, res) => {
+        pool.getConnection(function (err, connection) {
+            if (err) throw err;
+            connection.query('call issue_getListIssueCategories()', function (error, results, fields) {
+                connection.release();
+                if (error) throw error;
+
+                res.json(results);
+            })
+        })
+    },
+    issueGetListPhaseByProjectKey: (req, res) => {
+        let projectKey = req.query.sProjectKey
+
+        pool.getConnection(function (err, connection) {
+            if (err) throw err;
+            connection.query('call issue_getListPhaseByProjectKey(?)'
+                , [projectKey]
+                , function (error, results, fields) {
+                    connection.release();
+                    if (error) throw error;
+                    res.json(results);
+                })
+        })
+    },
+    issueGetProjectUserAssign: (req, res) => {
+        let projectKey = req.query.sProjectKey
+
+        pool.getConnection(function (err, connection) {
+            if (err) throw err;
+            connection.query('call issue_getProjectUserAssign(?)'
+                , [projectKey]
+                , function (error, results, fields) {
+                    connection.release();
+                    if (error) throw error;
+                    res.json(results);
+                })
+        })
+    },
+
 
 }
