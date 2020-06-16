@@ -11,8 +11,8 @@ import Home from './components/Home/Homeinterface'
 import ProjectDetail from './components/ProjectDetail'
 import Projects from './components/Projects'
 import CreateProject from './components/CreateProject'
+import EditProject from './components/EditProject'
 import IssueSearchForm from './components/Issues/IssueSearchForm'
-
 
 function App() {
 
@@ -56,6 +56,10 @@ function App() {
         <PrivateRoute exact path='/newProject'>
           <Menu />
           <CreateProject />
+        </PrivateRoute>
+        <PrivateRoute exact path='/pEdit/:pId'>
+          <Menu />
+          <EditProject />
         </PrivateRoute>
         <PrivateRoute exact path='/issues'>
           <Menu />
