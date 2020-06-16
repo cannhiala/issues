@@ -1,31 +1,41 @@
-import React, {useContext} from 'react'
+import React, { useContext } from 'react'
 import Homelist from './Homelist';
 import Issuelist from './Issuelist';
-import { Button, Table} from 'react-bootstrap';
+import { Table } from 'react-bootstrap';
 
-function Homeinterface () {
+function Homeinterface() {
   return (
-    <div>
-      <h2>HOME</h2>
-      <hr></hr>
-        <div id="block_container">
-        <div id="1">
-        <h4>My Project</h4>
-        <Table>
-          <th><Homelist /></th>
-        </Table>
+    <div id="container" className="fixed-header sidebar-closed">
+      <div id="content">
+        <div className="container">
+          <div className="crumbs">
+            <ul className="breadcrumb"><b>Home</b></ul>
+          </div>
+          <br /><br />
+          <div className="row">
+            <div className="col-md-5">
+              <div className="widget box">
+                <div className="widget-header">
+                  <h4>My Project</h4>
+                </div>
+                <div className="widget-content no-padding">
+                  <Homelist />
+                </div>
+              </div>
+            </div>
+            <div className="col-md-7">
+              <div className="widget box">
+                <div className="widget-header">
+                  <h4>My Project</h4>
+                </div>
+                <div className="widget-content no-padding">
+                  <Issuelist />
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-            &emsp;
-            &emsp;
-            &emsp;
-            &emsp;
-            <div id="2">
-          <h4>My Issue</h4>
-          <Table>
-          <th><Issuelist /></th>
-        </Table>
-        </div>
-        </div>
+      </div>
     </div>
   )
 }

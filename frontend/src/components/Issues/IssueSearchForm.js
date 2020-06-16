@@ -124,28 +124,47 @@ function IssueSearchForm() {
     }
 
     return (
-        <div>
-            <Form onSubmit={filterIssue}>
-                <Container fluid>
+        <div id="container" className="fixed-header sidebar-closed">
+            <div id="content">
+                <div className="container">
+                    <div className="crumbs">
+                        <ul className="breadcrumb"><b>Issues</b></ul>
+                    </div>
+                    <br /><br />
+                    <Form className="form-horizontal" onSubmit={filterIssue}>
                     <Row>
-                        <Col sm={1}><Form.Label>Project key</Form.Label></Col>
-                        <Col sm={2}>
-                            <Form.Control
-                                type="text"
-                                id="sProjectKey"
-                                value={searchCondition.sProjectKey}
-                                onChange={e => setSearchCondition({ ...searchCondition, sProjectKey: e.target.value })}
-                            />
-                        </Col>
-                        <Col sm={1}><Form.Label>Project name</Form.Label></Col>
-                        <Col sm={4}>
-                            <Form.Control
-                                type="text"
-                                id="sProjectName"
-                                value={searchCondition.sProjectName}
-                                onChange={e => setSearchCondition({ ...searchCondition, sProjectName: e.target.value })}
-                            />
-                        </Col>
+                            <Col md={12}>
+                                <div className="widget box">
+                                    <div className="widget-header"><h4>Search condition</h4></div>
+                                    <div className="widget-content">
+                                        <Form.Group>
+                                            <Form.Label className="col-md-1 control-label">Project key</Form.Label>
+                                            <Col md={2}>
+                                                <Form.Control
+                                                    type="text"
+                                                    id="sProjectKey"
+                                                    value={searchCondition.sProjectKey}
+                                                    onChange={e => setSearchCondition({ ...searchCondition, sProjectKey: e.target.value })}
+                                                />
+                                            </Col>
+                                            <Form.Label className="col-md-2 control-label">Project name</Form.Label>
+                                            <Col md={4}>
+                                                <Form.Control
+                                                    type="text"
+                                                    id="sProjectName"
+                                                    value={searchCondition.sProjectName}
+                                                    onChange={e => setSearchCondition({ ...searchCondition, sProjectName: e.target.value })}
+                                                />
+                                            </Col>
+                                        </Form.Group>
+                                    </div>
+                                </div>                                
+                            </Col>
+                    </Row>    
+                    <Row>
+
+                        
+                        <Col sm={1}></Col>                        
                     </Row>
                     <Row>
                         <Col sm={1}><Form.Label>Issue name</Form.Label></Col>
@@ -244,16 +263,14 @@ function IssueSearchForm() {
                             </div>
                         </Col>
                     </Row>
-                </Container>
-                <Container fluid>
+
                     <Row>
                         <Col>
                             <Button variant="primary" type="Submit">Create issue</Button>
                         </Col>
                     </Row>
-                </Container>
-            </Form>
-            <Container fluid>
+                </Form>
+
                 <BootstrapTable data={issueList} pagination={true} options={initState.tableoption} striped hover>
                     <TableHeaderColumn dataField='issuetypename' dataSort={true}>Issue type</TableHeaderColumn>
                     <TableHeaderColumn isKey dataField='key' dataSort={true}>Issue id</TableHeaderColumn>
@@ -270,7 +287,8 @@ function IssueSearchForm() {
                     <TableHeaderColumn dataField='update_on' dataSort={true}>Updated date</TableHeaderColumn>
                     <TableHeaderColumn dataField='createby' dataSort={true}>Created by</TableHeaderColumn>
                 </BootstrapTable>
-            </Container>
+                </div>                
+            </div>
         </div>
     );
 
