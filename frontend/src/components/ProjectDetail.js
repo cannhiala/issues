@@ -64,7 +64,7 @@ function ProjectDetail () {
   }
 
   return (
-    <div className="container">
+    <div>
       <h2>Project Detail</h2>
       <hr/>
 

@@ -112,8 +112,7 @@ function CreateProject () {
   }
 
   return (
-    <div className="container">
-    <Menu/>
+    <div>
       <h2>Create Project</h2>
       <hr/>
       <div className="modal-body">

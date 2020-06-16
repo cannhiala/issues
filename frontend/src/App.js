@@ -30,7 +30,7 @@ function App() {
   })
 
   return (
-    <div className="container">
+    <div className="container-fluid">
       <Switch>
         <PublicRoute path='/login' component={Login} />
         <PrivateRoute exact path='/'>

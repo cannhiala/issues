@@ -13,7 +13,7 @@ module.exports = {
                 	'FROM projects p  '+
                 	'LEFT JOIN project_types pt ON p.project_type_id = pt.project_type_id  '+
                 	'LEFT JOIN members m ON p.project_id = m.project_id  '+
-                	'INNER JOIN users u ON m.member_id = u.user_id  '+
+                	'LEFT JOIN users u ON m.user_id = u.user_id  '+
                 	'WHERE m.owner = 1 AND p.is_deleted = 1 AND m.is_deleted = 1 AND m.user_id = 1  '+
                 	'UNION  '+
                 	'Select tbl2.*, u.user_id, m.owner, CONCAT_WS(\' \', u.first_name, u.last_name) AS owner_fullname  from  '+
@@ -21,10 +21,10 @@ module.exports = {
                 		'FROM projects p  '+
                 		'LEFT JOIN project_types pt ON p.project_type_id = pt.project_type_id  '+
                 		'LEFT JOIN members m ON p.project_id = m.project_id  '+
-                		'INNER JOIN users u ON m.member_id = u.user_id  '+
+                		'LEFT JOIN users u ON m.member_id = u.user_id  '+
                 		'WHERE m.owner = 2 AND p.is_deleted = 1 AND m.is_deleted = 1 AND m.user_id = 1) tbl2  '+
                 	'LEFT JOIN members m ON tbl2.project_id = m.project_id   '+
-                	'INNER JOIN users u ON m.user_id = u.user_id  '+
+                	'LEFT JOIN users u ON m.user_id = u.user_id  '+
                 	'WHERE m.owner = 1 AND m.is_deleted = 1 AND m.is_deleted = 1 ) tt WHERE 1=1 '
                   if (data.s_p_key !== '') {sql = sql + ' AND tt.`key` like  "%'+ data.s_p_key +'%" ' }
                   if (data.s_p_name !== '') {sql = sql + ' AND tt.`name` like  "%'+ data.s_p_name +'%" ' }
@@ -54,10 +54,10 @@ module.exports = {
                 		'FROM projects p '+
                 		'LEFT JOIN project_types pt ON p.project_type_id = pt.project_type_id '+
                 		'LEFT JOIN members m ON p.project_id = m.project_id  '+
-                		'INNER JOIN users u ON m.member_id = u.user_id  '+
+                		'LEFT JOIN users u ON m.member_id = u.user_id  '+
                 		'WHERE p.is_deleted = 1 AND m.is_deleted = 1 AND m.user_id = 1) tbl2  '+
                 	'LEFT JOIN members m ON tbl2.project_id = m.project_id  '+
-                	'INNER JOIN users u ON m.user_id = u.user_id  '+
+                	'LEFT JOIN users u ON m.user_id = u.user_id  '+
                 	'WHERE m.owner = 1 AND m.is_deleted = 1 AND m.is_deleted = 1  AND tbl2.project_id ='+ data.pId
         db.query(sql, (err, response) => {
             if (err) console.log(err);
@@ -92,7 +92,7 @@ module.exports = {
         let data = req.query
         let sql = 'select m.project_id, m.owner, u.user_id, CONCAT_WS(\' \', u.first_name, u.last_name) AS fullname  from members m  '+
                   'LEFT JOIN projects p ON p.project_id = m.project_id  '+
-                  'INNER JOIN users u ON m.member_id = u.user_id  '+
+                  'INNER JOIN users u ON m.user_id = u.user_id  '+
                   'WHERE m.owner = 2 AND p.is_deleted = 1 AND m.is_deleted = 1  AND p.project_id ='+ data.pId
         db.query(sql, (err, response) => {
             if (err) console.log(err);

@@ -109,8 +109,7 @@ function Project () {
       history.replace("/newProject");
   }
   return (
-    <div className="container">
-    <Menu/>
+    <div>
     <h2>Projects</h2>
     <hr/>
     <div className="modal-body">
