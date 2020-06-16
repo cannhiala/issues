@@ -36,7 +36,7 @@ function ProjectDetail () {
 
   const onEditProject  = function (e) {
     e.preventDefault()
-    console.log('hand Estimate')
+    history.push("/pEdit/"+pId)
   }
   const onDelConfirmPopup  = function (e) {
     setShowDelConfirmPopup(true)

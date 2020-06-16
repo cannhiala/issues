@@ -178,5 +178,28 @@ module.exports = {
             console.log('getProjectKey ======' + JSON.stringify(response));
             res.json(response)
         })
+    },
+
+    // get project infor for update
+    getProjectForUpdate: (req, res) => {
+        let data = req.query
+        let sql = 'SELECT p.project_id, p.key, p.name, p.status, p.project_type_id, DATE_FORMAT(p.start_date, \'%Y-%m-%d\') as start_date, DATE_FORMAT(p.end_date, \'%Y-%m-%d\') as end_date, p.description '+
+                  'FROM issuestracking.projects p '+
+                  'WHERE p.is_deleted = 1 AND p.project_id='+ data.pId
+        db.query(sql, (err, response) => {
+            if (err) console.log(err);
+            res.json(response)
+        })
+    },
+
+    getUserForUpdate: (req, res) => {
+        let data = req.query
+        let sql = 'SELECT m.user_id, CONCAT_WS(\' \', u.first_name, u.last_name) AS fullname FROM issuestracking.members m  '+
+                  'LEFT JOIN users u ON m.user_id = u.user_id '+
+                  'WHERE m.project_id = '+ data.pId + ' AND m.user_id <> '+ data.uId
+        db.query(sql, (err, response) => {
+            if (err) console.log(err);
+            res.json(response)
+        })
     }
 }

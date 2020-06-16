@@ -25,7 +25,9 @@ module.exports = function(app) {
 	app.route('/addUser').post(projectCtrl.addUser);
 	app.route('/delProject').put(projectCtrl.delProject);
 	app.route('/checkPKey').get(projectCtrl.getProjectKey);
-	
+	app.route('/pForUpdate').get(projectCtrl.getProjectForUpdate);
+	app.route('/uForUpdate').get(projectCtrl.getUserForUpdate);
+
 	//issues route
 	//create by Quanha
 	app.route('/issueGetProjectByKey')

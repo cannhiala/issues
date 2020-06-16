@@ -1,20 +1,21 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import { Table} from 'react-bootstrap';
+import { getUser } from './../../utils/Common'
 
-
-
-    class Issuelist extends Component {
+class Issuelist extends Component {
       constructor(props) {
+
         super(props);
         this.state = {
           emps: [],
+          userid: getUser().userId,
         }
 
       }
 
     getIssues() {
-      axios.get('http://localhost:3001/myIssue')
+      axios.get('http://localhost:3001/myIssue?uId='+this.state.userid)
       .then(res => {
         const emps = res.data;
         this.setState({ emps });
@@ -54,8 +55,8 @@ import { Table} from 'react-bootstrap';
                     {emps.map(emp => (
                       <tr key={emp.id}>
                         <td>{emp.issuetype}</td>
-                        <td>{emp.issueid}</td>
-                        <td>{emp.issuename}</td>
+                        <td>{emp.key}</td>
+                        <td>{emp.name}</td>
                         <td>{emp.issuestatus}</td>
                         <td>{emp.issuepriority}</td>
                         <td>{emp.projectname}</td>
