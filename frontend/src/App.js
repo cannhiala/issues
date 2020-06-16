@@ -1,44 +1,66 @@
-import React, { useState, useContext } from 'react';
-import {Switch, Route, Redirect } from "react-router-dom";
+import React, { useState, useEffect } from 'react'
+import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom"
+import axios from 'axios'
+import PrivateRoute from './utils/PrivateRoute'
+import PublicRoute from './utils/PublicRoute'
+import { getToken, removeUserSession, setUserSession } from './utils/Common'
+
 import Menu from './components/Menu'
-import Login, { UserIDContext } from './components/Login'
-import Home from './components/Home/Homeinterface';
-import ProjectDetail from './components/ProjectDetail';
-import Projects from './components/Projects';
-import CreateProject from './components/CreateProject';
+import Login from './components/Login'
+import Home from './components/Home/Homeinterface'
+import ProjectDetail from './components/ProjectDetail'
+import Projects from './components/Projects'
+import CreateProject from './components/CreateProject'
 import IssueSearchForm from './components/Issues/IssueSearchForm'
 
 
 function App() {
-  const [isAuthenticated, userHasAuthenticated] = useState(false)
 
+  useEffect(() => {
+    const token = getToken()
+    if (!token) {
+      return
+    }
 
+    axios.get(`http://localhost:3001/verifyToken?token=${token}`).then(response => {
+      setUserSession(response.data.token, response.data.user);
+    }).catch(error => {
+      removeUserSession();
+    });
+  })
 
   return (
     <div className="container">
-      
       <Switch>
-        <Route exact path='/login'>
-          <Login isAuthenticated={isAuthenticated} />
-        </Route>
-        <Route exact path="/home">
+        <PublicRoute path='/login' component={Login} />
+        <PrivateRoute exact path='/'>
+          <Menu />
           <Home />
-        </Route>
-        <Route exact path="/projects">
+        </PrivateRoute>
+        <PrivateRoute exact path='/home'>
+          <Menu />
+          <Home />
+        </PrivateRoute>
+        <PrivateRoute exact path='/projects'>
+          <Menu />
           <Projects />
-        </Route>
-        <Route exact path="/projects/:succes/:pId">
+        </PrivateRoute>
+        <PrivateRoute exact path='/projects/:succes/:pId'>
+          <Menu />
           <Projects />
-        </Route>
-        <Route path="/pDetail/:pId">
+        </PrivateRoute>
+        <PrivateRoute exact path='/pDetail/:pId'>
+          <Menu />
           <ProjectDetail />
-        </Route>
-        <Route path="/newProject">
+        </PrivateRoute>
+        <PrivateRoute exact path='/newProject'>
+          <Menu />
           <CreateProject />
-        </Route>
-        <Route exact path="/issues">
+        </PrivateRoute>
+        <PrivateRoute exact path='/issues'>
+          <Menu />
           <IssueSearchForm />
-        </Route>
+        </PrivateRoute>
       </Switch>
     </div>
   );

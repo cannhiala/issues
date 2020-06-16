@@ -9,6 +9,7 @@ module.exports = function(app) {
 	//Login&Home route
 	//create by ThanhTV
 	app.route('/login').post(loginCtrl.login);
+	app.route('/verifyToken').get(loginCtrl.verifyToken);
 	app.route('/myProject').get(homeCtrl.myproject);
 	app.route('/myIssue').get(homeCtrl.myissue);
 
