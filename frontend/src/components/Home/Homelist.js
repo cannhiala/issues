@@ -10,10 +10,10 @@ import { Button, Table} from 'react-bootstrap';
         super(props);
         this.state = {
           emps: [],
-        }  
-        
+        }
+
       }
-    
+
     getProjects() {
       axios.get('http://localhost:3001/myProject')
       .then(res => {
@@ -21,50 +21,50 @@ import { Button, Table} from 'react-bootstrap';
         this.setState({ emps });
         console.log(res.data);
           })
-    }    
-    
+    }
+
     componentDidMount() {
         this.getProjects();
     }
 
 
-    render(){         
-      const{error,emps}=this.state;  
-      if(error){  
-          return(  
-              <div>Error:{error.message}</div>  
-          )  
-      }  
-      else  
-      {  
-          return(  
-            <div>         
-                <Table class="table-responsive col-md-6">  
-                  <thead className="btn-secondary">  
-                    <tr>  
+    render(){
+      const{error,emps}=this.state;
+      if(error){
+          return(
+              <div>Error:{error.message}</div>
+          )
+      }
+      else
+      {
+          return(
+            <div>
+                <Table className="table-responsive col-md-6">
+                  <thead className="btn-secondary">
+                    <tr>
                       <th></th>
-                      <th>ProjectKey</th>  
+                      <th>ProjectKey</th>
                       <th>ProjectName</th>
                       <th>ProjectStatus</th>
                       <th>ProjectType</th>
-                    </tr>  
-                  </thead>  
+                    </tr>
+                  </thead>
                   <tbody>
-                    {emps.map(emp => (    
+                    {emps.map(emp => (
                       <tr key={emp.id}>
-                        <td><button class="btn btn-outline-primary">Overview</button></td>
-                        <td>{emp.projectkey}</td>  
+                        <td><button className="btn btn-outline-primary">Overview</button></td>
+                        <td>{emp.projectkey}</td>
                         <td>{emp.projectname}</td>
                         <td>{emp.projectstatus}</td>
                         <td>{emp.projecttype}</td>
-                      </tr>  
-                    ))}  
-                  </tbody>  
-                </Table>  
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
             </div>
-            )  
-      }  
-  }  
-}  
+            )
+      }
+  }
+}
 
     export default Homelist;

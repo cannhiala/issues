@@ -104,7 +104,7 @@ function Login(props) {
               </>
             )
         )}
-      <div class="footer-copyright text-center">© Copyright 2020-2020, FF Team </div>
+      <div className="footer-copyright text-center">© Copyright 2020-2020, FF Team </div>
     </div>
   )
 }
