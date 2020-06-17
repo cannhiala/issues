@@ -50,7 +50,6 @@ function IssueSearchForm() {
             else
                 filterParams.append(key, searchCondition[key])
         }
-        console.log(filterParams.toString())
         fetch("http://localhost:3001/issueFilter?" + filterParams.toString(),
             {
                 method: "GET"
@@ -132,7 +131,7 @@ function IssueSearchForm() {
                     </div>
                     <br /><br />
                     <Form className="form-horizontal" onSubmit={filterIssue}>
-                    <Row>
+                        <Row>
                             <Col md={12}>
                                 <div className="widget box">
                                     <div className="widget-header">
@@ -168,7 +167,7 @@ function IssueSearchForm() {
                                         </Form.Group>
                                         <Form.Group>
                                             <Form.Label className="col-md-1 control-label">Issue name</Form.Label>
-                                            <Col sm={8}>
+                                            <Col md={8}>
                                                 <Form.Control
                                                     type="text"
                                                     id="sIssueName"
@@ -226,14 +225,14 @@ function IssueSearchForm() {
                                                 />
                                             </Col>
                                             <Form.Label className="col-md-1 control-label">~</Form.Label>
-                                            <Col sm={2}>
+                                            <Col md={2}>
                                                 <DatePicker className="form-control" autoComplete="off"
                                                     id="sStartDateTo"
                                                     selected={searchCondition.sStartDateTo}
                                                     onChange={date => setSearchCondition({ ...searchCondition, sStartDateTo: date })}
                                                 />
                                             </Col>
-                                            <span><i>(Enter in MM/DD/YYYY format)</i></span> 
+                                            <span><i>(Enter in MM/DD/YYYY format)</i></span>
                                         </Form.Group>
                                         <Form.Group>
                                             <Form.Label className="col-md-1 control-label">Due date</Form.Label>
@@ -255,7 +254,7 @@ function IssueSearchForm() {
                                         </Form.Group>
                                         <Form.Group>
                                             <Form.Label className="col-md-1 control-label">Issue status</Form.Label>
-                                            <Col sm={7}>
+                                            <Col md={7}>
                                                 <div onChange={e => setSearchCondition({ ...searchCondition, sissueStatusSelected: e.target.value })} className="mb-3">
                                                     <Form.Check className="radio-inline" inline label="All" defaultChecked name="issueStatusGroup" type="radio" value="" id="issueStatus-All" />
                                                     {arrIssueStatus.map((statusitem, key) => (
@@ -270,28 +269,28 @@ function IssueSearchForm() {
                                             <Col md={2}><Button variant="primary" type="Submit">{'\u00A0\u00A0'}Search{'\u00A0\u00A0'}</Button></Col>
                                         </Form.Group>
                                     </div>
-                                </div>                                
+                                </div>
                             </Col>
-                    </Row>
-                </Form>
+                        </Row>
+                    </Form>
 
-                <BootstrapTable data={issueList} pagination={true} options={initState.tableoption} striped hover>
-                    <TableHeaderColumn dataField='issuetypename' dataSort={true}>Issue type</TableHeaderColumn>
-                    <TableHeaderColumn isKey dataField='key' dataSort={true}>Issue id</TableHeaderColumn>
-                    <TableHeaderColumn dataField='name' dataSort={true}>Issue name</TableHeaderColumn>
-                    <TableHeaderColumn dataField='phase' dataSort={true}>Phase</TableHeaderColumn>
-                    <TableHeaderColumn dataField='status' dataSort={true}>Issue status</TableHeaderColumn>
-                    <TableHeaderColumn dataField='projectskey' dataSort={true}>Project key</TableHeaderColumn>
-                    <TableHeaderColumn dataField='projectsname' dataSort={true}>Project name</TableHeaderColumn>
-                    <TableHeaderColumn dataField='assignee' dataSort={true}>Assignee</TableHeaderColumn>
-                    <TableHeaderColumn dataField='priority' dataSort={true}>Priority</TableHeaderColumn>
-                    <TableHeaderColumn dataField='startdate' dataSort={true}>Start date</TableHeaderColumn>
-                    <TableHeaderColumn dataField='duedate' dataSort={true}>Due date</TableHeaderColumn>
-                    <TableHeaderColumn dataField='startdate' dataSort={true}>Start date</TableHeaderColumn>
-                    <TableHeaderColumn dataField='update_on' dataSort={true}>Updated date</TableHeaderColumn>
-                    <TableHeaderColumn dataField='createby' dataSort={true}>Created by</TableHeaderColumn>
-                </BootstrapTable>
-                </div>                
+                    <BootstrapTable data={issueList} pagination={true} options={initState.tableoption} striped hover>
+                        <TableHeaderColumn dataField='issuetypename' dataSort={true}>Issue type</TableHeaderColumn>
+                        <TableHeaderColumn isKey dataField='key' dataSort={true}>Issue id</TableHeaderColumn>
+                        <TableHeaderColumn dataField='name' dataSort={true}>Issue name</TableHeaderColumn>
+                        <TableHeaderColumn dataField='phase' dataSort={true}>Phase</TableHeaderColumn>
+                        <TableHeaderColumn dataField='status' dataSort={true}>Issue status</TableHeaderColumn>
+                        <TableHeaderColumn dataField='projectskey' dataSort={true}>Project key</TableHeaderColumn>
+                        <TableHeaderColumn dataField='projectsname' dataSort={true}>Project name</TableHeaderColumn>
+                        <TableHeaderColumn dataField='assignee' dataSort={true}>Assignee</TableHeaderColumn>
+                        <TableHeaderColumn dataField='priority' dataSort={true}>Priority</TableHeaderColumn>
+                        <TableHeaderColumn dataField='startdate' dataSort={true}>Start date</TableHeaderColumn>
+                        <TableHeaderColumn dataField='duedate' dataSort={true}>Due date</TableHeaderColumn>
+                        <TableHeaderColumn dataField='startdate' dataSort={true}>Start date</TableHeaderColumn>
+                        <TableHeaderColumn dataField='update_on' dataSort={true}>Updated date</TableHeaderColumn>
+                        <TableHeaderColumn dataField='createby' dataSort={true}>Created by</TableHeaderColumn>
+                    </BootstrapTable>
+                </div>
             </div>
         </div>
     );
