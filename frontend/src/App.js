@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom"
+import React, { useEffect } from 'react'
+import { Switch } from "react-router-dom"
 import axios from 'axios'
 import PrivateRoute from './utils/PrivateRoute'
 import PublicRoute from './utils/PublicRoute'
@@ -15,8 +15,6 @@ import IssueSearchForm from './components/Issues/IssueSearchForm'
 
 
 function App() {
-
-  const [userFullName, setName] = useState("")
 
   useEffect(() => {
     const token = getToken()

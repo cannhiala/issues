@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = function(app) {
+module.exports = function (app) {
 	let loginCtrl = require('./controllers/LoginController');
 	let homeCtrl = require('./controllers/HomeController');
 	let projectCtrl = require('./controllers/ProjectsController');
@@ -25,9 +25,10 @@ module.exports = function(app) {
 	app.route('/addUser').post(projectCtrl.addUser);
 	app.route('/delProject').put(projectCtrl.delProject);
 	app.route('/checkPKey').get(projectCtrl.getProjectKey);
-	
+
 	//issues route
 	//create by Quanha
+	
 	app.route('/issueGetProjectByKey')
 		.get(issueCtrl.issueGetProjectByKey);
 	app.route('/issueGetListStatuses')
@@ -38,5 +39,11 @@ module.exports = function(app) {
 		.get(issueCtrl.issueGetListPriotities);
 	app.route('/issueFilter')
 		.get(issueCtrl.issueFilter);
+	app.route('issueGetListIssueCategories')
+		.get(issueCtrl.issueGetListIssueCategories);
+	app.route('issueGetListPhaseByProjectKey')
+		.get(issueCtrl.issueGetListPhaseByProjectKey);
+	app.route('issueGetProjectUserAssign')
+		.get(issueCtrl.issueGetProjectUserAssign);
 
 };

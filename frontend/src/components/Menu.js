@@ -8,8 +8,7 @@ function Menu() {
   const [fullname, setName] = useState("")
 
   useEffect(() => {
-    console.log(getUser().name)
-    getUser() ? setName(getUser().name) : setName("")
+    getUser() != null ? setName(getUser().name) : setName("")
   }, [])
 
   const onLogout = () => {
