@@ -125,15 +125,11 @@ module.exports = {
     },
 
     // insert new project
-    addUser: (req, res) => {
+    addProject: (req, res) => {
         let data = req.body
         let project = data.project
         let members = data.members
         let owner_id = data.owner
-        console.log(JSON.stringify(data));
-        console.log("============project: " + JSON.stringify(data.project));
-        console.log("============members: " + JSON.stringify(data.members));
-        console.log("============Owner: " + JSON.stringify(data.owner));
 
         let insProject = 'INSERT INTO `issuestracking`.`projects` '+
                    '(`key`, `name`, `description`, `status`, `project_type_id`, `total_issues`, `progress`, `start_date`, `end_date`, `create_on`, `update_on`, `is_deleted`) ' +
@@ -149,12 +145,43 @@ module.exports = {
                       'VALUES ((SELECT project_id FROM projects p WHERE p.key="'+ project.p_key + '"), '+owner_id+', 1, now(), 1); '
         db.query(insProject + insMember, [], (err, response) => {
             if (err) console.log(err);
-            console.log('Insert success!');
+            console.log('Inserted Project success!');
             res.json(response)
         })
     },
 
     // insert new project
+    updProject: (req, res) => {
+        let data = req.body
+        let project = data.project
+        let members = data.members
+
+        let updProject = 'UPDATE `issuestracking`.`projects` '+
+                            'SET '+
+                            '`key` = "'+ project.p_key + '", '+
+                            '`name` = "'+ project.p_name + '", '+
+                            '`description` = "'+ project.p_description + '", '+
+                            '`status` = "'+ project.p_status + '", '+
+                            '`project_type_id` = '+project.p_type_id+', '+
+                            '`start_date` = "'+project.p_startdate+'", '+
+                            '`end_date` = "'+project.p_enddate+'", '+
+                            '`update_on` = now() '+
+                            'WHERE `project_id` = '+ project.p_id +'; '
+        let delMember = 'DELETE FROM `issuestracking`.`members` m WHERE m.project_id = '+ project.p_id +' AND m.owner = 2; '
+        let insMember = '';
+        for (let key in members) {
+          insMember += 'INSERT INTO `issuestracking`.`members` '+
+                        '(`project_id`, `user_id`, `owner`, `create_on`, `is_deleted`) ' +
+                        'VALUES ('+ project.p_id +', '+members[key].userid+', 2, now(), 1); '
+        }
+        db.query(updProject + delMember + insMember, [], (err, response) => {
+            if (err) console.log(err);
+            console.log('Updated Project success!');
+            res.json(response)
+        })
+    },
+
+    // del new project
     delProject: (req, res) => {
         let data = req.body
         let delStatus = false
@@ -162,8 +189,9 @@ module.exports = {
         let sqlMembers = 'Update members m SET m.is_deleted = 2 WHERE m.project_id ='+ data.pId
         db.query(sqlProjects + ';' + sqlMembers, [data], (err, response) => {
             if (err) console.log(err);
-            console.log(data);
+            // console.log(data);
             res.json(response)
+            console.log('Deleted Project success!');
             //res.json({message: ' Update success!'})
         })
     },
@@ -197,6 +225,20 @@ module.exports = {
         let sql = 'SELECT m.user_id, CONCAT_WS(\' \', u.first_name, u.last_name) AS fullname FROM issuestracking.members m  '+
                   'LEFT JOIN users u ON m.user_id = u.user_id '+
                   'WHERE m.project_id = '+ data.pId + ' AND m.user_id <> '+ data.uId
+        db.query(sql, (err, response) => {
+            if (err) console.log(err);
+            res.json(response)
+        })
+    },
+    // Project overview pie chart
+    getPieChart: (req, res) => {
+        let data = req.query
+        let sql = 'SELECT IFNULL(i.Amount,0) as y, ist.name as label, ist.color as color FROM issue_statuses ist '+
+                    'LEFT JOIN (SELECT issue_status_id, COUNT(issue_status_id) as Amount '+
+                    	   'FROM `issues` '+
+                    	   'WHERE is_deleted = 1 AND project_id ='+ data.pId +
+                    	   ' GROUP BY issue_status_id) i ON i.issue_status_id = ist.issue_status_id  '+
+                    ' WHERE ist.is_deleted = 1 '
         db.query(sql, (err, response) => {
             if (err) console.log(err);
             res.json(response)

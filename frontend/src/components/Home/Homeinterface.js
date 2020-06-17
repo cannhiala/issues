@@ -26,7 +26,7 @@ function Homeinterface() {
             <div className="col-md-7">
               <div className="widget box">
                 <div className="widget-header">
-                  <h4>My Project</h4>
+                  <h4>My Issues</h4>
                 </div>
                 <div className="widget-content no-padding">
                   <Issuelist />

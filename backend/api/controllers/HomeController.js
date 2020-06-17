@@ -6,9 +6,13 @@ const db = require('./../db')
 
 module.exports = {
 	myproject: (req, res) => {
-      let data = req.body
-      console.log(data)
-        let sql = 'SELECT projects.key as projectkey,projects.name as projectname,projects.status as projectstatus,project_types.name as projecttype FROM `projects` INNER JOIN project_types ON projects.project_type_id = project_types.project_type_id'
+      let data = req.query
+      let sql = 'SELECT p.project_id, p.key, p.name, p.status , pt.name as projecttype ' +
+										'FROM `projects` p ' +
+										'LEFT JOIN project_types pt ON p.project_type_id = pt.project_type_id ' +
+										'LEFT JOIN members m ON p.project_id = m.project_id ' +
+										'WHERE p.is_deleted = 1 AND m.user_id = ' + data.uId +
+										' ORDER BY p.update_on DESC'
         db.query(sql, (err, response) => {
             if (err) throw err
             res.json(response)
@@ -35,7 +39,8 @@ module.exports = {
                       'LEFT JOIN `users` u2 ON `issues`.`createby_id` = u2.`user_id` '+
               	'WHERE `issues`.`is_deleted` = 1 '+
               		'AND `projects`.`is_deleted` = 1 '+
-                      'AND `issues`.`createby_id` =  ' + data.uId
+                      'AND `issues`.`createby_id` =  ' + data.uId +
+											' ORDER BY issues.update_on DESC'
         db.query(sql, (err, response) => {
             if (err) throw err
             res.json(response)

@@ -110,139 +110,145 @@ function Project () {
       history.replace("/newProject")
   }
   return (
-    <div>
-    <h2>Projects</h2>
-    <hr/>
-    <div className="modal-body">
-      <Modal show={showISuccessPopup} onHide={onIShowSuccessClose} animation={false}>
-        <Modal.Header closeButton>
-          <Modal.Title>Inserted Success</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>Project: {projectInfor.pName} ({projectInfor.pKey}) had inserted successfull !</Modal.Body>
-      </Modal>
+    <div id="container" className="fixed-header sidebar-closed">
+        <div id="content">
+            <div className="container">
+                <div className="crumbs">
+                    <ul className="breadcrumb"><b>Projects</b></ul>
+                </div>
+                <br /><br />
+                <div className="modal-body">
+                <Modal show={showISuccessPopup} onHide={onIShowSuccessClose} animation={false}>
+                  <Modal.Header closeButton>
+                    <Modal.Title>Inserted Success</Modal.Title>
+                  </Modal.Header>
+                  <Modal.Body>Project: {projectInfor.pName} ({projectInfor.pKey}) had inserted successfull !</Modal.Body>
+                </Modal>
 
-      <Modal show={showUSuccessPopup} onHide={onUShowSuccessClose} animation={false}>
-        <Modal.Header closeButton>
-          <Modal.Title>Updated Success</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>Project: {projectInfor.pName} ({projectInfor.pKey}) had updated successfull !</Modal.Body>
-      </Modal>
+                <Modal show={showUSuccessPopup} onHide={onUShowSuccessClose} animation={false}>
+                  <Modal.Header closeButton>
+                    <Modal.Title>Updated Success</Modal.Title>
+                  </Modal.Header>
+                  <Modal.Body>Project: {projectInfor.pName} ({projectInfor.pKey}) had updated successfull !</Modal.Body>
+                </Modal>
 
-      <Modal show={showDSuccessPopup} onHide={onDShowSuccessClose} animation={false}>
-        <Modal.Header closeButton>
-          <Modal.Title>Deleted Success</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>Project: {projectInfor.pName} ({projectInfor.pKey}) had deleted successfull !</Modal.Body>
-      </Modal>
+                <Modal show={showDSuccessPopup} onHide={onDShowSuccessClose} animation={false}>
+                  <Modal.Header closeButton>
+                    <Modal.Title>Deleted Success</Modal.Title>
+                  </Modal.Header>
+                  <Modal.Body>Project: {projectInfor.pName} ({projectInfor.pKey}) had deleted successfull !</Modal.Body>
+                </Modal>
 
-      <form onSubmit={onSearch}>
-        <div className="form-group form-inline col-md-12">
-          <label htmlFor="inputKey" className="col-sm-2 col-form-label">Project Key</label>
-          <input type="text"
-          value={searchCondition.s_p_key}
-          onChange={pKey => setSearchCondition({...searchCondition, s_p_key: pKey.target.value})}
-          className="col-sm-2 form-control" id="inputKey"/>
-          <label htmlFor="inputName" className="col-sm-2 col-form-label">Prject Name</label>
-          <input type="text"
-          value={searchCondition.s_p_name}
-          onChange={pName => setSearchCondition({...searchCondition, s_p_name: pName.target.value})}
-          className="col-sm-6 form-control" id="inputName"/>
-        </div>
-        <div className="form-group form-inline col-md-12 col-lg-12">
-          <label htmlFor="inputStatus" className="col-sm-2 col-form-label">Project Status</label>
-          <select id="inputStatus"
-              className="col-sm-2 form-control"
-              name="projectStatus"
-              value={searchCondition.s_p_status}
-              onChange={pStatus => setSearchCondition({...searchCondition, s_p_status: pStatus.target.value})}
-              defaultValue={'ALL'}
-              >
-        				<option value="ALL">ALL</option>
-                {
-                  projectStatus.map((objStatus, key) => (
-        				        <option value={objStatus.key} key={key}>{objStatus.name}</option>
-                  ))
-                }
+                <form onSubmit={onSearch}>
+                  <div className="form-group form-inline col-md-12">
+                    <label htmlFor="inputKey" className="col-sm-2 col-form-label">Project Key</label>
+                    <input type="text"
+                    value={searchCondition.s_p_key}
+                    onChange={pKey => setSearchCondition({...searchCondition, s_p_key: pKey.target.value})}
+                    className="col-sm-2 form-control" id="inputKey"/>
+                    <label htmlFor="inputName" className="col-sm-2 col-form-label">Prject Name</label>
+                    <input type="text"
+                    value={searchCondition.s_p_name}
+                    onChange={pName => setSearchCondition({...searchCondition, s_p_name: pName.target.value})}
+                    className="col-sm-6 form-control" id="inputName"/>
+                  </div>
+                  <div className="form-group form-inline col-md-12 col-lg-12">
+                    <label htmlFor="inputStatus" className="col-sm-2 col-form-label">Project Status</label>
+                    <select id="inputStatus"
+                        className="col-sm-2 form-control"
+                        name="projectStatus"
+                        value={searchCondition.s_p_status}
+                        onChange={pStatus => setSearchCondition({...searchCondition, s_p_status: pStatus.target.value})}
+                        defaultValue={'ALL'}
+                        >
+                  				<option value="ALL">ALL</option>
+                          {
+                            projectStatus.map((objStatus, key) => (
+                  				        <option value={objStatus.key} key={key}>{objStatus.name}</option>
+                            ))
+                          }
 
-        		</select>
-          <label htmlFor="inputOwner" className="col-sm-2 col-form-label">Owner</label>
-          <select id="inputOwner"
-              className="col-sm-2 form-control"
-              name="projectOwner"
-              value={searchCondition.s_p_owner_id}
-              onChange={pOwner => setSearchCondition({...searchCondition, s_p_owner_id: pOwner.target.value})}
-              defaultValue={'ALL'}
-              >
-        				<option value="ALL">ALL</option>
-                {
-                  owner.map((objOwner, key) => (
-        				        <option value={objOwner.user_id} key={key}>{objOwner.owner_fullname}</option>
-                  ))
-                }
+                  		</select>
+                    <label htmlFor="inputOwner" className="col-sm-2 col-form-label">Owner</label>
+                    <select id="inputOwner"
+                        className="col-sm-2 form-control"
+                        name="projectOwner"
+                        value={searchCondition.s_p_owner_id}
+                        onChange={pOwner => setSearchCondition({...searchCondition, s_p_owner_id: pOwner.target.value})}
+                        defaultValue={'ALL'}
+                        >
+                  				<option value="ALL">ALL</option>
+                          {
+                            owner.map((objOwner, key) => (
+                  				        <option value={objOwner.user_id} key={key}>{objOwner.owner_fullname}</option>
+                            ))
+                          }
 
-        		</select>
-        </div>
-        <div className="form-group form-inline col-md-12 col-lg-12">
-          <label htmlFor="inputStartDateFrom" className="col-sm-2 col-md-2 col-form-label">Start Date</label>
-          <div className="form-group">
-            <DatePicker
-            id="inputStartDateFrom"
-            className="form-control"
-            name="startDateFrom"
-            selected={searchCondition.s_p_startdate_from}
-            onChange={startDateFrom => setSearchCondition({...searchCondition, s_p_startdate_from: startDateFrom})}
-            dateFormat="MM/dd/yyy"/>
-          </div>
-          &nbsp;&nbsp; ~ 	&nbsp;&nbsp;
-          <div className="form-group">
-            <DatePicker
-            id="inputStartDateTo"
-            className="form-control"
-            name="startDateTo"
-            selected={searchCondition.s_p_startdate_to}
-            onChange={startdateto => setSearchCondition({...searchCondition, s_p_startdate_to: startdateto})}
-            dateFormat="MM/dd/yyy" />
-          </div>
-        </div>
-        <div className="form-group form-inline col-md-12 col-lg-12">
-          <label htmlFor="inputEndDateFrom" className="col-sm-2 col-md-2 col-form-label">End Date</label>
-          <div className="form-group">
-            <DatePicker
-            id="inputEndDateFrom"
-            className="form-control"
-            name="startDateFrom"
-            selected={searchCondition.s_p_enddate_from}
-            onChange={enddatefrom => setSearchCondition({...searchCondition, s_p_enddate_from: enddatefrom})}
-            dateFormat="MM/dd/yyy" />
-          </div>
-            &nbsp;&nbsp; ~ 	&nbsp;&nbsp;
-          <div className="form-group">
-            <DatePicker
-            className="form-control"
-            name="startDateTo"
-            selected={searchCondition.s_p_enddate_to}
-            onChange={enddateto => setSearchCondition({...searchCondition, s_p_enddate_to: enddateto})}
-            dateFormat="MM/dd/yyy" />
-          </div>
-        </div>
-          <button type="submit" className="btn btn-primary" onClick={onSearch} name="btnSearch">Search</button>
-        </form>
-      </div>
-          <button type="Button" className="btn btn-primary pull-right" onClick={onCreateProject} name="btnCreateProject">Create Project</button>
-          <br/>
-          <br/>
-          <br/>
-          <BootstrapTable data={ projects } trClassName='table table-striped table-bordered table-sm' pagination = {true}>
-              <TableHeaderColumn width={'11%'} dataField='project_id' dataFormat={viewIssuesLink} dataSort={ false }>Action</TableHeaderColumn>
-              <TableHeaderColumn width={'11%'} dataField='key' isKey={ true } dataFormat={projectKeyLink} dataSort={ true }>Project Key</TableHeaderColumn>
-              <TableHeaderColumn width={'15%'} dataField='name' dataSort={ true }>Project Name</TableHeaderColumn>
-              <TableHeaderColumn width={'13%'} dataField='status' dataSort={ true }>Project Status</TableHeaderColumn>
-              <TableHeaderColumn width={'12%'} dataField='project_type_name' dataSort={ true }>Project Type</TableHeaderColumn>
-              <TableHeaderColumn width={'9%'} dataField='progress' dataFormat={progress} dataSort={ true }>Progess</TableHeaderColumn>
-              <TableHeaderColumn width={'15%'} dataField='owner_fullname' dataSort={ true }>Owner</TableHeaderColumn>
-              <TableHeaderColumn width={'11%'} dataField='start_date' dataSort={ true }>Start Date</TableHeaderColumn>
-              <TableHeaderColumn width={'11%'} dataField='end_date' dataSort={ true }>End Date</TableHeaderColumn>
-          </BootstrapTable>
+                  		</select>
+                  </div>
+                  <div className="form-group form-inline col-md-12 col-lg-12">
+                    <label htmlFor="inputStartDateFrom" className="col-sm-2 col-md-2 col-form-label">Start Date</label>
+                    <div className="form-group">
+                      <DatePicker
+                      id="inputStartDateFrom"
+                      className="form-control"
+                      name="startDateFrom"
+                      selected={searchCondition.s_p_startdate_from}
+                      onChange={startDateFrom => setSearchCondition({...searchCondition, s_p_startdate_from: startDateFrom})}
+                      dateFormat="MM/dd/yyy"/>
+                    </div>
+                    &nbsp;&nbsp; ~ 	&nbsp;&nbsp;
+                    <div className="form-group">
+                      <DatePicker
+                      id="inputStartDateTo"
+                      className="form-control"
+                      name="startDateTo"
+                      selected={searchCondition.s_p_startdate_to}
+                      onChange={startdateto => setSearchCondition({...searchCondition, s_p_startdate_to: startdateto})}
+                      dateFormat="MM/dd/yyy" />
+                    </div>
+                  </div>
+                  <div className="form-group form-inline col-md-12 col-lg-12">
+                    <label htmlFor="inputEndDateFrom" className="col-sm-2 col-md-2 col-form-label">End Date</label>
+                    <div className="form-group">
+                      <DatePicker
+                      id="inputEndDateFrom"
+                      className="form-control"
+                      name="startDateFrom"
+                      selected={searchCondition.s_p_enddate_from}
+                      onChange={enddatefrom => setSearchCondition({...searchCondition, s_p_enddate_from: enddatefrom})}
+                      dateFormat="MM/dd/yyy" />
+                    </div>
+                      &nbsp;&nbsp; ~ 	&nbsp;&nbsp;
+                    <div className="form-group">
+                      <DatePicker
+                      className="form-control"
+                      name="startDateTo"
+                      selected={searchCondition.s_p_enddate_to}
+                      onChange={enddateto => setSearchCondition({...searchCondition, s_p_enddate_to: enddateto})}
+                      dateFormat="MM/dd/yyy" />
+                    </div>
+                  </div>
+                    <button type="submit" className="btn btn-primary" onClick={onSearch} name="btnSearch">Search</button>
+                  </form>
+                </div>
+                <button type="Button" className="btn btn-primary pull-right" onClick={onCreateProject} name="btnCreateProject">Create Project</button>
+                <br/>
+                <br/>
+                <br/>
+                <BootstrapTable data={ projects } trClassName='table table-striped table-bordered table-sm' pagination = {true}>
+                    <TableHeaderColumn width={'11%'} dataField='project_id' dataFormat={viewIssuesLink} dataSort={ false }>Action</TableHeaderColumn>
+                    <TableHeaderColumn width={'11%'} dataField='key' isKey={ true } dataFormat={projectKeyLink} dataSort={ true }>Project Key</TableHeaderColumn>
+                    <TableHeaderColumn width={'15%'} dataField='name' dataSort={ true }>Project Name</TableHeaderColumn>
+                    <TableHeaderColumn width={'13%'} dataField='status' dataSort={ true }>Project Status</TableHeaderColumn>
+                    <TableHeaderColumn width={'12%'} dataField='project_type_name' dataSort={ true }>Project Type</TableHeaderColumn>
+                    <TableHeaderColumn width={'9%'} dataField='progress' dataFormat={progress} dataSort={ true }>Progess</TableHeaderColumn>
+                    <TableHeaderColumn width={'15%'} dataField='owner_fullname' dataSort={ true }>Owner</TableHeaderColumn>
+                    <TableHeaderColumn width={'11%'} dataField='start_date' dataSort={ true }>Start Date</TableHeaderColumn>
+                    <TableHeaderColumn width={'11%'} dataField='end_date' dataSort={ true }>End Date</TableHeaderColumn>
+                </BootstrapTable>
+            </div>
+        </div>    
     </div>
   )
 }

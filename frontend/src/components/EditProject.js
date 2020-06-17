@@ -90,18 +90,16 @@ function EditProject () {
         return false
     }
 
-     axios.post('http://localhost:3001/addUser', {project: {
+     axios.post('http://localhost:3001/updProject', {project: {
+                                                     p_id: pId,
                                                      p_key: 'Pr-'+ project.p_key,
                                                      p_name: project.p_name,
                                                      p_description: project.p_description,
                                                      p_status: project.p_status,
                                                      p_type_id: project.p_type_id,
-                                                     p_total_issues: 0,
-                                                     p_progress: 0,
                                                      p_startdate: Moment(project.p_startdate).format('YYYY-MM-DD'),
                                                      p_enddate: Moment(project.p_enddate).format('YYYY-MM-DD')},
-                                                  members: members,
-                                                  owner: userid}).then(
+                                                  members: members}).then(
           (res) => {
             if (res.status === 200) {
             console.log('INSERT Project success : ', res.data)
@@ -154,165 +152,169 @@ function EditProject () {
   }
 
   return (
-    <div>
-      <h2>Edit Project</h2>
-      <hr/>
-      <div className="modal-body">
-        <form onSubmit={onSave}>
-        <div className="form-group row text-right">
-          <button type="submit" className="btn btn-primary" name="btnDelProject">Save</button>&nbsp;&nbsp;
-          <button type="submit" className="btn btn-primary" onClick={onBack} name="btnBack">Back</button>
-        </div>
+    <div id="container" className="fixed-header sidebar-closed">
+        <div id="content">
+            <div className="container">
+                <div className="crumbs">
+                    <ul className="breadcrumb"><b>Edit Project</b></ul>
+                </div>
+                <br /><br />
+                  <form onSubmit={onSave}>
+                    <div className="form-group row text-right">
+                      <button type="submit" className="btn btn-primary" name="btnDelProject">Save</button>&nbsp;&nbsp;
+                      <button type="submit" className="btn btn-primary" onClick={onBack} name="btnBack">Back</button>
+                    </div>
 
-        <div className="form-group row">
-          <div className="col-xs-2"/>
-          <div className="col-xs-2">
-            <label htmlFor="inputKey" className="col-form-label">Project Key:</label>
-          </div>
-          <div>
-            <label htmlFor="inputKey" className="col-prefix col-form-label">Pr-</label>
-          </div>
-          <div className="col-xs-3">
-            <input type="text"
-            value={project.p_key}
-            onChange={pKey => setProject({...project, p_key: pKey.target.value})}
-            className="form-control" id="inputKey"/>
-          </div>
-        </div>
+                    <div className="form-group row">
+                      <div className="col-xs-2"/>
+                      <div className="col-xs-2">
+                        <label htmlFor="inputKey" className="col-form-label">Project Key:</label>
+                      </div>
+                      <div>
+                        <label htmlFor="inputKey" className="col-prefix col-form-label">Pr-</label>
+                      </div>
+                      <div className="col-xs-3">
+                        <input type="text"
+                        value={project.p_key}
+                        onChange={pKey => setProject({...project, p_key: pKey.target.value})}
+                        className="form-control" id="inputKey"/>
+                      </div>
+                    </div>
 
-        <div className="form-group row">
-          <div className="col-xs-2"/>
-          <div className="col-xs-2">
-            <label htmlFor="inputName" className="col-form-label">Prject Name:</label>
-          </div>
-          <div className="col-xs-3">
-            <input type="text"
-            value={project.p_name}
-            onChange={pName => setProject({...project, p_name: pName.target.value})}
-            className="col-sm-10 col-lg-10 form-control" id="inputName"/>
-          </div>
-        </div>
+                    <div className="form-group row">
+                      <div className="col-xs-2"/>
+                      <div className="col-xs-2">
+                        <label htmlFor="inputName" className="col-form-label">Prject Name:</label>
+                      </div>
+                      <div className="col-xs-3">
+                        <input type="text"
+                        value={project.p_name}
+                        onChange={pName => setProject({...project, p_name: pName.target.value})}
+                        className="col-sm-10 col-lg-10 form-control" id="inputName"/>
+                      </div>
+                    </div>
 
-      <fieldset className="form-group redo-fieldset ">
-        <legend className="reset-this redo-legend">General</legend>
-        <div className="form-group row" >
-          <div className="col-xs-2">
-            <label htmlFor="inputStatus" className="col-form-label">Project Status:</label>
-          </div>
-          <div className="col-xs-3">
-            <select id="inputStatus"
-                className="form-control"
-                name="projectStatus"
-                value={project.p_status}
-                onChange={pStatus => setProject({...project, p_status: pStatus.target.value})}>
-                  <option value="Open">Open</option>
-                  <option value="Closed">Closed</option>
-              </select>
-          </div>
-          <div className="col-xs-2">
-            <label htmlFor="inputType" className="col-form-label">Project Type:</label>
-          </div>
-          <div className="col-xs-3">
-            <select id="inputType"
-                className="form-control"
-                name="projectType"
-                value={project.p_type_id}
-                onChange={pType => setProject({...project, p_type_id: pType.target.value})}>
-                  {
-                    projectType.map((projectType, key) => (
-                          <option value={projectType.project_type_id} key={key}>{projectType.name}</option>
-                    ))
-                  }
+                    <fieldset className="form-group redo-fieldset ">
+                      <legend className="reset-this redo-legend">General</legend>
+                      <div className="form-group row" >
+                        <div className="col-xs-2">
+                          <label htmlFor="inputStatus" className="col-form-label">Project Status:</label>
+                        </div>
+                        <div className="col-xs-3">
+                          <select id="inputStatus"
+                              className="form-control"
+                              name="projectStatus"
+                              value={project.p_status}
+                              onChange={pStatus => setProject({...project, p_status: pStatus.target.value})}>
+                                <option value="Open">Open</option>
+                                <option value="Closed">Closed</option>
+                            </select>
+                        </div>
+                        <div className="col-xs-2">
+                          <label htmlFor="inputType" className="col-form-label">Project Type:</label>
+                        </div>
+                        <div className="col-xs-3">
+                          <select id="inputType"
+                              className="form-control"
+                              name="projectType"
+                              value={project.p_type_id}
+                              onChange={pType => setProject({...project, p_type_id: pType.target.value})}>
+                                {
+                                  projectType.map((projectType, key) => (
+                                        <option value={projectType.project_type_id} key={key}>{projectType.name}</option>
+                                  ))
+                                }
 
-              </select>
-          </div>
-        </div>
+                            </select>
+                        </div>
+                      </div>
 
-        <div className="form-group row" >
-          <div className="col-xs-2">
-            <label htmlFor="inputStartDate" className="col-form-label">Start Date:</label>
-          </div>
-          <div className="col-xs-3">
-              <DatePicker
-              id="inputStartDate"
-              name={Moment}
-              className="form-control"
-              name="startDate"
-              selected={project.p_startdate}
-              onChange={startdate => setProject({...project, p_startdate: startdate})}
-              dateFormat="MM/dd/yyyy"/>
-          </div>
-          <div className="col-xs-2">
-            <label htmlFor="inputEndDate" className="col-enddate col-form-label">End Date:</label>
-          </div>
-          <div className="col-xs-3">
-              <DatePicker
-              id="inputEndDate"
-              className="form-control"
-              name="endDate"
-              selected={project.p_enddate}
-              onChange={enddate => setProject({...project, p_enddate: enddate})}
-              dateFormat="MM/dd/yyy"/>
-          </div>
-        </div>
-      </fieldset>
+                      <div className="form-group row" >
+                        <div className="col-xs-2">
+                          <label htmlFor="inputStartDate" className="col-form-label">Start Date:</label>
+                        </div>
+                        <div className="col-xs-3">
+                            <DatePicker
+                            id="inputStartDate"
+                            name={Moment}
+                            className="form-control"
+                            name="startDate"
+                            selected={project.p_startdate}
+                            onChange={startdate => setProject({...project, p_startdate: startdate})}
+                            dateFormat="MM/dd/yyyy"/>
+                        </div>
+                        <div className="col-xs-2">
+                          <label htmlFor="inputEndDate" className="col-enddate col-form-label">End Date:</label>
+                        </div>
+                        <div className="col-xs-3">
+                            <DatePicker
+                            id="inputEndDate"
+                            className="form-control"
+                            name="endDate"
+                            selected={project.p_enddate}
+                            onChange={enddate => setProject({...project, p_enddate: enddate})}
+                            dateFormat="MM/dd/yyy"/>
+                        </div>
+                      </div>
+                    </fieldset>
 
-      <fieldset className="form-group redo-fieldset ">
-        <legend className="reset-this redo-legend">Members</legend>
-        <div className="form-group row" >
-          <div className="col-xs-2">
-            <label className="col-form-label">Owner:</label>
-          </div>
-          <div className="col-xs-3">
-            <label className="col-form-label">{username}</label>
-          </div>
-        </div>
+                    <fieldset className="form-group redo-fieldset ">
+                      <legend className="reset-this redo-legend">Members</legend>
+                      <div className="form-group row" >
+                        <div className="col-xs-2">
+                          <label className="col-form-label">Owner:</label>
+                        </div>
+                        <div className="col-xs-3">
+                          <label className="col-form-label">{username}</label>
+                        </div>
+                      </div>
 
-        <div className="form-group row" >
-          <div className="col-xs-2">
-            <label className="col-form-label">Members:</label>
-          </div>
-          <div className="col-xs-4">
-            <Autocomplete className="pding"
-            	id="combo-box-demo"
-            	options={user}
-              freeSolo
-              onChange={(event, newUser) => {
-                if (null !== newUser)
-                  setUserAutocomplete({userid: newUser.user_id, fullname: newUser.fullname})
-              }}
-            	getOptionLabel={user => user.fullname}
-            	renderInput={params => (
-            		<TextField {...params} className="form-control" label="input user" variant="outlined" fullWidth />
-            	)}/>
-          </div>
-          <div className="col-xs-1">
-           <button type="button" className="btn btn-primary" onClick={onAddUser} name="btnBack">Add User</button>
-          </div>
+                      <div className="form-group row" >
+                        <div className="col-xs-2">
+                          <label className="col-form-label">Members:</label>
+                        </div>
+                        <div className="col-xs-4">
+                          <Autocomplete className="pding"
+                          	id="combo-box-demo"
+                          	options={user}
+                            freeSolo
+                            onChange={(event, newUser) => {
+                              if (null !== newUser)
+                                setUserAutocomplete({userid: newUser.user_id, fullname: newUser.fullname})
+                            }}
+                          	getOptionLabel={user => user.fullname}
+                          	renderInput={params => (
+                          		<TextField {...params} className="form-control" label="input user" variant="outlined" fullWidth />
+                          	)}/>
+                        </div>
+                        <div className="col-xs-1">
+                         <button type="button" className="btn btn-primary" onClick={onAddUser} name="btnBack">Add User</button>
+                        </div>
+                      </div>
+                      <div className="form-group row" >
+                          {
+                            members.map((user, key) => (
+                            <div className="col-xs-3" key={key}>
+                              {user.fullname} <button type="button" onClick={(e)=> onRemoveUser(e, user.userid)}>-</button>
+                            </div>
+                          ))
+                          }
+                      </div>
+                      </fieldset>
+                    <fieldset className="form-group redo-fieldset ">
+                      <legend className="reset-this redo-legend">Description</legend>
+                      <div className="form-group row" >
+                        <div className="col-xs-12">
+                          <textarea  type="text" rows="4" cols="50"
+                          value={project.p_description}
+                          onChange={description => setProject({...project, p_description: description.target.value})}
+                          className="form-control" id="inputDescription"/>
+                        </div>
+                      </div>
+                    </fieldset>
+                  </form>
+            </div>
         </div>
-        <div className="form-group row" >
-            {
-              members.map((user, key) => (
-              <div className="col-xs-3" key={key}>
-                {user.fullname} <button type="button" onClick={(e)=> onRemoveUser(e, user.userid)}>-</button>
-              </div>
-            ))
-            }
-        </div>
-        </fieldset>
-      <fieldset className="form-group redo-fieldset ">
-        <legend className="reset-this redo-legend">Description</legend>
-        <div className="form-group row" >
-          <div className="col-xs-12">
-            <textarea  type="text" rows="4" cols="50"
-            value={project.p_description}
-            onChange={description => setProject({...project, p_description: description.target.value})}
-            className="form-control" id="inputDescription"/>
-          </div>
-        </div>
-      </fieldset>
-      </form>
-      </div>
     </div>
   )
 }

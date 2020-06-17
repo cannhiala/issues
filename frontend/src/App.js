@@ -12,6 +12,7 @@ import ProjectDetail from './components/ProjectDetail'
 import Projects from './components/Projects'
 import CreateProject from './components/CreateProject'
 import EditProject from './components/EditProject'
+import ProjectOverview from './components/ProjectOverview'
 import IssueSearchForm from './components/Issues/IssueSearchForm'
 
 function App() {
@@ -60,6 +61,10 @@ function App() {
         <PrivateRoute exact path='/pEdit/:pId'>
           <Menu />
           <EditProject />
+        </PrivateRoute>
+        <PrivateRoute exact path='/pOverview/:pId'>
+          <Menu />
+          <ProjectOverview />
         </PrivateRoute>
         <PrivateRoute exact path='/issues'>
           <Menu />

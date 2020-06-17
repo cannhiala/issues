@@ -22,11 +22,13 @@ module.exports = function (app) {
 	app.route('/members').get(projectCtrl.getMembers);
 	app.route('/projectTypes').get(projectCtrl.getProjectType);
 	app.route('/users').get(projectCtrl.getUsers);
-	app.route('/addUser').post(projectCtrl.addUser);
+	app.route('/addProject').post(projectCtrl.addProject);
 	app.route('/delProject').put(projectCtrl.delProject);
 	app.route('/checkPKey').get(projectCtrl.getProjectKey);
 	app.route('/pForUpdate').get(projectCtrl.getProjectForUpdate);
 	app.route('/uForUpdate').get(projectCtrl.getUserForUpdate);
+	app.route('/getPieChart').get(projectCtrl.getPieChart);
+	app.route('/updProject').get(projectCtrl.updProject);
 
 	//issues route
 	//create by Quanha
