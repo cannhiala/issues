@@ -127,6 +127,18 @@ module.exports = {
                 })
         })
     },
+    issueGetProjectByUser: (req, res) => {
+        let userId = req.query.sUserId
 
-
+        pool.getConnection(function (err, connection) {
+            if (err) throw err;
+            connection.query('call issue_getProjectByUser(?)'
+                , [userId]
+                , function (error, results, fields) {
+                    connection.release();
+                    if (error) throw error;
+                    res.json(results);
+                })
+        })
+    },
 }

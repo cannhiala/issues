@@ -43,11 +43,13 @@ module.exports = function (app) {
 		.get(issueCtrl.issueGetListPriotities);
 	app.route('/issueFilter')
 		.get(issueCtrl.issueFilter);
-	app.route('issueGetListIssueCategories')
+	app.route('/issueGetListIssueCategories')
 		.get(issueCtrl.issueGetListIssueCategories);
-	app.route('issueGetListPhaseByProjectKey')
+	app.route('/issueGetListPhaseByProjectKey')
 		.get(issueCtrl.issueGetListPhaseByProjectKey);
-	app.route('issueGetProjectUserAssign')
+	app.route('/issueGetProjectUserAssign')
 		.get(issueCtrl.issueGetProjectUserAssign);
+	app.route('/issueGetProjectByUser')
+		.get(issueCtrl.issueGetProjectByUser);		
 
 };

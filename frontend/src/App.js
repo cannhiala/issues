@@ -14,6 +14,7 @@ import CreateProject from './components/CreateProject'
 import EditProject from './components/EditProject'
 import ProjectOverview from './components/ProjectOverview'
 import IssueSearchForm from './components/Issues/IssueSearchForm'
+import AddIssue from './components/Issues/AddIssue'
 
 function App() {
 
@@ -31,7 +32,7 @@ function App() {
   })
 
   return (
-    <div>
+    <div className="_app">
       <Switch>
         <PublicRoute path='/login' component={Login} />
         <PrivateRoute exact path='/'>
@@ -69,6 +70,10 @@ function App() {
         <PrivateRoute exact path='/issues'>
           <Menu />
           <IssueSearchForm />
+        </PrivateRoute>
+        <PrivateRoute exact path='/addIssue'>
+          <Menu />
+          <AddIssue />
         </PrivateRoute>
       </Switch>
     </div>
