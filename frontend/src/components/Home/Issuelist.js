@@ -38,7 +38,7 @@ import { Table} from 'react-bootstrap';
       {
           return(
         <div>
-                <Table class="table-responsive col-md-6">
+                <Table className="table-responsive col-md-6">
                   <thead className="btn-secondary">
                     <tr>
                       <th>IssueType</th>

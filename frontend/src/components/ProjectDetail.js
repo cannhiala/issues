@@ -86,7 +86,7 @@ function ProjectDetail () {
     </div>
         {
           projectDetail.map((pDetail, key) => (
-            <div className="modal-body">
+            <div className="modal-body" key={key}>
               <div className="form-group row">
                 <button type="submit" className="btn btn-primary" onClick={onEditProject} name="btnEditProject">Edit Project</button>&nbsp;&nbsp;
                 { userid === pDetail.user_id ? (
@@ -131,8 +131,8 @@ function ProjectDetail () {
                 <label className="col-sm-2 col-form-label">Members:</label>
                 <label className="col-sm-10 col-form-label">
                   {
-                    members.map((pDetailm, key) => (
-                    <a href="#"> {pDetailm.fullname} </a>
+                    members.map((member, key2) => (
+                    <a href="#" key={key2}> {member.fullname} </a>
                   ))
                   }
                 </label>

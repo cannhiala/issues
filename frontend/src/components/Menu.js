@@ -24,7 +24,7 @@ function Menu() {
           <img width="40px" src="/assets/img/logo.png" alt="logo" />
           <strong> ISSUE</strong> TRACKING
         </a>
-        <ul class="nav navbar-nav navbar-left hidden-xs hidden-sm">
+        <ul className="nav navbar-nav navbar-left hidden-xs hidden-sm">
           <li className="menu-item"><NavLink exact to="/home"> Home </NavLink></li>
           <li><NavLink exact to="/projects"> Projects </NavLink></li>
           <li><NavLink exact to="/issues"> Issues </NavLink></li>
