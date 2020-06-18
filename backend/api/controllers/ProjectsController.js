@@ -38,7 +38,7 @@ module.exports = {
                   if (data.s_p_enddate_from !== '') {sql = sql + ' AND tt.`end_date` >="'+ data.s_p_enddate_from +'" ' }
                   console.log("==========s_p_enddate_to======" + data.s_p_enddate_to);
                   if (data.s_p_enddate_to !== '') {sql = sql + ' AND tt.`end_date` <="'+ data.s_p_enddate_to +'" ' }
-                  sql = sql + ' ORDER BY tt.`update_on` ASC ';
+                  sql = sql + ' ORDER BY tt.`update_on` DESC ';
                   //console.log("SQL here  ===  : " + sql);
         db.query(sql, (err, response) => {
             if (err) console.log(err);
@@ -130,10 +130,12 @@ module.exports = {
         let project = data.project
         let members = data.members
         let owner_id = data.owner
+        let startDate = project.p_startdate !== '' ? '"'+project.p_startdate+'"' : null
+        let endDate = project.p_enddate !== '' ? '"'+project.p_enddate+'"' : null
 
         let insProject = 'INSERT INTO `issuestracking`.`projects` '+
                    '(`key`, `name`, `description`, `status`, `project_type_id`, `total_issues`, `progress`, `start_date`, `end_date`, `create_on`, `update_on`, `is_deleted`) ' +
-                   'VALUES ("'+ project.p_key + '", "'+ project.p_name + '", "'+ project.p_description + '", \'OPEN\', '+project.p_type_id+' , 0, 0,  "'+project.p_startdate+'", "'+project.p_enddate+'", now() , now() , 1); '
+                   'VALUES ("'+ project.p_key + '", "'+ project.p_name + '", "'+ project.p_description + '", \'OPEN\', '+project.p_type_id+' , 0, 0,  '+startDate+' , '+endDate+', now() , now() , 1); '
         let insMember = '';
         for (let key in members) {
           insMember += 'INSERT INTO `issuestracking`.`members` '+
@@ -144,9 +146,14 @@ module.exports = {
                       '(`project_id`, `user_id`, `owner`, `create_on`, `is_deleted`) ' +
                       'VALUES ((SELECT project_id FROM projects p WHERE p.key="'+ project.p_key + '"), '+owner_id+', 1, now(), 1); '
         db.query(insProject + insMember, [], (err, response) => {
-            if (err) console.log(err);
-            console.log('Inserted Project success!');
-            res.json(response)
+            if (err) {
+              console.log('Inserted Project Error!');
+              console.log(err)
+              res.json(response)
+            } else {
+              console.log('Inserted Project success!');
+              res.json(response)
+            }
         })
     },
 
@@ -155,6 +162,8 @@ module.exports = {
         let data = req.body
         let project = data.project
         let members = data.members
+        let startDate = project.p_startdate !== '' ? '"'+project.p_startdate+'"' : null
+        let endDate = project.p_enddate !== '' ? '"'+project.p_enddate+'"' : null
 
         let updProject = 'UPDATE `issuestracking`.`projects` '+
                             'SET '+
@@ -163,21 +172,27 @@ module.exports = {
                             '`description` = "'+ project.p_description + '", '+
                             '`status` = "'+ project.p_status + '", '+
                             '`project_type_id` = '+project.p_type_id+', '+
-                            '`start_date` = "'+project.p_startdate+'", '+
-                            '`end_date` = "'+project.p_enddate+'", '+
+                            '`start_date` = '+startDate+', '+
+                            '`end_date` = '+endDate+', '+
                             '`update_on` = now() '+
                             'WHERE `project_id` = '+ project.p_id +'; '
         let delMember = 'DELETE FROM `issuestracking`.`members` m WHERE m.project_id = '+ project.p_id +' AND m.owner = 2; '
         let insMember = '';
+        console.log("MEMber ========== ", members);
         for (let key in members) {
           insMember += 'INSERT INTO `issuestracking`.`members` '+
                         '(`project_id`, `user_id`, `owner`, `create_on`, `is_deleted`) ' +
                         'VALUES ('+ project.p_id +', '+members[key].userid+', 2, now(), 1); '
         }
         db.query(updProject + delMember + insMember, [], (err, response) => {
-            if (err) console.log(err);
+          if (err) {
+            console.log('Updated Project Error!');
+            console.log(err)
+            res.json(response)
+          } else {
             console.log('Updated Project success!');
             res.json(response)
+          }
         })
     },
 
@@ -200,7 +215,7 @@ module.exports = {
     getProjectKey: (req, res) => {
         let data = req.query
         //console.log('getProjectKey ======' + JSON.stringify(data));
-        let sql = 'SELECT p.key FROM projects p where p.key = "Pr-'+ data.pkey +'"'
+        let sql = 'SELECT p.project_id, p.key FROM projects p where p.key = "Pr-'+ data.pkey +'"'
         db.query(sql, (err, response) => {
             if (err) console.log(err);
             console.log('getProjectKey ======' + JSON.stringify(response));
@@ -222,7 +237,7 @@ module.exports = {
 
     getUserForUpdate: (req, res) => {
         let data = req.query
-        let sql = 'SELECT m.user_id, CONCAT_WS(\' \', u.first_name, u.last_name) AS fullname FROM issuestracking.members m  '+
+        let sql = 'SELECT m.user_id as userid, CONCAT_WS(\' \', u.first_name, u.last_name) AS fullname FROM issuestracking.members m  '+
                   'LEFT JOIN users u ON m.user_id = u.user_id '+
                   'WHERE m.project_id = '+ data.pId + ' AND m.user_id <> '+ data.uId
         db.query(sql, (err, response) => {

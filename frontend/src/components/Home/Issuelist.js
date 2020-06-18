@@ -1,74 +1,34 @@
-import React, { Component } from 'react';
-import axios from 'axios';
-import { Table} from 'react-bootstrap';
+import React, { Component, useState, useEffect } from 'react'
+import axios from 'axios'
 import { getUser } from './../../utils/Common'
+import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table'
 
-class Issuelist extends Component {
-      constructor(props) {
+function Issuelist () {
 
-        super(props);
-        this.state = {
-          emps: [],
-          userid: getUser().userId,
-        }
+  const [issues, setIssues] = useState([])
+  const userid = getUser().userId
 
-      }
-
-    getIssues() {
-      axios.get('http://localhost:3001/myIssue?uId='+this.state.userid)
+  useEffect(() => {
+      axios.get('http://localhost:3001/myIssue?uId='+userid)
       .then(res => {
-        const emps = res.data;
-        this.setState({ emps });
-        console.log(res.data);
-          })
-    }
+        if (null !== res.data)
+            setIssues(res.data)
+          }).catch((err) => { console.log('Projects Error: ', err) })
+    }, [userid])
 
-    componentDidMount() {
-        this.getIssues();
-    }
-
-
-    render(){
-      const{error,emps}=this.state;
-      if(error){
-          return(
-              <div>Error:{error.message}</div>
-          )
-      }
-      else
-      {
-          return(
+  return (
         <div>
-                <Table className="table-responsive col-md-6">
-                  <thead className="btn-secondary">
-                    <tr>
-                      <th>IssueType</th>
-                      <th>IssueId</th>
-                      <th>IssueName</th>
-                      <th>IssueStatus</th>
-                      <th>IssuePriority</th>
-                      <th>ProjectName</th>
-                      <th>DueDate</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {emps.map(emp => (
-                      <tr key={emp.id}>
-                        <td>{emp.issuetype}</td>
-                        <td>{emp.key}</td>
-                        <td>{emp.name}</td>
-                        <td>{emp.issuestatus}</td>
-                        <td>{emp.issuepriority}</td>
-                        <td>{emp.projectname}</td>
-                        <td>{emp.duedate}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </Table>
-              </div>
-            )
-      }
-  }
+          <BootstrapTable data={ issues } trClassName='table table-striped table-bordered table-sm' pagination = {true}>
+              <TableHeaderColumn width={'11%'} dataField='issuetype' dataSort={ false }>Issue Type</TableHeaderColumn>
+              <TableHeaderColumn width={'15%'} dataField='key' isKey={ true } dataSort={ true }>Issue Key</TableHeaderColumn>
+              <TableHeaderColumn width={'13%'} dataField='name' dataSort={ true }>Issue Name</TableHeaderColumn>
+              <TableHeaderColumn width={'12%'} dataField='issuestatus' dataSort={ true }>Issue Status</TableHeaderColumn>
+              <TableHeaderColumn width={'15%'} dataField='issuepriority' dataSort={ true }>Issue Priority</TableHeaderColumn>
+              <TableHeaderColumn width={'13%'} dataField='projectname' dataSort={ true }>Project Name</TableHeaderColumn>
+              <TableHeaderColumn width={'12%'} dataField='duedate' dataSort={ true }>Due Date</TableHeaderColumn>
+          </BootstrapTable>
+        </div>
+      )
 }
 
-    export default Issuelist;
+export default Issuelist;

@@ -40,7 +40,7 @@ module.exports = {
               	'WHERE `issues`.`is_deleted` = 1 '+
               		'AND `projects`.`is_deleted` = 1 '+
                       'AND `issues`.`createby_id` =  ' + data.uId +
-											' ORDER BY issues.update_on DESC'
+											' ORDER BY issues.duedate DESC '
         db.query(sql, (err, response) => {
             if (err) throw err
             res.json(response)

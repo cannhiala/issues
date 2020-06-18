@@ -56,7 +56,7 @@ function EditProject () {
              console.log(error)
            }
      }).catch((err) => { console.log('Axios Error:', err) })
-  }, [pId])
+  }, [])
 
   useEffect(() => {
      axios.get('http://localhost:3001/projectTypes').then(
@@ -81,36 +81,47 @@ function EditProject () {
     if (project.p_key.trim() === '') {
         alert('Please input project key !')
         return false
-    } else {
-       //onCheckProjectKey()
     }
-
-    if ( project.p_name.trim() === '') {
+    if (project.p_name.trim() === '') {
         alert('Please input project name !')
         return false
     }
-
-     axios.post('http://localhost:3001/updProject', {project: {
-                                                     p_id: pId,
-                                                     p_key: 'Pr-'+ project.p_key,
-                                                     p_name: project.p_name,
-                                                     p_description: project.p_description,
-                                                     p_status: project.p_status,
-                                                     p_type_id: project.p_type_id,
-                                                     p_startdate: Moment(project.p_startdate).format('YYYY-MM-DD'),
-                                                     p_enddate: Moment(project.p_enddate).format('YYYY-MM-DD')},
-                                                  members: members}).then(
+    if (project.p_key.trim() !== '') {
+      axios.get('http://localhost:3001/checkPKey?pkey='+project.p_key).then(
           (res) => {
             if (res.status === 200) {
-            console.log('INSERT Project success : ', res.data)
-            let pId = res.data[0].insertId
-              history.push("/projects/isucces/"+pId)
-          } else {
-            const error = new Error(res.error)
-            //throw error
-            console.log('INSERT Project eror: ', error)
-          }
+              if (res.data.length > 0 && res.data[0].project_id != pId) {
+                alert('Project key already exists. Please input another key !')
+                return false
+              } else {
+                axios.post('http://localhost:3001/updProject', {project: {
+                                                                 p_id: pId,
+                                                                 p_key: 'Pr-'+ project.p_key,
+                                                                 p_name: project.p_name,
+                                                                 p_description: project.p_description,
+                                                                 p_status: project.p_status,
+                                                                 p_type_id: project.p_type_id,
+                                                                 p_startdate: project.p_startdate !== '' ? Moment(project.p_startdate).format('YYYY-MM-DD') : '',
+                                                                 p_enddate: project.p_enddate !== '' ? Moment(project.p_enddate).format('YYYY-MM-DD') : ''},
+                                                              members: members}).then(
+                      (res) => {
+                        if (res.status === 200) {
+                          if (res.data.length > 0) {
+                            console.log('Updated Project success!')
+                            console.log('Updated Project success!', JSON.stringify(res.data))
+                            history.push("/projects/isucces/"+pId)
+                          } else
+                            console.log('Updated Project fail !')
+                      } else {
+                        const error = new Error(res.error)
+                        //throw error
+                        console.log('INSERT Project eror: ', error)
+                      }
+                  }).catch((err) => { console.log('Axios Error:', err) })
+              }
+            }
       }).catch((err) => { console.log('Axios Error:', err) })
+    }
   }
 
   const onCheckProjectKey  = function (e) {

@@ -28,7 +28,7 @@ module.exports = function (app) {
 	app.route('/pForUpdate').get(projectCtrl.getProjectForUpdate);
 	app.route('/uForUpdate').get(projectCtrl.getUserForUpdate);
 	app.route('/getPieChart').get(projectCtrl.getPieChart);
-	app.route('/updProject').get(projectCtrl.updProject);
+	app.route('/updProject').post(projectCtrl.updProject);
 
 	//issues route
 	//create by Quanha
@@ -50,6 +50,6 @@ module.exports = function (app) {
 	app.route('/issueGetProjectUserAssign')
 		.get(issueCtrl.issueGetProjectUserAssign);
 	app.route('/issueGetProjectByUser')
-		.get(issueCtrl.issueGetProjectByUser);		
+		.get(issueCtrl.issueGetProjectByUser);
 
 };

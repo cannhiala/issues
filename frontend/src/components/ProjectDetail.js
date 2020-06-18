@@ -93,7 +93,10 @@ function ProjectDetail () {
                   projectDetail.map((pDetail, key) => (
                     <div className="modal-body" key={key}>
                       <div className="form-group row">
-                        <button type="submit" className="btn btn-primary" onClick={onEditProject} name="btnEditProject">Edit Project</button>&nbsp;&nbsp;
+                        { userid === pDetail.user_id ? (
+                        <button type="submit" className="btn btn-primary" onClick={onEditProject} name="btnEditProject">Edit Project</button>
+                        ):(<></>)}
+                        &nbsp;&nbsp;
                         { userid === pDetail.user_id ? (
                           <button type="submit" className="btn btn-primary" onClick={onDelConfirmPopup} name="btnDelProject">Delete Project</button>
                         ):(<></>)}
