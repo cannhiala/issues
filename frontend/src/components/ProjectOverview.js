@@ -10,8 +10,43 @@ function ProjectOverview () {
   let { pId } = useParams()
   const [projectHealth, setProjectHealth] = useState({pName: '', pStatus: '', pType: '', pProgress: 0, pOwner: '', pStartdate: '', pEndate: ''})
   const [optionsPie, setOptionsPie] = useState({})
+  const [stackedChartProjectType, setStackedChartProjectType] = useState()
+  const [optionsStackedChart, setOptionsStackedChart] = useState({width: 500,
+                                                                    height: 320,
+                                                                    axisY:{
+                                                                      labelFormatter: function(e){
+                                                                        return  ""
+                                                                      }
+                                                                     },
+                                                                    data: []})
+ const [test, setTest] = useState([{
+                                       type: "stackedBar100",
+                                               color: "#FF0000",
+                                               name: "Open",
+                                               indexLabel: "{y}",
+                                               indexLabelFontColor: "white",
+                                               dataPoints: [
+                                                 { label: "Design",   y: 15 },
+                                                 { label: "Coding",   y: 0 },
+                                                 { label: "Testing",   y: 77 },
+                                                 { label: "Deploy",   y: 68 }
+                                               ]
+                                             }, {
+                                               type: "stackedBar100",
+                                               color: "orange",
+                                               name: "In Progress",
+                                               indexLabel: "{y}",
+                                               indexLabelFontColor: "white",
+                                               dataPoints: [
+                                                 { label: "Design",   y: 15 },
+                                                 { label: "Coding",   y: 0 },
+                                                 { label: "Testing",   y: 23 },
+                                                 { label: "Deploy",   y: 32 }
+                                               ]
+                                             }])
+ const [dataCoding, setDataCoding] = useState({ label: "Coding",   y: 0 })
 
-    const options = {
+  const options = {
           width: 500,
           height: 320,
           axisY:{
@@ -27,7 +62,7 @@ function ProjectOverview () {
     				indexLabelFontColor: "white",
     				dataPoints: [
     					{ label: "Design",   y: 15 },
-    					{ label: "Coding",   y: 79 },
+    					{ label: "Coding",   y: 0 },
     					{ label: "Testing",   y: 77 },
     					{ label: "Deploy",   y: 68 }
     				]
@@ -39,7 +74,7 @@ function ProjectOverview () {
     				indexLabelFontColor: "white",
     				dataPoints: [
     					{ label: "Design",   y: 15 },
-    					{ label: "Coding",   y: 21 },
+    					{ label: "Coding",   y: 0 },
     					{ label: "Testing",   y: 23 },
     					{ label: "Deploy",   y: 32 }
     				]
@@ -51,7 +86,7 @@ function ProjectOverview () {
     				indexLabelFontColor: "white",
     				dataPoints: [
     					{ label: "Design",   y: 15 },
-    					{ label: "Coding",   y: 21 },
+    					{ label: "Coding",   y: 0 },
     					{ label: "Testing",   y: 23 },
     					{ label: "Deploy",   y: 32 }
     				]
@@ -63,7 +98,7 @@ function ProjectOverview () {
     				indexLabelFontColor: "white",
     				dataPoints: [
     					{ label: "Design",   y: 15 },
-    					{ label: "Coding",   y: 21 },
+    					{ label: "Coding",   y: 0 },
     					{ label: "Testing",   y: 23 },
     					{ label: "Deploy",   y: 32 }
     				]
@@ -121,6 +156,59 @@ function ProjectOverview () {
                    console.log(error) }
      }).catch((err) => { console.log('Axios Error:', err) })
   }, [pId])
+  useEffect(() => {
+     axios.get('http://localhost:3001/getStackedChartProjectType?pId='+ pId).then(
+         (res) => {
+           if (res.status === 200) {
+             if (res.data.length > 0) {
+
+                // console.log("==================3 ", res)
+                // console.log("==================3 ", res)
+                // setStackedChartProjectType(res.data)
+                // // console.log("==================3 ", optionsStackedChart.data)
+                //
+
+                // console.log("==============23423==== ", JSON.stringify(optionsStackedChart))
+             }
+           } else {const error = new Error(res.error)
+                   console.log(error) }
+     }).catch((err) => { console.log('Axios Error:', err) })
+  }, [pId])
+
+  useEffect(() => {
+     axios.get('http://localhost:3001/getStackedChart?pId='+ pId).then(
+         (res) => {
+           if (res.status === 200) {
+             if (res.data.length > 0) {
+                let strData = res.data.map(dataObj => ({
+                  type: "stackedBar100",
+                  color: dataObj.color,
+                  name: dataObj.label,
+                  indexLabel: "{y}",
+                  indexLabelFontColor: "white",
+                  dataPoints: [
+                    { label: dataObj.name, y: dataObj.y }
+                  ]
+                }))
+                console.log("================== ", strData)
+                console.log("==================test ", test)
+                console.log("==================test2 ", test[0])
+                setOptionsStackedChart ({...optionsStackedChart, data: strData})
+                // console.log("==================3 ", optionsStackedChart.data)
+                //console.log("==================test3 ", ...optionsStackedChart.data[0])
+                optionsStackedChart.data.map((obj) => (
+                  console.log("=========obj ", obj)
+                ))
+                // setOptionsStackedChart ({...optionsStackedChart, data: [...optionsStackedChart.data[0], ...optionsStackedChart.data[0].dataPoints: dataCoding]})
+                // setOptionsStackedChart ({...optionsStackedChart, data: [...optionsStackedChart.data[1], ...optionsStackedChart.data[1].dataPoints: dataCoding]})
+                // setOptionsStackedChart ({...optionsStackedChart, data: [...optionsStackedChart.data[2], ...optionsStackedChart.data[2].dataPoints: dataCoding]})
+                // setOptionsStackedChart ({...optionsStackedChart, data: [...optionsStackedChart.data[3], ...optionsStackedChart.data[3].dataPoints: dataCoding]})
+                // console.log("==================test4 ", ...optionsStackedChart.data[0].dataPoints)
+             }
+           } else {const error = new Error(res.error)
+                   console.log(error) }
+     }).catch((err) => { console.log('Axios Error:', err) })
+  }, [pId])
 
   return (
     <div id="container" className="fixed-header sidebar-closed">
@@ -163,6 +251,9 @@ function ProjectOverview () {
                 				/* onRef={ref => this.chart = ref} */
                 		/>
                   <CanvasJSChart options = {options}
+            				/* onRef={ref => this.chart = ref} */
+            			/>
+                  <CanvasJSChart options = {optionsStackedChart}
             				/* onRef={ref => this.chart = ref} */
             			/>
                 </fieldset>

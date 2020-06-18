@@ -258,5 +258,41 @@ module.exports = {
             if (err) console.log(err);
             res.json(response)
         })
+    },
+
+    // Project overview Stacked chart
+    getStackedChart: (req, res) => {
+        let data = req.query
+        let sql = 'SELECT ist.*, pt.name FROM (SELECT IFNULL(i.Amount,0) as y, ist.name as label, ist.color as color, projec_type_id FROM issue_statuses ist ' +
+                    'LEFT JOIN (SELECT issue_status_id, COUNT(issue_status_id) as Amount, projec_type_id ' +
+                    	   'FROM `issues` ' +
+                    	   'WHERE is_deleted = 1 AND project_id =1 ' +
+                    	    'GROUP BY issue_status_id) i ON i.issue_status_id = ist.issue_status_id ' +
+                     'WHERE ist.is_deleted = 1) ist ' +
+                  'LEFT JOIN (SELECT pt.project_type_id, pt.name FROM issuestracking.project_types pt ' +
+                  				'INNER JOIN (SELECT pt.project_type_id, pt.name FROM issuestracking.project_types pt ' +
+                  							'LEFT JOIN projects p ON p.project_type_id = pt.project_type_id ' +
+                  							'WHERE p.project_id = 1 and pt.is_deleted = 1) pt2 ' +
+                  				'ON pt2.project_type_id = pt.parent_id ' +
+                  				'WHERE pt.is_deleted = 1) pt ' +
+                  'ON pt.project_type_id =  ist.projec_type_id; '
+        db.query(sql, (err, response) => {
+            if (err) console.log(err);
+            res.json(response)
+        })
+    },
+
+    getStackedChartProjectType: (req, res) => {
+        let data = req.query
+        let sql = 'SELECT pt.project_type_id, pt.name FROM issuestracking.project_types pt '+ 
+                  				'INNER JOIN (SELECT pt.project_type_id, pt.name FROM issuestracking.project_types pt '+
+                  							'LEFT JOIN projects p ON p.project_type_id = pt.project_type_id '+
+                  							'WHERE p.project_id = 1 and pt.is_deleted = 1) pt2 '+
+                  				'ON pt2.project_type_id = pt.parent_id '+
+                  				'WHERE pt.is_deleted = 1'
+        db.query(sql, (err, response) => {
+            if (err) console.log(err);
+            res.json(response)
+        })
     }
 }

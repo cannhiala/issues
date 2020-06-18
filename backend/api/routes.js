@@ -29,6 +29,8 @@ module.exports = function (app) {
 	app.route('/uForUpdate').get(projectCtrl.getUserForUpdate);
 	app.route('/getPieChart').get(projectCtrl.getPieChart);
 	app.route('/updProject').post(projectCtrl.updProject);
+	app.route('/getStackedChart').get(projectCtrl.getStackedChart);
+	app.route('/getStackedChartProjectType').get(projectCtrl.getStackedChartProjectType);
 
 	//issues route
 	//create by Quanha
