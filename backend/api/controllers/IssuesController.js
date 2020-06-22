@@ -429,4 +429,28 @@ module.exports = {
                 })
         })
     },
+	getIssueById: (req, res) => {
+        let issueId = req.query.issueId
+        pool.getConnection(function (err, connection) {
+            if (err) throw err;
+            connection.query('call issue_getIssueById(?)', [issueId]
+                , function (error, results, fields) {
+                    connection.release();
+                    if (error) throw error;
+                    res.json(results);
+                })
+        })
+    },
+    getSubIssues: (req, res) => {
+        let parentId = req.query.parentId
+        pool.getConnection(function (err, connection) {
+            if (err) throw err;
+            connection.query('call issue_getSubIssues(?)', [parentId]
+                , function (error, results, fields) {
+                    connection.release();
+                    if (error) throw error;
+                    res.json(results);
+                })
+        })
+    },
 }
