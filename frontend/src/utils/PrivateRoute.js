@@ -2,6 +2,8 @@ import React from 'react'
 import { Route, Redirect } from 'react-router-dom'
 import { getToken } from './Common'
 import Menu from './../components/Menu'
+import Footer from './../components/Footer'
+
 
 // handle the private routes
 function PrivateRoute({ component: Component, ...rest }) {
@@ -13,6 +15,7 @@ function PrivateRoute({ component: Component, ...rest }) {
                     (<div>
                         <Menu />
                         <Component {...props} />
+                        <Footer />
                     </div>
                     ) :
                     <Redirect to={{ pathname: '/login', state: { from: props.location } }
