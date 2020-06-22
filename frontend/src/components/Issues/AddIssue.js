@@ -6,14 +6,18 @@ import { Editor } from 'react-draft-wysiwyg'
 import { AsyncTypeahead } from 'react-bootstrap-typeahead'
 import DatePicker from 'react-datepicker'
 import { getUser } from './../../utils/Common'
+import { useHistory, useParams } from "react-router-dom"
 import './../../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css'
 import './../../../node_modules/react-datepicker/dist/react-datepicker.css'
 import './../../../node_modules/react-bootstrap-table/dist/react-bootstrap-table-all.min.css'
 
 
 function AddIssue() {
+    let history = useHistory()
+    let { pissueKey } = useParams()
 
     const initState = {
+        apiUrl: "http://localhost:3001",
         userLoginId: getUser() ? getUser().userId : null,
         arrProject: [],
         arrIssueType: [],
@@ -26,6 +30,7 @@ function AddIssue() {
             iProjectKey: "",
             iIssueType: "1",
             iPhase: "",
+            iIssueKey: "",
             iIssueName: "",
             iDescription: EditorState.createEmpty(),
             iDescriptionRaw: "",
@@ -51,17 +56,101 @@ function AddIssue() {
     const [arrAssignee, setAssignee] = useState(initState.arrAssignee)
     const [arrPhase, setPhase] = useState(initState.arrPhase)
     const [arrParentTask, setParentTask] = useState(initState.arrParentTask)
-    //const [arrIssueStatus, setIssueStatus] = useState(initState.arrIssueStatus)
+    const [arrIssueStatus, setIssueStatus] = useState(initState.arrIssueStatus)
 
     const [inputPane, setInputPane] = useState(initState.formInput)
     const [valid, setValid] = useState(true)
     const [validatePane, setValidatePane] = useState(initState.formValidate)
 
+    const [editForm, setEditForm] = useState(false)
+
     useEffect(() => {
         if (initState.userLoginId == null)
             return
 
-        fetch("http://localhost:3001/issueGetProjectByUser?sUserId=" + initState.userLoginId,
+        if (typeof (pissueKey) !== "undefined" && pissueKey !== "") {
+            setEditForm(true)
+
+            fetch(initState.apiUrl + "/issueGetListStatuses",
+                {
+                    method: "GET"
+                })
+                .then(res => res.json())
+                .then(
+                    (result) => {
+                        setIssueStatus(result[0])
+                    },
+                    (error) => {
+                        setIssueStatus([])
+                    })
+
+            fetch(initState.apiUrl + "/issueGetIssueByKey?sIssueKey="
+                + pissueKey
+                + "&sUserId=" + initState.userLoginId,
+                {
+                    method: "GET"
+                })
+                .then(res => res.json())
+                .then(
+                    (result) => {
+                        const issueData = result[0]
+                        issueData.map((data) => {
+
+                            fetch(initState.apiUrl + "/issueGetListPhaseByProjectKey?sProjectKey=" + data.project_key,
+                                {
+                                    method: "GET"
+                                })
+                                .then(res => res.json())
+                                .then(
+                                    (result) => {
+                                        setPhase(result[0])
+                                    },
+                                    (error) => {
+                                        setPhase([])
+                                    })
+
+                            fetch(initState.apiUrl + "/issueGetProjectUserAssign?sProjectKey=" + data.project_key,
+                                {
+                                    method: "GET"
+                                })
+                                .then(res => res.json())
+                                .then(
+                                    (result) => {
+                                        setAssignee(result[0])
+                                    },
+                                    (error) => {
+                                        setAssignee([])
+                                    })
+
+                            setInputPane({
+                                ...inputPane,
+                                iProjectKey: data.project_key,
+                                iIssueType: data.issue_category_id,
+                                iPhase: data.projec_type_id,
+                                iIssueKey: data.key,
+                                iIssueName: data.name,
+                                iDescription: data.description ?
+                                    EditorState.createWithContent(convertFromRaw(JSON.parse(data.description))) :
+                                    EditorState.createEmpty(),
+                                iDescriptionRaw: data.description,
+                                iStatus: data.issue_status_id,
+                                iParentTask: data.parent_id,
+                                iStartDate: data.startdate ? (new Date(data.startdate)) : "",
+                                iAssignee: data.assgned_id,
+                                iDueDate: data.duedate ? (new Date(data.duedate)) : "",
+                                iPriority: data.priority_id,
+                                iEstimate: data.estimated_hours,
+                            })
+                        })
+
+                    },
+                    (error) => {
+                        //setIssueStatus([])
+                    })
+
+        }
+
+        fetch(initState.apiUrl + "/issueGetProjectByUser?sUserId=" + initState.userLoginId,
             {
                 method: "GET"
             })
@@ -74,7 +163,7 @@ function AddIssue() {
                     setProject([])
                 })
 
-        fetch("http://localhost:3001/issueGetListIssueCategories",
+        fetch(initState.apiUrl + "/issueGetListIssueCategories",
             {
                 method: "GET"
             })
@@ -87,7 +176,7 @@ function AddIssue() {
                     setIssueType([])
                 })
 
-        fetch("http://localhost:3001/issueGetListPriotities",
+        fetch(initState.apiUrl + "/issueGetListPriotities",
             {
                 method: "GET"
             })
@@ -100,8 +189,7 @@ function AddIssue() {
                     setPriority([])
                 })
 
-
-    }, [initState.userLoginId])
+    }, [initState.userLoginId, initState.apiUrl, pissueKey])
 
     const onProjectChange = function (val) {
         setInputPane({ ...inputPane, iProjectKey: val })
@@ -117,7 +205,7 @@ function AddIssue() {
             , iProjectKeyRequired: true
         })
 
-        fetch("http://localhost:3001/issueGetListPhaseByProjectKey?sProjectKey=" + val,
+        fetch(initState.apiUrl + "/issueGetListPhaseByProjectKey?sProjectKey=" + val,
             {
                 method: "GET"
             })
@@ -130,7 +218,7 @@ function AddIssue() {
                     setPhase([])
                 })
 
-        fetch("http://localhost:3001/issueGetProjectUserAssign?sProjectKey=" + val,
+        fetch(initState.apiUrl + "/issueGetProjectUserAssign?sProjectKey=" + val,
             {
                 method: "GET"
             })
@@ -146,11 +234,11 @@ function AddIssue() {
 
     const handleParentTaskSearch = useCallback((query) => {
 
-        if (inputPane.iProjectKey == "")
+        if (inputPane.iProjectKey === "")
             return
 
         setIsParentTaskLoading(true)
-        fetch("http://localhost:3001/issueGetListParentIssues?sProjectKey="
+        fetch(initState.apiUrl + "/issueGetListParentIssues?sProjectKey="
             + inputPane.iProjectKey
             + "&sSearchKey=" + query,
             {
@@ -173,7 +261,7 @@ function AddIssue() {
                     setParentTask([])
                     setIsParentTaskLoading(false)
                 })
-    })
+    }, [inputPane.iProjectKey, initState.apiUrl])
 
     const onEditorStateChange = function (text) {
         let rawText = JSON.stringify(convertToRaw(text.getCurrentContent()))
@@ -185,6 +273,13 @@ function AddIssue() {
         parentTask ?
             setInputPane({ ...inputPane, iParentTask: parentTask.issue_id }) :
             setInputPane({ ...inputPane, iParentTask: "" })
+    }
+
+    const assigntomyself = function (e) {
+        e.preventDefault()
+
+        if (inputPane.iProjectKey.trim().length !== 0)
+            setInputPane({ ...inputPane, iAssignee: initState.userLoginId })
     }
 
     const saveIssue = function (e) {
@@ -208,8 +303,8 @@ function AddIssue() {
             validate_form = false
             issueNameErr = <label className="has-error help-block">Please enter at least 255 characters.</label>
         }
-        
-        if(!isNormalInteger(inputPane.iEstimate) ){
+
+        if (inputPane.iEstimate.length !== 0 && !isNormalInteger(inputPane.iEstimate)) {
             validate_form = false
             estimateErr = <label className="has-error help-block">Please enter only digits.</label>
         }
@@ -223,12 +318,13 @@ function AddIssue() {
 
         setValid(validate_form)
 
-        if (validate_form == true) {
+        if (validate_form === true) {
 
             const saveObj = {
                 projectkey: inputPane.iProjectKey.trim().substring(0, 20),
                 issuetype: parseInt(inputPane.iIssueType),
                 phase: parseInt(inputPane.iPhase),
+                issuekey: inputPane.iIssueKey.trim().substring(0, 20),
                 issuename: inputPane.iIssueName.trim().substring(0, 255),
                 description: inputPane.iDescriptionRaw,
                 status: parseInt(inputPane.iStatus),
@@ -241,21 +337,41 @@ function AddIssue() {
                 loginuserid: parseInt(initState.userLoginId)
             }
 
-            fetch("http://localhost:3001/issueInsert",
-                {
-                    method: "POST",
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(saveObj)
-                })
-                .then(res => res.json())
-                .then(
-                    (result) => {
-                        console.log(result)
-                    },
-                    (error) => {
-                        console.log(error)
-                    })
-
+            editForm ?
+                (
+                    fetch(initState.apiUrl + "/issueUpdate",
+                        {
+                            method: "POST",
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(saveObj)
+                        })
+                        .then(res => res.json())
+                        .then(
+                            (result) => {
+                                const outputIssueKey = result.issuekey
+                                history.push("/issues/usucess/" + outputIssueKey)
+                            },
+                            (error) => {
+                                console.log(error)
+                            })
+                ) :
+                (
+                    fetch(initState.apiUrl + "/issueInsert",
+                        {
+                            method: "POST",
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(saveObj)
+                        })
+                        .then(res => res.json())
+                        .then(
+                            (result) => {
+                                const outputIssueKey = result[0].issuekey
+                                history.push("/issues/isucess/" + outputIssueKey)
+                            },
+                            (error) => {
+                                console.log(error)
+                            })
+                )
         }
     }
 
@@ -268,7 +384,9 @@ function AddIssue() {
             <div id="content">
                 <div className="container">
                     <div className="crumbs">
-                        <ul className="breadcrumb"><b>Create Issue </b></ul>
+                        <ul className="breadcrumb">
+                            <b>{editForm ? ("Edit Issue: " + inputPane.iIssueKey) : "Create Issue"} </b>
+                        </ul>
                     </div>
                     <br />
                     <Form className="form-horizontal">
@@ -277,8 +395,16 @@ function AddIssue() {
                                 <Col md={8}>{'\u00A0'}</Col>
                                 <Form.Label className="col-md-4 control-label">
                                     <Button variant="success" type="Submit" onClick={saveIssue}>{'\u00A0\u00A0'}Save{'\u00A0\u00A0'}</Button>
-                                    {'\u00A0\u00A0\u00A0'}
-                                    <Button variant="primary" type="Submit">{'\u00A0\u00A0'}Save and continue{'\u00A0\u00A0'}</Button>
+                                    {
+                                        editForm ? "" :
+                                            (
+                                                <span>
+                                                    {'\u00A0\u00A0\u00A0'}
+                                                    <Button variant="primary" type="Submit">{'\u00A0\u00A0'}Save and continue{'\u00A0\u00A0'}</Button>
+                                                </span>
+                                            )
+                                    }
+
                                     {'\u00A0\u00A0\u00A0'}
                                     <Button variant="inverse" type="Submit">{'\u00A0\u00A0'}Back{'\u00A0\u00A0'}</Button>
                                 </Form.Label>
@@ -383,7 +509,24 @@ function AddIssue() {
                                     <Form.Group>
                                         <Form.Label className="col-md-1 control-label">Status:</Form.Label>
                                         <Form.Label style={{ textAlign: "left" }} className="col-md-2 control-label">
-                                            <span className="label label-danger">Open</span>
+                                            {
+                                                editForm ?
+                                                    (
+                                                        <Form.Control
+                                                            as="select"
+                                                            id="iStatus"
+                                                            value={inputPane.iStatus}
+                                                            onChange={e => setInputPane({ ...inputPane, iStatus: e.target.value })}
+                                                        >
+                                                            {arrIssueStatus.map((statusitem, key) => (
+                                                                <option key={key} value={statusitem.issue_status_id}>{statusitem.name}</option>
+                                                            ))}
+                                                        </Form.Control>
+                                                    ) : <span className="label label-danger">Open</span>
+                                            }
+
+
+
                                         </Form.Label>
                                         <Form.Label className="col-md-4 control-label">Parent task:</Form.Label>
                                         <Col md={3}>
@@ -431,6 +574,12 @@ function AddIssue() {
                                                     <option key={key} value={assigneeitem.user_id}>{assigneeitem.first_name} {assigneeitem.last_name}</option>
                                                 ))}
                                             </Form.Control>
+                                        </Col>
+                                        <Col md={2}>
+                                            <button className="btn assign-my-self-btn" onClick={assigntomyself}>
+                                                <i className="icon-user"></i>
+                                                <strong>Assign to myself</strong>
+                                            </button>
                                         </Col>
                                     </Form.Group>
                                     <Form.Group>
