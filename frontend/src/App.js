@@ -14,6 +14,7 @@ import CreateProject from './components/CreateProject'
 import EditProject from './components/EditProject'
 import ProjectOverview from './components/ProjectOverview'
 import IssueSearchForm from './components/Issues/IssueSearchForm'
+import IssueDetail from './components/Issues/IssueDetail'
 import AddIssue from './components/Issues/AddIssue'
 
 function App() {
@@ -43,6 +44,7 @@ function App() {
         <PrivateRoute exact path='/newProject' component={CreateProject} />
         <PrivateRoute exact path='/pEdit/:pId' component={CreateProject} />
         <PrivateRoute exact path='/pOverview/:pId' component={ProjectOverview} />
+        <PrivateRoute exact path='/issueDetail/:pId' component={IssueDetail} />
         <PrivateRoute exact path='/issues' component={IssueSearchForm} />
         <PrivateRoute exact path='/issues/:success/:pId' component={IssueSearchForm} />
         <PrivateRoute exact path='/addIssue' component={AddIssue} />
