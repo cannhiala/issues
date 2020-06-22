@@ -60,7 +60,6 @@ module.exports = function (app) {
 		.get(issueCtrl.issueGetProjectUserAssign)
 
 	app.route('/issueGetProjectByUser')
-<<<<<<< .merge_file_a26576
 		.get(issueCtrl.issueGetProjectByUser)
 
 	app.route('/issueGetListParentIssues')
@@ -74,13 +73,12 @@ module.exports = function (app) {
 
 	app.route('/issueGetIssueByKey')
 		.get(issueCtrl.issueGetIssueByKey)
-=======
-		.get(issueCtrl.issueGetProjectByUser);
+
 	app.route('/getIssueById')
 		.get(issueCtrl.getIssueById);
+		
 	app.route('/getSubIssues')
 		.get(issueCtrl.getSubIssues);
 
->>>>>>> .merge_file_a15596
 
 };
