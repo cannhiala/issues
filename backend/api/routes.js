@@ -36,22 +36,42 @@ module.exports = function (app) {
 	//create by Quanha
 
 	app.route('/issueGetProjectByKey')
-		.get(issueCtrl.issueGetProjectByKey);
+		.get(issueCtrl.issueGetProjectByKey)
+
 	app.route('/issueGetListStatuses')
-		.get(issueCtrl.issueGetListStatuses);
+		.get(issueCtrl.issueGetListStatuses)
+
 	app.route('/issueGetUsersSameProjects')
-		.get(issueCtrl.issueGetUsersSameProjects);
+		.get(issueCtrl.issueGetUsersSameProjects)
+
 	app.route('/issueGetListPriotities')
-		.get(issueCtrl.issueGetListPriotities);
+		.get(issueCtrl.issueGetListPriotities)
+
 	app.route('/issueFilter')
-		.get(issueCtrl.issueFilter);
+		.get(issueCtrl.issueFilter)
+
 	app.route('/issueGetListIssueCategories')
-		.get(issueCtrl.issueGetListIssueCategories);
+		.get(issueCtrl.issueGetListIssueCategories)
+
 	app.route('/issueGetListPhaseByProjectKey')
-		.get(issueCtrl.issueGetListPhaseByProjectKey);
+		.get(issueCtrl.issueGetListPhaseByProjectKey)
+
 	app.route('/issueGetProjectUserAssign')
-		.get(issueCtrl.issueGetProjectUserAssign);
+		.get(issueCtrl.issueGetProjectUserAssign)
+
 	app.route('/issueGetProjectByUser')
-		.get(issueCtrl.issueGetProjectByUser);
+		.get(issueCtrl.issueGetProjectByUser)
+
+	app.route('/issueGetListParentIssues')
+		.get(issueCtrl.issueGetListParentIssues)
+
+	app.route('/issueInsert')
+		.post(issueCtrl.issueInsert)
+
+	app.route('/issueUpdate')
+		.post(issueCtrl.issueUpdate)
+
+	app.route('/issueGetIssueByKey')
+		.get(issueCtrl.issueGetIssueByKey)
 
 };

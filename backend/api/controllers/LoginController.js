@@ -2,9 +2,8 @@
 
 var jwt = require('jsonwebtoken')
 const utils = require('./../utils')
-const mysql = require('mysql')
-const db = require('./../db')
-const { json } = require('body-parser')
+const pool = require('./../pool')
+
 
 module.exports = {
     login: (req, res) => {
@@ -13,20 +12,33 @@ module.exports = {
             + data.username
             + '" and pass_word="' + data.password + '"'
             + ' and is_deleted = 1'
-        db.query(sql, (err, response) => {
-            if (err) throw err
-
-            if (response[0] == null)
-                return res.status(401).json({
+        pool.getConnection(function (err, connection) {
+            if (err)
+                return res.status(400).json({
                     error: true,
-                    message: "Invalid user."
-                });
+                    message: "db connection error."
+                })
 
-            let result = JSON.stringify(response)
-            const token = utils.generateToken(result)
-            const userObj = utils.getCleanUser(result)
+            connection.query(sql, function (err, response) {
+                connection.release()
+                if (err)
+                    return res.status(400).json({
+                        error: true,
+                        message: "db execute error."
+                    })
 
-            res.json({ user: userObj, token })
+                if (response[0] == null)
+                    return res.status(401).json({
+                        error: true,
+                        message: "Invalid user."
+                    })
+
+                let result = JSON.stringify(response)
+                const token = utils.generateToken(result)
+                const userObj = utils.getCleanUser(result)
+
+                res.json({ user: userObj, token })
+            })
         })
     },
     verifyToken: (req, res) => {
@@ -48,21 +60,35 @@ module.exports = {
                 + user.userId
                 + '" and is_deleted = 1'
 
-            db.query(sql, (err, response) => {
-                if (err) throw err
-
-                if (response[0] == null)
-                    return res.status(401).json({
+            pool.getConnection(function (err, connection) {
+                if (err)
+                    return res.status(400).json({
                         error: true,
-                        message: "Invalid user."
-                    });
+                        message: "db connection error."
+                    })
 
-                let result = JSON.stringify(response)
-                const token = utils.generateToken(result)
-                const userObj = utils.getCleanUser(result)
+                connection.query(sql, (err, response) => {
+                    connection.release()
+                    if (err)
+                        return res.status(400).json({
+                            error: true,
+                            message: "db execute error."
+                        })
 
-                res.json({ user: userObj, token })
+                    if (response[0] == null)
+                        return res.status(401).json({
+                            error: true,
+                            message: "Invalid user."
+                        });
+
+                    let result = JSON.stringify(response)
+                    const token = utils.generateToken(result)
+                    const userObj = utils.getCleanUser(result)
+
+                    res.json({ user: userObj, token })
+                })
             })
+
         });
     }
 }
