@@ -53,5 +53,10 @@ module.exports = function (app) {
 		.get(issueCtrl.issueGetProjectUserAssign);
 	app.route('/issueGetProjectByUser')
 		.get(issueCtrl.issueGetProjectByUser);
+	app.route('/getIssueById')
+		.get(issueCtrl.getIssueById);
+	app.route('/getSubIssues')
+		.get(issueCtrl.getSubIssues);
+
 
 };

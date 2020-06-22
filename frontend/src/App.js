@@ -14,6 +14,7 @@ import CreateProject from './components/CreateProject'
 import EditProject from './components/EditProject'
 import ProjectOverview from './components/ProjectOverview'
 import IssueSearchForm from './components/Issues/IssueSearchForm'
+import IssueDetail from './components/Issues/IssueDetail'
 import AddIssue from './components/Issues/AddIssue'
 
 function App() {
@@ -70,6 +71,10 @@ function App() {
         <PrivateRoute exact path='/issues'>
           <Menu />
           <IssueSearchForm />
+        </PrivateRoute>
+        <PrivateRoute exact path='/issueDetail/:pId'>
+          <Menu />
+          <IssueDetail />
         </PrivateRoute>
         <PrivateRoute exact path='/addIssue'>
           <Menu />
