@@ -17,9 +17,9 @@ function IssueSearchForm() {
         tableoption: {
             defaultSortName: 'update_on',
             defaultSortOrder: 'desc',
-            onRowClick: function (row) {
-                //alert(`You click row id: ${row.key}`);
-                history.push("/issues/usucess/" + row.key)
+            onRowClick: function (row, column) {
+                if (typeof (column) !== 'undefined')
+                    history.push('/issueDetail/' + row.issue_id)
             }
         },
         userLoginId: getUser().userId,
@@ -146,7 +146,7 @@ function IssueSearchForm() {
 
     const issueIdFormat = function(cell, row) {
         return (
-            <NavLink exact to={'/'}> {row.key} </NavLink>
+            <NavLink exact to={'/issueDetail/'+ row.issue_id}> {row.key} </NavLink>
         )
     }
 
@@ -340,15 +340,12 @@ function IssueSearchForm() {
                     <Row>
                         <Col md={12} style={{ overflowX: "auto" }}>
                             <div style={{ width: "2500px" }}>
-                                <BootstrapTable data={issueList} pagination={true} options={initState.tableoption} striped hover tableBodyClass='table-cursor'>
-                                    <TableHeaderColumn hidden={true} dataField='issue_category_id'>Issue type Id</TableHeaderColumn>
+                                <BootstrapTable data={issueList} pagination={true} options={initState.tableoption} striped hover tableBodyClass='table-cursor'>                                    
                                     <TableHeaderColumn width={'5%'} dataField='issuetypename' dataAlign='center' dataFormat={issueTypeDataFormat} dataSort={true}>Issue type</TableHeaderColumn>
-                                    <TableHeaderColumn width={'5%'} isKey dataField='key' dataSort={true} dataFormat={issueIdFormat}>Issue id</TableHeaderColumn>
+                                    <TableHeaderColumn width={'5%'} isKey dataField='key' dataSort={true} dataFormat={issueIdFormat}>Issue id</TableHeaderColumn>                                    
                                     <TableHeaderColumn dataField='name' dataSort={true}>Issue name</TableHeaderColumn>
-                                    <TableHeaderColumn width={'6%'} dataField='phase' dataSort={true}>Phase</TableHeaderColumn>
-                                    <TableHeaderColumn hidden={true} dataField='issue_status_id'>Project Status Id</TableHeaderColumn>
-                                    <TableHeaderColumn width={'5%'} dataField='status' dataAlign='center' dataFormat={issueStatusFormat} dataSort={true}>Issue status</TableHeaderColumn>
-                                    <TableHeaderColumn hidden={true} dataField='project_id'>Project Id</TableHeaderColumn>
+                                    <TableHeaderColumn width={'6%'} dataField='phase' dataSort={true}>Phase</TableHeaderColumn>                                    
+                                    <TableHeaderColumn width={'5%'} dataField='status' dataAlign='center' dataFormat={issueStatusFormat} dataSort={true}>Issue status</TableHeaderColumn>                                    
                                     <TableHeaderColumn width={'5%'} dataField='projectskey' dataSort={true} dataFormat={projectsKeyFormat}>Project key</TableHeaderColumn>
                                     <TableHeaderColumn width={'12%'} dataField='projectsname' dataSort={true}>Project name</TableHeaderColumn>
                                     <TableHeaderColumn width={'6%'} dataField='assignee' dataSort={true}>Assignee</TableHeaderColumn>
@@ -358,6 +355,10 @@ function IssueSearchForm() {
                                     <TableHeaderColumn width={'6%'} dataField='startdate' dataAlign='center' dataSort={true}>Start date</TableHeaderColumn>                                    
                                     <TableHeaderColumn width={'6%'} dataField='update_on' dataAlign='center' dataSort={true} dataFormat={updateOnFormat}>Updated date</TableHeaderColumn>
                                     <TableHeaderColumn width={'6%'} dataField='createby' dataSort={true}>Created by</TableHeaderColumn>
+                                    <TableHeaderColumn hidden={true} dataField='issue_category_id'>Issue type Id</TableHeaderColumn>
+                                    <TableHeaderColumn hidden={true} dataField='issue_id'>Project Id</TableHeaderColumn>
+                                    <TableHeaderColumn hidden={true} dataField='issue_status_id'>Project Status Id</TableHeaderColumn>
+                                    <TableHeaderColumn hidden={true} dataField='project_id'>Project Id</TableHeaderColumn>
                                 </BootstrapTable>
                             </div>
                         </Col>
