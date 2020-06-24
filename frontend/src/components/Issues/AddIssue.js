@@ -6,7 +6,7 @@ import { Editor } from 'react-draft-wysiwyg'
 import { AsyncTypeahead } from 'react-bootstrap-typeahead'
 import DatePicker from 'react-datepicker'
 import { getUser } from './../../utils/Common'
-import { useHistory, useParams } from "react-router-dom"
+import { useHistory, useParams } from 'react-router-dom'
 import './../../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css'
 import './../../../node_modules/react-datepicker/dist/react-datepicker.css'
 import './../../../node_modules/react-bootstrap-table/dist/react-bootstrap-table-all.min.css'
