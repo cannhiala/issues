@@ -75,10 +75,21 @@ module.exports = function (app) {
 		.get(issueCtrl.issueGetIssueByKey)
 
 	app.route('/getIssueById')
-		.get(issueCtrl.getIssueById);
-		
-	app.route('/getSubIssues')
-		.get(issueCtrl.getSubIssues);
+		.get(issueCtrl.getIssueById)
 
+	app.route('/getSubIssues')
+		.get(issueCtrl.getSubIssues)
+
+	app.route('/getIssueCommentsById')
+		.get(issueCtrl.getIssueCommentsById)
+
+	app.route('/insertComment')
+		.post(issueCtrl.insertComment)
+
+	app.route('/getNextIssue')
+		.get(issueCtrl.getNextIssue)
+
+	app.route('/getPreviousIssue')
+		.get(issueCtrl.getPreviousIssue)
 
 };

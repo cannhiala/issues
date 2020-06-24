@@ -322,7 +322,7 @@ module.exports = {
                             message: "db execution error."
                         })
                     }
-                    
+
                     res.json(results[3])
                 })
         })
@@ -350,7 +350,7 @@ module.exports = {
                 error: true,
                 message: "projectkey parameter is required."
             })
-        
+
         if (issueKey == "" || typeof (issueKey) == "undefined")
             return res.status(400).json({
                 error: true,
@@ -446,6 +446,84 @@ module.exports = {
         pool.getConnection(function (err, connection) {
             if (err) throw err;
             connection.query('call issue_getSubIssues(?)', [parentId]
+                , function (error, results, fields) {
+                    connection.release();
+                    if (error) throw error;
+                    res.json(results);
+                })
+        })
+    },
+    getIssueCommentsById: (req, res) => {
+        let issueId = req.query.issueId
+        pool.getConnection(function (err, connection) {
+            if (err) throw err;
+            connection.query('call issue_getIssueCommentsById(?)', [issueId]
+                , function (error, results, fields) {
+                    connection.release();
+                    if (error) throw error;
+                    res.json(results);
+                })
+        })
+    },
+
+    insertComment: (req, res) => {
+        let data = req.body
+
+        let issue_id = data.issue_id
+        let user_id = data.user_id
+        let comment = data.comments
+        console.log("",data);
+        if (comment == "" || typeof (comment) == "undefined")
+            return res.status(202).json({
+                error: true,
+                message: "Please input your comment first!"
+            })
+
+        pool.getConnection(function (err, connection) {
+            if (err)
+                return res.status(202).json({
+                    error: true,
+                    message: "db connection error."
+                })
+            connection.query('call insert_comment(?, ?, ?)'
+                , [issue_id
+                    , user_id
+                    , comment]
+                , function (error, response, fields) {
+                    connection.release()
+                    if (error) {
+                        console.log(error)
+                        return res.status(202).json({
+                            error: true,
+                            message: "db execution error."
+                        })
+                    }
+                    res.json({
+                        status: 200,
+                        message: "Insert comment success !"
+                    })
+                })
+        })
+    },
+
+    getNextIssue: (req, res) => {
+        let issueId = req.query.issueId
+        pool.getConnection(function (err, connection) {
+            if (err) throw err;
+            connection.query('call issue_next(?)', [issueId]
+                , function (error, results, fields) {
+                    connection.release();
+                    if (error) throw error;
+                    res.json(results);
+                })
+        })
+    },
+
+    getPreviousIssue: (req, res) => {
+        let issueId = req.query.issueId
+        pool.getConnection(function (err, connection) {
+            if (err) throw err;
+            connection.query('call issue_previous(?)', [issueId]
                 , function (error, results, fields) {
                     connection.release();
                     if (error) throw error;

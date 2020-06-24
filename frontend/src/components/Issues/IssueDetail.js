@@ -11,13 +11,15 @@ function IssueDetail () {
   // let userid = getUser().userId
   // let history = useHistory()
   let issueId = 1
-  //let overviewLink = "/pOverview/" + pId
+  let userid = 1
   const [userAutocomplete, setUserAutocomplete] = useState({userid: 0, fullname: 0})
   const [issueDetail, setIssueDetail] = useState({p_Name: '', i_TypeName:'', i_Key:'', i_Id: 0, i_DueDate: '', i_Status: '', i_Color: '', i_Title: '', i_CreateByName: '', i_CreateByTime: '', i_Description: '', i_Phase: '', i_ParentTask: '', i_Assign: '', i_Priority: '', i_StartDate: '', i_EstimateHour: ''})
+  const [inputComment, setInputComment] = useState({issue_id: issueId, user_id: userid, comments: ''})
+  const [issueNextPrevious, setIssueNextPrevious] = useState({n_id: '', n_key: '', n_name: '', p_id: '', p_key: '', p_name:''})
   const [subIssues, setSubIssues] = useState([])
+  const [issueComments, setIssueComments] = useState([])
   const [showDelConfirmPopup, setShowDelConfirmPopup] = useState(false)
-  //const [members, setMembers] = useState([])
-  //const [showDelConfirmPopup, setShowDelConfirmPopup] = useState(false)
+  const [state, setState] = useState(false)
 
   useEffect(() => {
      axios.get('http://localhost:3001/getIssueById?issueId='+ issueId).then(
@@ -54,8 +56,6 @@ function IssueDetail () {
          (res) => {
            if (res.status === 200) {
              if (res.data.length > 0) {
-               console.log('=====:', JSON.stringify(res.data))
-               console.log('=====:', res.data[0])
                setSubIssues(res.data[0])
              }
            } else {
@@ -63,12 +63,64 @@ function IssueDetail () {
              console.log('Get Issue Detail Error:', error)
            }
      }).catch((err) => { console.log('Axios Error:', err) })
-  }, [subIssues])
+  }, [issueId])
+
+  useEffect(() => {
+     axios.get('http://localhost:3001/getPreviousIssue?issueId='+ issueId).then(
+         (res) => {
+           if (res.status === 200) {
+             if (res.data.length > 0) {
+               setIssueNextPrevious({...issueNextPrevious, p_id: res.data[0][0].issue_id, p_key: res.data[0][0].key, p_name: res.data[0][0].name})
+             }
+           } else {
+             console.log('Get Previous Issue Error:', res.error)
+           }
+     }).catch((err) => { console.log('Axios Error:', err) })
+  }, [issueId])
+
+  useEffect(() => {
+     axios.get('http://localhost:3001/getNextIssue?issueId='+ issueId).then(
+         (res) => {
+           if (res.status === 200) {
+             if (res.data.length > 0) {
+               setIssueNextPrevious({...issueNextPrevious, n_id: res.data[0][0].issue_id, n_key: res.data[0][0].key, n_name: res.data[0][0].name})
+             }
+           } else {
+             console.log('Get Next Issue Error:', res.error)
+           }
+     }).catch((err) => { console.log('Axios Error:', err) })
+  }, [issueId])
+
+  useEffect(() => {
+     axios.get('http://localhost:3001/getIssueCommentsById?issueId='+ issueId).then(
+         (res) => {
+           if (res.status === 200) {
+             if (res.data.length > 0) {
+               setIssueComments(res.data[0])
+             }
+           } else {
+             const error = new Error(res.error)
+             console.log('Get Issue Comments Error:', error)
+           }
+     }).catch((err) => { console.log('Axios Error:', err) })
+  }, [state, issueId])
+
+  const onPostComment = function (text) {
+      axios.post('http://localhost:3001/insertComment', inputComment).then(
+            (res) => {
+            if (res.status === 200) {
+                  setState(true)
+             } else if (res.status === 202) {
+              
+             } else {
+              console.log('INSERT Comment eror: ', res.error)
+            }
+        }).catch((err) => { console.log('Axios Error:', err) })
+    }
 
   const onDelConfirmPopup  = function (e) {
     setShowDelConfirmPopup(true)
   }
-
   const onDelConfirmClose = () => setShowDelConfirmPopup(false)
 
   const onBack  = function (e) {
@@ -98,7 +150,14 @@ function IssueDetail () {
                 </div>
                 <div className="row text-right">
                   <a href="#" >Back to list</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                  <a href="#" >Previous issues</a>&nbsp;|&nbsp;<a href="#" >Next issues</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  { issueNextPrevious.p_name !== '' ? (
+                    <a href="#" >{issueNextPrevious.p_key}- {issueNextPrevious.p_name}</a>
+                  ):(<></>)}
+                  &nbsp;|&nbsp;
+                  { issueNextPrevious.n_name !== '' ? (
+                    <a href="#" >{issueNextPrevious.n_key}- {issueNextPrevious.n_name}</a>
+                  ):(<></>)}
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 </div>
                 <div className="crumbs">
                     <ul className="breadcrumb"><b>Project: {issueDetail.p_Name}</b></ul>
@@ -186,6 +245,33 @@ function IssueDetail () {
                 </fieldset>
                 <fieldset className="redo-fieldset ">
                   <legend className="reset-this redo-legend">Comments</legend>
+                    {
+                      issueComments.map((comment, key) => (
+                      <div key={key}>
+                          <div className="row">
+                              <div className="col-sm-10 col-md-10 col-lg-10">
+                                <a href="#">{comment.username}</a> <small><i>At {comment.create_on}</i></small>
+                              </div>
+                              <div className="col-sm-1 col-md-1 col-lg-1">
+                                "Quote
+                              </div>
+                          </div>
+                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>{comment.comments} </strong> <br/>
+                      </div>
+                    ))
+                    }
+
+                    <br/><br/>
+                    <div className="text-right">
+                      <button type="submit" className="btn btn-primary" onClick={onPostComment} name="btnPostComment">Post</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    </div>
+                    <br/>
+                    <div className="col-sm-12 col-md-12 col-lg-12">
+                      <textarea  type="text" rows="4" cols="50"
+                      value={inputComment.comments}
+                      onChange={comment => setInputComment({...inputComment, comments: comment.target.value})}
+                      className="form-control" id="inputComment"/>
+                    </div>
                 </fieldset>
                 <br/>
                 <div className="row">
