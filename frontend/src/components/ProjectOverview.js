@@ -7,7 +7,9 @@ var CanvasJSChart = CanvasJSReact.CanvasJSChart
 
 function ProjectOverview () {
 
-  let { pId } = useParams()
+  const url = 'http://localhost:3001/'
+
+  const { pId } = useParams()
   const [projectHealth, setProjectHealth] = useState({pName: '', pStatus: '', pType: '', pProgress: 0, pOwner: '', pStartdate: '', pEndate: ''})
   const [optionsPie, setOptionsPie] = useState({})
   const [stackedChartProjectType, setStackedChartProjectType] = useState()
@@ -106,10 +108,10 @@ function ProjectOverview () {
     		}
 
   useEffect(() => {
-     axios.get('http://localhost:3001/projectDetail?pId='+ pId).then(
+     axios.get(url + 'projectDetail?pId='+ pId).then(
          (res) => {
            if (res.status === 200) {
-             if (null !== res.data[0])
+             if (res.data.length > 0)
                  setProjectHealth({pName: res.data[0].name,
                    pStatus: res.data[0].status,
                    pType: res.data[0].project_type_name,
@@ -117,17 +119,16 @@ function ProjectOverview () {
                    pOwner: res.data[0].owner_fullname,
                    pStartdate: res.data[0].start_date,
                    pEndate: res.data[0].end_date})
-                   console.log("projectHealth==========" + JSON.stringify(projectHealth))
            } else {const error = new Error(res.error)
                    console.log(error) }
      }).catch((err) => { console.log('Axios Error:', err) })
   }, [pId])
 
   useEffect(() => {
-     axios.get('http://localhost:3001/getPieChart?pId='+ pId).then(
+     axios.get(url + 'getPieChart?pId='+ pId).then(
          (res) => {
            if (res.status === 200) {
-             if (null !== res.data) {
+             if (res.data.length > 0) {
                setOptionsPie({exportEnabled: true,
                              animationEnabled: true,
                              title: {
@@ -143,7 +144,7 @@ function ProjectOverview () {
                                dataPoints: res.data
                              }]
                })
-               console.log("==========" + JSON.stringify(optionsPie))
+               // console.log("==========" + JSON.stringify(optionsPie))
                // res.data.forEach((iType, i) => {
                //   console.log("=== " + iType.name);
                // });
@@ -157,7 +158,7 @@ function ProjectOverview () {
      }).catch((err) => { console.log('Axios Error:', err) })
   }, [pId])
   useEffect(() => {
-     axios.get('http://localhost:3001/getStackedChartProjectType?pId='+ pId).then(
+     axios.get(url + 'getStackedChartProjectType?pId='+ pId).then(
          (res) => {
            if (res.status === 200) {
              if (res.data.length > 0) {
@@ -176,7 +177,7 @@ function ProjectOverview () {
   }, [pId])
 
   useEffect(() => {
-     axios.get('http://localhost:3001/getStackedChart?pId='+ pId).then(
+     axios.get(url + 'getStackedChart?pId='+ pId).then(
          (res) => {
            if (res.status === 200) {
              if (res.data.length > 0) {
@@ -190,9 +191,9 @@ function ProjectOverview () {
                     { label: dataObj.name, y: dataObj.y }
                   ]
                 }))
-                console.log("================== ", strData)
-                console.log("==================test ", test)
-                console.log("==================test2 ", test[0])
+                // console.log("================== ", strData)
+                // console.log("==================test ", test)
+                // console.log("==================test2 ", test[0])
                 setOptionsStackedChart ({...optionsStackedChart, data: strData})
                 // console.log("==================3 ", optionsStackedChart.data)
                 //console.log("==================test3 ", ...optionsStackedChart.data[0])
@@ -249,10 +250,7 @@ function ProjectOverview () {
                   <legend className="reset-this redo-legend">Issues</legend>
                   <CanvasJSChart options = {optionsPie}
                 				/* onRef={ref => this.chart = ref} */
-                		/>
-                  <CanvasJSChart options = {options}
-            				/* onRef={ref => this.chart = ref} */
-            			/>
+                		/>      
                   <CanvasJSChart options = {optionsStackedChart}
             				/* onRef={ref => this.chart = ref} */
             			/>

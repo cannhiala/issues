@@ -7,30 +7,25 @@ import axios from 'axios'
 import { getUser } from './../utils/Common'
 
 function ProjectDetail () {
-
-  let userid = getUser().userId
-  let history = useHistory()
-  let { pId } = useParams()
+  const url = 'http://localhost:3001/'
+  const userid = getUser().userId
+  const history = useHistory()
+  const { pId } = useParams()
   let overviewLink = "/pOverview/" + pId
   const [projectDetail, setProjectDetail] = useState([])
   const [members, setMembers] = useState([])
   const [showDelConfirmPopup, setShowDelConfirmPopup] = useState(false)
 
   useEffect(() => {
-     axios.get('http://localhost:3001/projectDetail?pId='+ pId).then(
+     axios.get(url + 'projectDetail?pId='+ pId).then(
          (res) => {
-           console.log('Get ProjectDetail:',res)
-           console.log('ProjectDetail data:',res.data[0])
            setProjectDetail(res.data)
-           console.log('projectDetail data:', projectDetail)
      }).catch((err) => { console.log('Axios Error:', err) })
   }, [pId])
 
   useEffect(() => {
-     axios.get('http://localhost:3001/members?pId='+ pId).then(
+     axios.get(url + 'members?pId='+ pId).then(
          (res) => {
-           console.log('Get Member of project:',res)
-           console.log('Member data:',res.data[0])
            setMembers(res.data)
      }).catch((err) => { console.log('Axios Error:', err) })
   }, [])
@@ -45,15 +40,13 @@ function ProjectDetail () {
   }
 
   const onDelProject  = function (e) {
-    axios.put('http://localhost:3001/delProject', {pId}).then(
+    axios.put(url + 'delProject', {pId}).then(
           (res) => {
             if(res.status === 200) {
-                console.log('DELETE PROJECT success:',res.data)
+                // console.log('DELETE PROJECT success:',res.data)
                 history.push("/projects/dsucces/"+pId)
             } else {
-              const error = new Error(res.error)
-              //throw error
-              console.log(error)
+              console.log(res.error)
             }
       }).catch((err) => { console.log('DELETE PROJECT Error:', err) })
       setShowDelConfirmPopup(false)

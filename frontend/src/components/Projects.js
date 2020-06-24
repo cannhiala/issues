@@ -12,13 +12,17 @@ import Menu from './Menu'
 import { getUser } from './../utils/Common'
 
 function Project () {
+  const url = 'http://localhost:3001/'
+  const isucces = 'isucces'
+  const usucces = 'usucces'
+  const dsucces = 'dsucces'
   // session from context
   const userid = getUser().userId
-  let history = useHistory()
+  const history = useHistory()
 
   // parameter check in these case: inserted, updated, deleted successfull. to show popup message.
-  let { succes } = useParams()
-  let { pId } = useParams()
+  const { succes } = useParams()
+  const { pId } = useParams()
   const [showISuccessPopup, setIShowSuccessPopup] = useState(false)
   const [showUSuccessPopup, setUShowSuccessPopup] = useState(false)
   const [showDSuccessPopup, setDShowSuccessPopup] = useState(false)
@@ -31,37 +35,30 @@ function Project () {
   const [searchCondition, setSearchCondition] = useState({userIdLogin: userid, s_p_key: '', s_p_name : '', s_p_status: 'ALL', s_p_owner_id: 'ALL', s_p_startdate_from: '', s_p_startdate_to: '', s_p_enddate_from: '', s_p_enddate_to: ''})
 
   useEffect(() => {
-     axios.get('http://localhost:3001/projects?userIdLogin='+userid+'&s_p_key='+searchCondition.s_p_key+'&s_p_name='+searchCondition.s_p_name+'&s_p_status='+searchCondition.s_p_status+'&s_p_owner_id='+searchCondition.s_p_owner_id+'&s_p_startdate_from='+searchCondition.s_p_startdate_from+'&s_p_startdate_to='+searchCondition.s_p_startdate_to+'&s_p_enddate_from='+searchCondition.s_p_enddate_from +'&s_p_enddate_to='+searchCondition.s_p_enddate_to+'').then(
+     axios.get(url + 'projects?userIdLogin='+userid+'&s_p_key='+searchCondition.s_p_key+'&s_p_name='+searchCondition.s_p_name+'&s_p_status='+searchCondition.s_p_status+'&s_p_owner_id='+searchCondition.s_p_owner_id+'&s_p_startdate_from='+searchCondition.s_p_startdate_from+'&s_p_startdate_to='+searchCondition.s_p_startdate_to+'&s_p_enddate_from='+searchCondition.s_p_enddate_from +'&s_p_enddate_to='+searchCondition.s_p_enddate_to+'').then(
          (res) => {
-           console.log('Init Projects:',res)
-           console.log('Init Projects data:',res.data)
            setProjects(res.data)
      }).catch((err) => { console.log('Axios Error:', err) })
   }, [])
 
   useEffect(() => {
-     axios.get('http://localhost:3001/owner').then(
+     axios.get(url + 'owner').then(
          (res) => {
-           console.log('Get Owner:',res)
-           console.log('Owner data:',res.data)
            setOwner(res.data)
      }).catch((err) => { console.log('Axios Error:', err) })
   }, [])
 
   useEffect(() => {
-    if (succes === 'isucces' || succes === 'usucces' || succes === 'dsucces') {
-      axios.get('http://localhost:3001/projectInfor?pId='+ pId).then(
+    if (succes === isucces || succes === usucces || succes === dsucces) {
+      axios.get(url + 'projectInfor?pId='+ pId).then(
           (res) => {
-            console.log('Get projectInfor:',res)
-            console.log('projectInfor data:',res.data)
             setProjectInfor({pKey: res.data[0].key, pName: res.data[0].name})
-            console.log('projectInfor projectInfor:' +  projectInfor.pKey)
       }).catch((err) => { console.log('Axios Error:', err) })
     }
     switch (succes) {
-      case 'isucces': return setIShowSuccessPopup(true)
-      case 'usucces': return setUShowSuccessPopup(true)
-      case 'dsucces': return setDShowSuccessPopup(true)
+      case isucces: return setIShowSuccessPopup(true)
+      case usucces: return setUShowSuccessPopup(true)
+      case dsucces: return setDShowSuccessPopup(true)
     }
   }, [])
   const onIShowSuccessClose = () => setIShowSuccessPopup(false)
@@ -77,7 +74,7 @@ function Project () {
       let endDateF = ((searchCondition.s_p_enddate_from !== '') ? Moment(searchCondition.s_p_enddate_from).format('YYYY/MM/DD') : '')
       let endDateT = ((searchCondition.s_p_enddate_to !== '') ? Moment(searchCondition.s_p_enddate_to).format('YYYY/MM/DD') : '')
 
-      axios.get('http://localhost:3001/projects?userIdLogin='+searchCondition.userIdLogin
+      axios.get(url + 'projects?userIdLogin='+searchCondition.userIdLogin
       +'&s_p_key='+searchCondition.s_p_key
       +'&s_p_name='+searchCondition.s_p_name
       +'&s_p_status='+searchCondition.s_p_status
@@ -87,9 +84,6 @@ function Project () {
       +'&s_p_enddate_from='+ endDateF
       +'&s_p_enddate_to='+ endDateT+'').then(
           (res) => {
-            //setMessage('Insert successfull !')
-            console.log('Search Projects:',res)
-            console.log('Search Projects data:',res.data)
             setProjects(res.data)
       }).catch((err) => { console.log('Axios Error:', err) })
   }
@@ -248,7 +242,7 @@ function Project () {
                     <TableHeaderColumn width={'11%'} dataField='end_date' dataSort={ true }>End Date</TableHeaderColumn>
                 </BootstrapTable>
             </div>
-        </div>    
+        </div>
     </div>
   )
 }

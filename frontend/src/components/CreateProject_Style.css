@@ -1,30 +1,3 @@
-/* label.col-prefix {
-  width: 40px;
-  margin-top: 9px;
-  padding-left: 0px;
-  float: left;
-}
-
-label.col-status {
-  padding-left: 0px;
-  float: left;
-}
-
-label.col-owner {
-  padding-left: 0px;
-  float: left;
-}
-
-input#combo-box-demo {
-    padding-top: 0;
-    padding-bottom: 6px;
-}
-
-/* label.col-enddate {
-  padding-left: 131px;
-  padding-right: 44px;
-} */
-
 /* Prefix format */
 label.col-prefix {
   margin-top: 9px;

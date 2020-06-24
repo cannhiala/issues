@@ -13,11 +13,12 @@ import { getUser } from './../utils/Common'
 
 function EditProject () {
 
-  let history = useHistory()
-  let { pId } = useParams()
+  const url = 'http://localhost:3001/'
+  const history = useHistory()
+  const { pId } = useParams()
   //get user infor from session(context)
-  let userid = getUser().userId
-  let username = getUser().name
+  const userid = getUser().userId
+  const username = getUser().name
   const [user, setUser] = useState([])
   const [projectType, setProjectType] = useState([])
   const [userAutocomplete, setUserAutocomplete] = useState({userid: 0, fullname: 0})
@@ -25,7 +26,7 @@ function EditProject () {
   const [project, setProject] = useState({p_key: '001', p_name: '', p_description: '', p_status: 'Open', p_type_id: 1, p_total_issues: 0, p_progress: 0, p_startdate: '', p_enddate: ''})
 
   useEffect(() => {
-     axios.get('http://localhost:3001/pForUpdate?pId='+ pId).then(
+     axios.get(url + 'pForUpdate?pId='+ pId).then(
          (res) => {
            if(res.status === 200) {
                setProject({p_key: res.data[0].key.substring(3, res.data[0].key.length),
@@ -46,7 +47,7 @@ function EditProject () {
   }, [pId])
 
   useEffect(() => {
-     axios.get('http://localhost:3001/uForUpdate?pId='+ pId +'&uId='+ userid).then(
+     axios.get(url + 'uForUpdate?pId='+ pId +'&uId='+ userid).then(
          (res) => {
            if(res.status === 200) {
                setMembers(res.data)
@@ -59,7 +60,7 @@ function EditProject () {
   }, [])
 
   useEffect(() => {
-     axios.get('http://localhost:3001/projectTypes').then(
+     axios.get(url + 'projectTypes').then(
          (res) => {
            console.log('Get Member of project:',res)
            console.log('Member data:',res.data[0])
@@ -68,7 +69,7 @@ function EditProject () {
   }, [])
 
   useEffect(() => {
-     axios.get('http://localhost:3001/users?uId='+ userid).then(
+     axios.get(url + 'users?uId='+ userid).then(
          (res) => {
            console.log('Get Member of project:',res)
            console.log('Member data:',res.data[0])
@@ -87,14 +88,14 @@ function EditProject () {
         return false
     }
     if (project.p_key.trim() !== '') {
-      axios.get('http://localhost:3001/checkPKey?pkey='+project.p_key).then(
+      axios.get(url + 'checkPKey?pkey='+project.p_key).then(
           (res) => {
             if (res.status === 200) {
               if (res.data.length > 0 && res.data[0].project_id != pId) {
                 alert('Project key already exists. Please input another key !')
                 return false
               } else {
-                axios.post('http://localhost:3001/updProject', {project: {
+                axios.post(url + 'updProject', {project: {
                                                                  p_id: pId,
                                                                  p_key: 'Pr-'+ project.p_key,
                                                                  p_name: project.p_name,
@@ -125,7 +126,7 @@ function EditProject () {
   }
 
   const onCheckProjectKey  = function (e) {
-    axios.get('http://localhost:3001/checkPKey?pkey='+project.p_key).then(
+    axios.get(url + 'checkPKey?pkey='+project.p_key).then(
           (res) => {
             if(res.status === 200) {
                 console.log('PROJECT PROJECT KEY success:',res.data)
@@ -144,7 +145,7 @@ function EditProject () {
   const onAddUser  = function (e) {
     let isUserExists = false
     e.preventDefault()
-    console.log("===============" + JSON.stringify(userAutocomplete))
+    // console.log("===============" + JSON.stringify(userAutocomplete))
     if (userAutocomplete.userid === 0) {
       alert('Please choose new user !')
       return false

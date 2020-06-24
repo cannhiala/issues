@@ -12,11 +12,12 @@ import { getUser } from './../utils/Common'
 
 function CreateProject () {
 
-  let history = useHistory()
+  const history = useHistory()
 
   //get user infor from session(context)
-  let userid = getUser().userId
-  let username = getUser().name
+  const url = 'http://localhost:3001/'
+  const userid = getUser().userId
+  const username = getUser().name
   const [user, setUser] = useState([])
   const [projectType, setProjectType] = useState([])
   const [userAutocomplete, setUserAutocomplete] = useState({userid: 0, fullname: 0})
@@ -24,19 +25,15 @@ function CreateProject () {
   const [members, setMembers] = useState([])
 
   useEffect(() => {
-     axios.get('http://localhost:3001/projectTypes').then(
+     axios.get(url + 'projectTypes').then(
          (res) => {
-           console.log('Get Member of project:',res)
-           console.log('Member data:',res.data[0])
            setProjectType(res.data)
      }).catch((err) => { console.log('Axios Error:', err) })
   }, [])
 
   useEffect(() => {
-     axios.get('http://localhost:3001/users?uId='+ userid).then(
+     axios.get(url + 'users?uId='+ userid).then(
          (res) => {
-           console.log('Get Member of project:',res)
-           console.log('Member data:',res.data[0])
            setUser(res.data)
      }).catch((err) => { console.log('Axios Error:', err) })
   }, [])
@@ -47,19 +44,30 @@ function CreateProject () {
         alert('Please input project key !')
         return false
     }
+
+    if (project.p_key.trim().length > 20) {
+        alert('Please input project key maximum 20 characters !')
+        return false
+    }
+
     if (project.p_name.trim() === '') {
         alert('Please input project name !')
         return false
     }
+
+    if (project.p_name.trim().length > 60 ) {
+        alert('Please input project name maximum 60 characters!')
+        return false
+    }
     if (project.p_key.trim() !== '') {
-      axios.get('http://localhost:3001/checkPKey?pkey='+project.p_key).then(
+      axios.get(url + 'checkPKey?pkey='+project.p_key).then(
           (res) => {
             if (res.status === 200) {
               if (res.data.length > 0) {
                 alert('Project key already exists. Please input another key !')
                 return false
               } else {
-                axios.post('http://localhost:3001/addProject', {project: {
+                axios.post(url + 'addProject', {project: {
                                                                  p_key: 'Pr-'+ project.p_key,
                                                                  p_name: project.p_name,
                                                                  p_description: project.p_description,
@@ -72,16 +80,12 @@ function CreateProject () {
                       (res) => {
                         if (res.status === 200) {
                           if (res.data.length > 0) {
-                            console.log('INSERTED Project success!')
-                            console.log("===============: "+ res.data[0]);
                             let pId = res.data[0].insertId
                             history.push("/projects/isucces/"+pId)
                           } else
                             console.log('INSERTED Project fail !')
                       } else {
-                        const error = new Error(res.error)
-                        //throw error
-                        console.log('INSERT Project eror: ', error)
+                        console.log('INSERTED Project eror: ', res.error)
                       }
                   }).catch((err) => { console.log('Axios Error:', err) })
               }
@@ -91,7 +95,7 @@ function CreateProject () {
   }
 
   const onCheckProjectKey  = function (e) {
-    axios.get('http://localhost:3001/checkPKey?pkey='+project.p_key).then(
+    axios.get(url + 'checkPKey?pkey='+project.p_key).then(
           (res) => {
             if(res.status === 200) {
                 console.log('PROJECT PROJECT KEY success:',res.data)
