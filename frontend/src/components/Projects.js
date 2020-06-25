@@ -21,7 +21,7 @@ function Project () {
   const history = useHistory()
 
   // parameter check in these case: inserted, updated, deleted successfull. to show popup message.
-  const { succes } = useParams()
+  const { success } = useParams()
   const { pId } = useParams()
   const [showISuccessPopup, setIShowSuccessPopup] = useState(false)
   const [showUSuccessPopup, setUShowSuccessPopup] = useState(false)
@@ -49,13 +49,13 @@ function Project () {
   }, [])
 
   useEffect(() => {
-    if (succes === isucces || succes === usucces || succes === dsucces) {
+    if (success === isucces || success === usucces || success === dsucces) {
       axios.get(url + 'projectInfor?pId='+ pId).then(
           (res) => {
             setProjectInfor({pKey: res.data[0].key, pName: res.data[0].name})
       }).catch((err) => { console.log('Axios Error:', err) })
     }
-    switch (succes) {
+    switch (success) {
       case isucces: return setIShowSuccessPopup(true)
       case usucces: return setUShowSuccessPopup(true)
       case dsucces: return setDShowSuccessPopup(true)

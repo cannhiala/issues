@@ -83,8 +83,19 @@ function EditProject () {
         alert('Please input project key !')
         return false
     }
+
+    if (project.p_key.trim().length > 20) {
+        alert('Please input project key maximum 20 characters !')
+        return false
+    }
+
     if (project.p_name.trim() === '') {
         alert('Please input project name !')
+        return false
+    }
+
+    if (project.p_name.trim().length > 60 ) {
+        alert('Please input project name maximum 60 characters!')
         return false
     }
     if (project.p_key.trim() !== '') {
@@ -110,7 +121,7 @@ function EditProject () {
                           if (res.data.length > 0) {
                             console.log('Updated Project success!')
                             console.log('Updated Project success!', JSON.stringify(res.data))
-                            history.push("/projects/isucces/"+pId)
+                            history.push("/projects/usucces/"+pId)
                           } else
                             console.log('Updated Project fail !')
                       } else {

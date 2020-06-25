@@ -1,6 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import {  useParams } from "react-router-dom"
-import { useHistory } from "react-router-dom"
+import { NavLink, useHistory, useParams } from "react-router-dom"
 import Modal from 'react-bootstrap/Modal'
 import Button from 'react-bootstrap/Button'
 import axios from 'axios'
@@ -10,23 +9,27 @@ function IssueDetail () {
 
   // let userid = getUser().userId
   // let history = useHistory()
-  let issueId = 1
-  let userid = 1
+  const url = 'http://localhost:3001/'
+  let { issueId } = useParams()
+  const userid = getUser().userId
+  const history = useHistory()
   const [userAutocomplete, setUserAutocomplete] = useState({userid: 0, fullname: 0})
-  const [issueDetail, setIssueDetail] = useState({p_Name: '', i_TypeName:'', i_Key:'', i_Id: 0, i_DueDate: '', i_Status: '', i_Color: '', i_Title: '', i_CreateByName: '', i_CreateByTime: '', i_Description: '', i_Phase: '', i_ParentTask: '', i_Assign: '', i_Priority: '', i_StartDate: '', i_EstimateHour: ''})
+  const [issueDetail, setIssueDetail] = useState({p_Name: '', i_TypeId:'', i_TypeName:'', i_Key:'', i_Id: 0, i_DueDate: '', i_Status: '', i_Color: '', i_Title: '', i_CreateByName: '', i_CreateByTime: '', i_Description: '', i_Phase: '', i_ParentTask: '', i_Assign: '', i_Priority: '', i_StartDate: '', i_EstimateHour: ''})
   const [inputComment, setInputComment] = useState({issue_id: issueId, user_id: userid, comments: ''})
-  const [issueNextPrevious, setIssueNextPrevious] = useState({n_id: '', n_key: '', n_name: '', p_id: '', p_key: '', p_name:''})
+  const [issueNextIssue, setIssueNextIssue] = useState({n_id: '', n_key: '', n_name: ''})
+  const [issuePreviousIssue, setIssuePreviousIssue] = useState({p_id: '', p_key: '', p_name:''})
   const [subIssues, setSubIssues] = useState([])
   const [issueComments, setIssueComments] = useState([])
   const [showDelConfirmPopup, setShowDelConfirmPopup] = useState(false)
   const [state, setState] = useState(false)
 
   useEffect(() => {
-     axios.get('http://localhost:3001/getIssueById?issueId='+ issueId).then(
+     axios.get(url + 'getIssueById?issueId='+ issueId).then(
          (res) => {
            if (res.status === 200) {
              if (res.data.length > 0) {
                setIssueDetail({p_Name: res.data[0][0].projectsname,
+               i_TypeId: res.data[0][0].issue_category_id,
                i_TypeName: res.data[0][0].issuetypename,
                i_Key: res.data[0][0].key,
                i_Id: res.data[0][0].issue_id,
@@ -52,7 +55,7 @@ function IssueDetail () {
   }, [issueId])
 
   useEffect(() => {
-     axios.get('http://localhost:3001/getSubIssues?parentId='+ issueId).then(
+     axios.get(url + 'getSubIssues?parentId='+ issueId).then(
          (res) => {
            if (res.status === 200) {
              if (res.data.length > 0) {
@@ -66,11 +69,11 @@ function IssueDetail () {
   }, [issueId])
 
   useEffect(() => {
-     axios.get('http://localhost:3001/getPreviousIssue?issueId='+ issueId).then(
+     axios.get(url + 'getPreviousIssue?issueId='+ issueId).then(
          (res) => {
            if (res.status === 200) {
              if (res.data.length > 0) {
-               setIssueNextPrevious({...issueNextPrevious, p_id: res.data[0][0].issue_id, p_key: res.data[0][0].key, p_name: res.data[0][0].name})
+               setIssuePreviousIssue({p_id: res.data[0][0].issue_id, p_key: res.data[0][0].key, p_name: res.data[0][0].name})
              }
            } else {
              console.log('Get Previous Issue Error:', res.error)
@@ -79,11 +82,11 @@ function IssueDetail () {
   }, [issueId])
 
   useEffect(() => {
-     axios.get('http://localhost:3001/getNextIssue?issueId='+ issueId).then(
+     axios.get(url + 'getNextIssue?issueId='+ issueId).then(
          (res) => {
            if (res.status === 200) {
              if (res.data.length > 0) {
-               setIssueNextPrevious({...issueNextPrevious, n_id: res.data[0][0].issue_id, n_key: res.data[0][0].key, n_name: res.data[0][0].name})
+               setIssueNextIssue({n_id: res.data[0][0].issue_id, n_key: res.data[0][0].key, n_name: res.data[0][0].name})
              }
            } else {
              console.log('Get Next Issue Error:', res.error)
@@ -92,7 +95,7 @@ function IssueDetail () {
   }, [issueId])
 
   useEffect(() => {
-     axios.get('http://localhost:3001/getIssueCommentsById?issueId='+ issueId).then(
+     axios.get(url + 'getIssueCommentsById?issueId='+ issueId).then(
          (res) => {
            if (res.status === 200) {
              if (res.data.length > 0) {
@@ -105,13 +108,14 @@ function IssueDetail () {
      }).catch((err) => { console.log('Axios Error:', err) })
   }, [state, issueId])
 
-  const onPostComment = function (text) {
-      axios.post('http://localhost:3001/insertComment', inputComment).then(
+  const onPostComment = function (e) {
+      e.preventDefault()
+      axios.post(url + 'insertComment', inputComment).then(
             (res) => {
             if (res.status === 200) {
                   setState(true)
              } else if (res.status === 202) {
-              
+
              } else {
               console.log('INSERT Comment eror: ', res.error)
             }
@@ -121,11 +125,30 @@ function IssueDetail () {
   const onDelConfirmPopup  = function (e) {
     setShowDelConfirmPopup(true)
   }
+
+  const onDelIssue  = function (e) {
+    e.preventDefault()
+    axios.put(url + 'delIssue', {issueId}).then(
+          (res) => {
+            if(res.status === 200) {
+                history.push("/issues/dsuccess/" + issueDetail.i_Key)
+            } else {
+                console.log('DELETE Issue Error:', res.error)
+            }
+      }).catch((err) => { console.log('DELETE Issue Error:', err) })
+      setShowDelConfirmPopup(false)
+  }
+
   const onDelConfirmClose = () => setShowDelConfirmPopup(false)
 
-  const onBack  = function (e) {
+  const createNewIssue = function (e) {
+      e.preventDefault()
+      history.push("/addissue/")
+  }
+
+  const editIssue  = function (e) {
     e.preventDefault()
-    // history.push("/projects")
+    history.push("/editIssue/"+issueDetail.i_Key)
   }
 
   return (
@@ -139,7 +162,7 @@ function IssueDetail () {
                     </Modal.Header>
                     <Modal.Body>Do you want to delete this issues !</Modal.Body>
                     <Modal.Footer>
-                      <Button variant="secondary" onClick={onBack}>
+                      <Button variant="secondary" onClick={onDelIssue}>
                           Yes
                         </Button>
                         <Button variant="primary" onClick={onDelConfirmClose}>
@@ -149,13 +172,13 @@ function IssueDetail () {
                   </Modal>
                 </div>
                 <div className="row text-right">
-                  <a href="#" >Back to list</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                  { issueNextPrevious.p_name !== '' ? (
-                    <a href="#" >{issueNextPrevious.p_key}- {issueNextPrevious.p_name}</a>
+                  <NavLink exact to={'/issues'}>Back to list</NavLink>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  { issuePreviousIssue.p_id !== '' && issuePreviousIssue.p_id !== null ? (
+                      <NavLink exact to={'/issueDetail/'+ issuePreviousIssue.p_id}> {issuePreviousIssue.p_key} - {issuePreviousIssue.p_name} </NavLink>
                   ):(<></>)}
                   &nbsp;|&nbsp;
-                  { issueNextPrevious.n_name !== '' ? (
-                    <a href="#" >{issueNextPrevious.n_key}- {issueNextPrevious.n_name}</a>
+                  { issueNextIssue.n_id !== '' && issueNextIssue.n_id !== null ? (
+                    <NavLink exact to={'/issueDetail/'+ issueNextIssue.n_id}> {issueNextIssue.n_key} - {issueNextIssue.n_name} </NavLink>
                   ):(<></>)}
                   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 </div>
@@ -164,7 +187,7 @@ function IssueDetail () {
                 </div>
                 <div className="row">
                     <div className="col-sm-3 col-md-3 col-lg-3">
-                      <strong>{issueDetail.i_TypeName} : {issueDetail.i_Key}</strong>
+                      <strong><span className={"pill pill-" + issueDetail.i_TypeId}>{issueDetail.i_TypeName}</span> : {issueDetail.i_Key}</strong>
                     </div>
                     <div className="row text-right">
                       <label className="col-form-label text-danger">Due Date {issueDetail.i_DueDate}</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -179,8 +202,8 @@ function IssueDetail () {
                         <h3><strong>{issueDetail.i_Title} </strong></h3>
                     </div>
                     <div className="text-right">
-                      <button type="submit" className="btn btn-primary" onClick={onBack} name="btnDelProject">Edit Issue</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                      <button type="submit" className="btn btn-primary" onClick={onBack} name="btnDelProject">Create SubIssue</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      <button type="submit" className="btn btn-primary" onClick={editIssue} name="btnDelProject">Edit Issue</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      <button type="submit" className="btn btn-primary" onClick={createNewIssue} name="btnDelProject">Create SubIssue</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     </div>
                 </div>
                 <fieldset className="redo-fieldset ">
@@ -238,7 +261,7 @@ function IssueDetail () {
                   <ol>
                     {
                       subIssues.map((subIssue, key2) => (
-                      <li key={key2}><a href="#">  {subIssue.key} {subIssue.name} </a></li>
+                      <li key={key2}><NavLink exact to={'/issueDetail/'+ subIssue.issue_id}>  {subIssue.key} {subIssue.name} </NavLink></li>
                     ))
                     }
                   </ol>
@@ -279,8 +302,8 @@ function IssueDetail () {
                       <button type="submit" className="btn" onClick={onDelConfirmPopup} name="btnDelProject">Delete Issue</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     </div>
                     <div className="text-right">
-                      <button type="submit" className="btn btn-primary" onClick={onBack} name="btnDelProject">Edit Issue</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                      <button type="submit" className="btn btn-primary" onClick={onBack} name="btnDelProject">Create SubIssue</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      <button type="submit" className="btn btn-primary" onClick={editIssue} name="btnDelProject">Edit Issue</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      <button type="submit" className="btn btn-primary" onClick={createNewIssue} name="btnDelProject">Create SubIssue</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     </div>
                 </div>
               </div>
