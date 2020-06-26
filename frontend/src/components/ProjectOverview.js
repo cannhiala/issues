@@ -250,7 +250,7 @@ function ProjectOverview () {
                   <legend className="reset-this redo-legend">Issues</legend>
                   <CanvasJSChart options = {optionsPie}
                 				/* onRef={ref => this.chart = ref} */
-                		/>      
+                		/>
                   <CanvasJSChart options = {optionsStackedChart}
             				/* onRef={ref => this.chart = ref} */
             			/>

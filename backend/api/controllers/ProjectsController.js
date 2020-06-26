@@ -8,42 +8,21 @@ module.exports = {
     // get project list
     getProject: (req, res) => {
       let data = req.query
-      let sql = 'SELECT \'View Issues\' as Action,tt.* FROM  '+
-                	'(SELECT p.project_id, p.key, p.name, p.description, p.status, p.project_type_id, p.total_issues, p.progress, DATE_FORMAT(p.start_date, \'%d/%m/%Y\') as start_date, DATE_FORMAT(p.end_date, \'%d/%m/%Y\') as end_date, p.create_on, p.update_on, p.is_deleted, pt.name as project_type_name, m.user_id, m.owner, CONCAT_WS(\' \', u.first_name, u.last_name) AS owner_fullname  '+
-                	'FROM projects p  '+
-                	'LEFT JOIN project_types pt ON p.project_type_id = pt.project_type_id  '+
-                	'LEFT JOIN members m ON p.project_id = m.project_id  '+
-                	'LEFT JOIN users u ON m.user_id = u.user_id  '+
-                	'WHERE m.owner = 1 AND p.is_deleted = 1 AND m.is_deleted = 1 AND m.user_id = '+data.userIdLogin+' '+
-                	'UNION  '+
-                	'Select tbl2.*, u.user_id, m.owner, CONCAT_WS(\' \', u.first_name, u.last_name) AS owner_fullname  from  '+
-                		'(SELECT p.project_id, p.key, p.name, p.description, p.status, p.project_type_id, p.total_issues, p.progress, DATE_FORMAT(p.start_date, \'%d/%m/%Y\') as start_date, DATE_FORMAT(p.end_date, \'%d/%m/%Y\') as end_date, p.create_on, p.update_on, p.is_deleted,  pt.name as project_type_name  '+
-                		'FROM projects p  '+
-                		'LEFT JOIN project_types pt ON p.project_type_id = pt.project_type_id  '+
-                		'LEFT JOIN members m ON p.project_id = m.project_id  '+
-                		'LEFT JOIN users u ON m.member_id = u.user_id  '+
-                		'WHERE m.owner = 2 AND p.is_deleted = 1 AND m.is_deleted = 1 AND m.user_id = '+data.userIdLogin+') tbl2  '+
-                	'LEFT JOIN members m ON tbl2.project_id = m.project_id   '+
-                	'LEFT JOIN users u ON m.user_id = u.user_id  '+
-                	'WHERE m.owner = 1 AND m.is_deleted = 1 AND m.is_deleted = 1 ) tt WHERE 1=1 '
-                  if (data.s_p_key !== '') {sql = sql + ' AND tt.`key` like  "%'+ data.s_p_key +'%" ' }
-                  if (data.s_p_name !== '') {sql = sql + ' AND tt.`name` like  "%'+ data.s_p_name +'%" ' }
-                  if (data.s_p_status !== '' && data.s_p_status !== 'ALL') {sql = sql + ' AND tt.`status` like  "%'+ data.s_p_status +'%" ' }
-                  if (data.s_p_owner_id !== '' && data.s_p_owner_id !== 'ALL') {sql = sql + ' AND tt.`user_id` = '+ data.s_p_owner_id +' AND tt.`owner` = 1 ' }
-                  console.log("==========s_p_startdate_from======" + data.s_p_startdate_from);
-                  if (data.s_p_startdate_from !== '') {sql = sql + ' AND tt.`start_date` >=" '+ data.s_p_startdate_from +'" ' }
-                  console.log("==========s_p_startdate_to======" + data.s_p_startdate_to);
-                  if (data.s_p_startdate_to !== '') {sql = sql + ' AND tt.`start_date` <= "'+ data.s_p_startdate_to +'" '}
-                  console.log("==========s_p_enddate_from======" + data.s_p_enddate_from);
-                  if (data.s_p_enddate_from !== '') {sql = sql + ' AND tt.`end_date` >="'+ data.s_p_enddate_from +'" ' }
-                  console.log("==========s_p_enddate_to======" + data.s_p_enddate_to);
-                  if (data.s_p_enddate_to !== '') {sql = sql + ' AND tt.`end_date` <="'+ data.s_p_enddate_to +'" ' }
-                  sql = sql + ' ORDER BY tt.`update_on` DESC ';
-                  //console.log("SQL here  ===  : " + sql);
-        db.query(sql, (err, response) => {
-            if (err) console.log(err);
-            res.json(response)
-        })
+      let _user_id = data.userIdLogin !=='' ? data.userIdLogin : null
+      let _p_key = data.s_p_key !=='' ? data.s_p_key : null
+      let _p_name = data.s_p_name !=='' ? data.s_p_name : null
+      let _p_status = (data.s_p_status !=='' && data.s_p_status !=='ALL') ? data.s_p_status : null
+      let _owner_id = (data.s_p_owner_id !=='' && data.s_p_owner_id !=='ALL') ? data.s_p_owner_id : null
+      let _startdate_from = (data.s_p_startdate_from !=='' && data.s_p_startdate_from !=='Invalid date') ? data.s_p_startdate_from : null
+      let _startdate_to = (data.s_p_startdate_to !=='' && data.s_p_startdate_from !=='Invalid date') ? data.s_p_startdate_to : null
+      let _enddate_from = (data.s_p_enddate_from !=='' && data.s_p_enddate_from !=='Invalid date') ? data.s_p_enddate_from : null
+      let _enddate_to = (data.s_p_enddate_to !=='' && data.s_p_enddate_to !=='Invalid date') ? data.s_p_enddate_to : null
+
+      db.query('call project_lists(?,?,?,?,?,?,?,?,?)'
+      ,[_user_id, _p_key, _p_name, _p_status, _owner_id, _startdate_from, _startdate_to, _enddate_from, _enddate_to], (err, response) => {
+          if (err) console.log(err);
+          res.json(response)
+      })
     },
 
     // get project detail
@@ -266,13 +245,13 @@ module.exports = {
         let sql = 'SELECT ist.*, pt.name FROM (SELECT IFNULL(i.Amount,0) as y, ist.name as label, ist.color as color, projec_type_id FROM issue_statuses ist ' +
                     'LEFT JOIN (SELECT issue_status_id, COUNT(issue_status_id) as Amount, projec_type_id ' +
                     	   'FROM `issues` ' +
-                    	   'WHERE is_deleted = 1 AND project_id =1 ' +
-                    	    'GROUP BY issue_status_id) i ON i.issue_status_id = ist.issue_status_id ' +
+                    	   'WHERE is_deleted = 1 AND project_id ='+ data.pId +
+                    	    ' GROUP BY issue_status_id) i ON i.issue_status_id = ist.issue_status_id ' +
                      'WHERE ist.is_deleted = 1) ist ' +
                   'LEFT JOIN (SELECT pt.project_type_id, pt.name FROM issuestracking.project_types pt ' +
                   				'INNER JOIN (SELECT pt.project_type_id, pt.name FROM issuestracking.project_types pt ' +
                   							'LEFT JOIN projects p ON p.project_type_id = pt.project_type_id ' +
-                  							'WHERE p.project_id = 1 and pt.is_deleted = 1) pt2 ' +
+                  							'WHERE p.project_id = '+ data.pId + ' and pt.is_deleted = 1) pt2 ' +
                   				'ON pt2.project_type_id = pt.parent_id ' +
                   				'WHERE pt.is_deleted = 1) pt ' +
                   'ON pt.project_type_id =  ist.projec_type_id; '
@@ -284,10 +263,10 @@ module.exports = {
 
     getStackedChartProjectType: (req, res) => {
         let data = req.query
-        let sql = 'SELECT pt.project_type_id, pt.name FROM issuestracking.project_types pt '+ 
+        let sql = 'SELECT pt.project_type_id, pt.name FROM issuestracking.project_types pt '+
                   				'INNER JOIN (SELECT pt.project_type_id, pt.name FROM issuestracking.project_types pt '+
                   							'LEFT JOIN projects p ON p.project_type_id = pt.project_type_id '+
-                  							'WHERE p.project_id = 1 and pt.is_deleted = 1) pt2 '+
+                  							'WHERE p.project_id = '+ data.pId +' and pt.is_deleted = 1) pt2 '+
                   				'ON pt2.project_type_id = pt.parent_id '+
                   				'WHERE pt.is_deleted = 1'
         db.query(sql, (err, response) => {
