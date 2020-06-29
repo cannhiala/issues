@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { Row, Col, Form, Button } from 'react-bootstrap'
 import Moment from 'moment'
 import { EditorState, convertFromRaw, convertToRaw } from 'draft-js'
 import { Editor } from 'react-draft-wysiwyg'
-import { AsyncTypeahead } from 'react-bootstrap-typeahead'
+import { AsyncTypeahead, Typeahead } from 'react-bootstrap-typeahead'
 import DatePicker from 'react-datepicker'
 import { getUser } from './../../utils/Common'
 import { useHistory, useParams } from 'react-router-dom'
@@ -13,8 +13,9 @@ import './../../../node_modules/react-bootstrap-table/dist/react-bootstrap-table
 
 
 function AddIssue() {
+    const ref = useRef()
     let history = useHistory()
-    let { pissueKey } = useParams()
+    let { pissueKey, type } = useParams()
 
     const initState = {
         apiUrl: "http://localhost:3001",
@@ -69,7 +70,13 @@ function AddIssue() {
             return
 
         if (typeof (pissueKey) !== "undefined" && pissueKey !== "") {
-            setEditForm(true)
+
+            if (typeof (type) === "undefined")
+                setEditForm(true)
+            else if (type !== "subIssue")
+                history.push("/issues/")
+            else
+                setEditForm(false)
 
             fetch(initState.apiUrl + "/issueGetListStatuses",
                 {
@@ -122,25 +129,62 @@ function AddIssue() {
                                         setAssignee([])
                                     })
 
-                            setInputPane({
-                                ...inputPane,
-                                iProjectKey: data.project_key,
-                                iIssueType: data.issue_category_id,
-                                iPhase: data.projec_type_id,
-                                iIssueKey: data.key,
-                                iIssueName: data.name,
-                                iDescription: data.description ?
-                                    EditorState.createWithContent(convertFromRaw(JSON.parse(data.description))) :
-                                    EditorState.createEmpty(),
-                                iDescriptionRaw: data.description,
-                                iStatus: data.issue_status_id,
-                                iParentTask: data.parent_id,
-                                iStartDate: data.startdate ? (new Date(data.startdate)) : "",
-                                iAssignee: data.assgned_id,
-                                iDueDate: data.duedate ? (new Date(data.duedate)) : "",
-                                iPriority: data.priority_id,
-                                iEstimate: data.estimated_hours,
-                            })
+                            if (data.parent_id != null) {
+                                fetch(initState.apiUrl + "/issueGetListParentIssues?sProjectKey="
+                                    + data.project_key
+                                    + "&sSearchKey=" + data.parent_key,
+                                    {
+                                        method: "GET"
+                                    })
+                                    .then(res => res.json())
+                                    .then(
+                                        (result) => {
+                                            let searchArr = result[0]
+                                            const arrParentTask = searchArr.map((i) => ({
+                                                issue_id: i.issue_id.toString(),
+                                                key: i.key,
+                                                name: i.name,
+                                                itemdisplay: i.key + " - " + i.name
+                                            }));
+
+                                            if (arrParentTask.length !== 0)
+                                                ref.current.state.selected = [{ itemdisplay: arrParentTask[0].itemdisplay }]
+
+                                            setParentTask(arrParentTask)
+                                            setIsParentTaskLoading(false)
+                                        },
+                                        (error) => {
+                                            setParentTask([])
+                                            setIsParentTaskLoading(false)
+                                        })
+                            }
+
+                            if (type === "subIssue")
+                                setInputPane({
+                                    ...inputPane,
+                                    iProjectKey: data.project_key,
+                                    iParentTask: data.parent_id,
+                                })
+                            else
+                                setInputPane({
+                                    ...inputPane,
+                                    iProjectKey: data.project_key,
+                                    iIssueType: data.issue_category_id,
+                                    iPhase: data.projec_type_id,
+                                    iIssueKey: data.key,
+                                    iIssueName: data.name,
+                                    iDescription: data.description ?
+                                        EditorState.createWithContent(convertFromRaw(JSON.parse(data.description))) :
+                                        EditorState.createEmpty(),
+                                    iDescriptionRaw: data.description,
+                                    iStatus: data.issue_status_id ? data.issue_status_id : "",
+                                    iParentTask: data.parent_id,
+                                    iStartDate: data.startdate ? (new Date(data.startdate)) : "",
+                                    iAssignee: data.assgned_id ? data.assgned_id : "",
+                                    iDueDate: data.duedate ? (new Date(data.duedate)) : "",
+                                    iPriority: data.priority_id ? data.priority_id : "",
+                                    iEstimate: data.estimated_hours ? data.estimated_hours : "",
+                                })
                         })
 
                     },
@@ -199,6 +243,8 @@ function AddIssue() {
             setPhase([])
             return
         }
+
+        setParentTask([])
 
         setValidatePane({
             ...validatePane
@@ -269,6 +315,7 @@ function AddIssue() {
     }
 
     const iParentTaskChange = function (onSelected) {
+        console.log(ref)
         let parentTask = onSelected[0]
         parentTask ?
             setInputPane({ ...inputPane, iParentTask: parentTask.issue_id }) :
@@ -283,6 +330,7 @@ function AddIssue() {
     }
 
     const saveIssue = function (e) {
+        let buttonName = e.target.name
         e.preventDefault()
 
         //Validate data
@@ -304,7 +352,7 @@ function AddIssue() {
             issueNameErr = <label className="has-error help-block">Please enter at least 255 characters.</label>
         }
 
-        if (inputPane.iEstimate.length !== 0 && !isNormalInteger(inputPane.iEstimate)) {
+        if (!!inputPane.iEstimate && !isNormalInteger(inputPane.iEstimate)) {
             validate_form = false
             estimateErr = <label className="has-error help-block">Please enter only digits.</label>
         }
@@ -366,13 +414,23 @@ function AddIssue() {
                         .then(
                             (result) => {
                                 const outputIssueKey = result[0].issuekey
-                                history.push("/issues/isuccess/" + outputIssueKey)
+
+                                if (buttonName !== 'SaveAndContinue')
+                                    history.push("/issues/isuccess/" + outputIssueKey)
+                                else {
+                                    history.push("/addissue/isuccess/" + outputIssueKey)
+                                }
                             },
                             (error) => {
                                 console.log(error)
                             })
                 )
         }
+    }
+
+    const backToList = function (e) {
+        e.preventDefault()
+        history.push("/issues/")
     }
 
     const isNormalInteger = function (str) {
@@ -400,13 +458,13 @@ function AddIssue() {
                                             (
                                                 <span>
                                                     {'\u00A0\u00A0\u00A0'}
-                                                    <Button variant="primary" type="Submit">{'\u00A0\u00A0'}Save and continue{'\u00A0\u00A0'}</Button>
+                                                    <Button variant="primary" type="Submit" name="SaveAndContinue" onClick={saveIssue}>{'\u00A0\u00A0'}Save and continue{'\u00A0\u00A0'}</Button>
                                                 </span>
                                             )
                                     }
 
                                     {'\u00A0\u00A0\u00A0'}
-                                    <Button variant="inverse" type="Submit">{'\u00A0\u00A0'}Back{'\u00A0\u00A0'}</Button>
+                                    <Button variant="inverse" type="Submit" onClick={backToList}>{'\u00A0\u00A0'}Back{'\u00A0\u00A0'}</Button>
                                 </Form.Label>
                             </Form.Group>
                             {
@@ -533,12 +591,14 @@ function AddIssue() {
                                             <AsyncTypeahead
                                                 id="iParentTask"
                                                 labelKey="itemdisplay"
+                                                defaultSelected={[]}
                                                 isLoading={isParentTaskLoading}
                                                 minLength={1}
                                                 onSearch={handleParentTaskSearch}
                                                 options={arrParentTask}
                                                 placeholder="Input task id or task name"
                                                 onChange={iParentTaskChange}
+                                                ref={ref}
                                                 renderMenuItemChildren={(option, props) => (
                                                     <div title={option.itemdisplay}>
                                                         {option.itemdisplay.length > 40 ?
@@ -621,7 +681,7 @@ function AddIssue() {
                                             {validatePane.iEstimateErr}
                                         </Col>
                                         <Col md={3}>
-                                            <span style={{ paddingTop: "5px", display: "inline-block", color: "red", fontSize: "small" }}>
+                                            <span style={{ paddingTop: "5px", display: "none", color: "red", fontSize: "small" }}>
                                                 Suggest estimate this task, click here
                                             </span>
                                         </Col>
@@ -629,14 +689,24 @@ function AddIssue() {
                                 </div>
                             </div>
 
-                            <Col md={8}>{'\u00A0'}</Col>
-                            <Form.Label className="col-md-4 control-label">
-                                <Button variant="success" type="Submit" onClick={saveIssue} >{'\u00A0\u00A0'}Save{'\u00A0\u00A0'}</Button>
-                                {'\u00A0\u00A0\u00A0'}
-                                <Button variant="primary" type="Submit">{'\u00A0\u00A0'}Save and continue{'\u00A0\u00A0'}</Button>
-                                {'\u00A0\u00A0\u00A0'}
-                                <Button variant="inverse" type="Submit">{'\u00A0\u00A0'}Back{'\u00A0\u00A0'}</Button>
-                            </Form.Label>
+                            <Form.Group>
+                                <Col md={8}>{'\u00A0'}</Col>
+                                <Form.Label className="col-md-4 control-label">
+                                    <Button variant="success" type="Submit" onClick={saveIssue}>{'\u00A0\u00A0'}Save{'\u00A0\u00A0'}</Button>
+                                    {
+                                        editForm ? "" :
+                                            (
+                                                <span>
+                                                    {'\u00A0\u00A0\u00A0'}
+                                                    <Button variant="primary" type="Submit" name="SaveAndContinue" onClick={saveIssue}>{'\u00A0\u00A0'}Save and continue{'\u00A0\u00A0'}</Button>
+                                                </span>
+                                            )
+                                    }
+
+                                    {'\u00A0\u00A0\u00A0'}
+                                    <Button variant="inverse" type="Submit" onClick={backToList}>{'\u00A0\u00A0'}Back{'\u00A0\u00A0'}</Button>
+                                </Form.Label>
+                            </Form.Group>
                         </Row>
                     </Form>
                 </div>

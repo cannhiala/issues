@@ -48,6 +48,7 @@ function App() {
         <PrivateRoute exact path='/issues' component={IssueSearchForm} />
         <PrivateRoute exact path='/issues/:success/:issuekey' component={IssueSearchForm} />
         <PrivateRoute exact path='/addIssue' component={AddIssue} />
+        <PrivateRoute exact path='/addIssue/:type/:pissueKey' component={AddIssue} />
         <PrivateRoute exact path='/editIssue/:pissueKey' component={AddIssue} />
       </Switch>
     </div>

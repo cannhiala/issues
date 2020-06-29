@@ -22,10 +22,6 @@ function IssueSearchForm() {
         tableoption: {
             defaultSortName: 'update_on',
             defaultSortOrder: 'desc',
-            onRowClick: function (row, column) {
-                if (typeof (column) !== 'undefined')
-                    history.push('/issueDetail/' + row.issue_id)
-            }
         },
         userLoginId: getUser().userId,
         arrIssueStatus: [],
@@ -58,8 +54,9 @@ function IssueSearchForm() {
 
     const filter = function () {
         let filterParams = new URLSearchParams()
+        console.log(searchCondition)
         for (let key in searchCondition) {
-            if (searchCondition[key] === "")
+            if (searchCondition[key] === "" || searchCondition[key] === null)
                 continue
             if (key.indexOf("Date") > 0)
                 filterParams.append(key, Moment(searchCondition[key]).format('YYYY-MM-DD'))
@@ -379,7 +376,7 @@ function IssueSearchForm() {
                     <br />
                     <Row>
                         <Col md={12} style={{ overflowX: "auto" }}>
-                            <div style={{ width: "2500px" }}>
+                            <div style={{ width: "2300px" }}>
                                 <BootstrapTable data={issueList} pagination={true} options={initState.tableoption} striped hover tableBodyClass='table-cursor'>
                                     <TableHeaderColumn width={'5%'} dataField='issuetypename' dataAlign='center' dataFormat={issueTypeDataFormat} dataSort={true}>Issue type</TableHeaderColumn>
                                     <TableHeaderColumn width={'5%'} isKey dataField='key' dataSort={true} dataFormat={issueIdFormat}>Issue id</TableHeaderColumn>
@@ -389,10 +386,9 @@ function IssueSearchForm() {
                                     <TableHeaderColumn width={'5%'} dataField='projectskey' dataSort={true} dataFormat={projectsKeyFormat}>Project key</TableHeaderColumn>
                                     <TableHeaderColumn width={'12%'} dataField='projectsname' dataSort={true}>Project name</TableHeaderColumn>
                                     <TableHeaderColumn width={'6%'} dataField='assignee' dataSort={true}>Assignee</TableHeaderColumn>
-                                    <TableHeaderColumn width={'4%'} dataField='priority' dataSort={true}>Priority</TableHeaderColumn>
+                                    <TableHeaderColumn width={'4%'} dataField='priority' dataSort={true}>Priority</TableHeaderColumn>                                    
                                     <TableHeaderColumn width={'6%'} dataField='startdate' dataAlign='center' dataSort={true}>Start date</TableHeaderColumn>
-                                    <TableHeaderColumn width={'6%'} dataField='duedate' dataAlign='center' dataSort={true}>Due date</TableHeaderColumn>
-                                    <TableHeaderColumn width={'6%'} dataField='startdate' dataAlign='center' dataSort={true}>Start date</TableHeaderColumn>
+                                    <TableHeaderColumn width={'6%'} dataField='duedate' dataAlign='center' dataSort={true}>Due date</TableHeaderColumn>                                    
                                     <TableHeaderColumn width={'6%'} dataField='update_on' dataAlign='center' dataSort={true} dataFormat={updateOnFormat}>Updated date</TableHeaderColumn>
                                     <TableHeaderColumn width={'6%'} dataField='createby' dataSort={true}>Created by</TableHeaderColumn>
                                     <TableHeaderColumn hidden={true} dataField='issue_category_id'>Issue type Id</TableHeaderColumn>
