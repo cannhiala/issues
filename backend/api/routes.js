@@ -1,36 +1,36 @@
-'use strict';
+'use strict'
 
 module.exports = function (app) {
-	let loginCtrl = require('./controllers/LoginController');
-	let homeCtrl = require('./controllers/HomeController');
-	let projectCtrl = require('./controllers/ProjectsController');
-	let issueCtrl = require('./controllers/IssuesController');
+	let loginCtrl = require('./controllers/LoginController')
+	let homeCtrl = require('./controllers/HomeController')
+	let projectCtrl = require('./controllers/ProjectsController')
+	let issueCtrl = require('./controllers/IssuesController')
 
 	//Login&Home route
 	//create by ThanhTV
-	app.route('/login').post(loginCtrl.login);
-	app.route('/verifyToken').get(loginCtrl.verifyToken);
-	app.route('/myProject').get(homeCtrl.myproject);
-	app.route('/myIssue').get(homeCtrl.myissue);
+	app.route('/login').post(loginCtrl.login)
+	app.route('/verifyToken').get(loginCtrl.verifyToken)
+	app.route('/myProject').get(homeCtrl.myproject)
+	app.route('/myIssue').get(homeCtrl.myissue)
 
 	//projects route
 	//create by CanTV
-	app.route('/projects').get(projectCtrl.getProject);
-	app.route('/owner').get(projectCtrl.getOwner);
-	app.route('/projectDetail').get(projectCtrl.getProjectDetail);
-	app.route('/projectInfor').get(projectCtrl.getProjectInfor);
-	app.route('/members').get(projectCtrl.getMembers);
-	app.route('/projectTypes').get(projectCtrl.getProjectType);
-	app.route('/users').get(projectCtrl.getUsers);
-	app.route('/addProject').post(projectCtrl.addProject);
-	app.route('/delProject').put(projectCtrl.delProject);
-	app.route('/checkPKey').get(projectCtrl.getProjectKey);
-	app.route('/pForUpdate').get(projectCtrl.getProjectForUpdate);
-	app.route('/uForUpdate').get(projectCtrl.getUserForUpdate);
-	app.route('/getPieChart').get(projectCtrl.getPieChart);
-	app.route('/updProject').post(projectCtrl.updProject);
-	app.route('/getStackedChart').get(projectCtrl.getStackedChart);
-	app.route('/getStackedChartProjectType').get(projectCtrl.getStackedChartProjectType);
+	app.route('/projects').get(projectCtrl.getProject)
+	app.route('/owner').get(projectCtrl.getOwner)
+	app.route('/projectDetail').get(projectCtrl.getProjectDetail)
+	app.route('/projectInfor').get(projectCtrl.getProjectInfor)
+	app.route('/members').get(projectCtrl.getMembers)
+	app.route('/projectTypes').get(projectCtrl.getProjectType)
+	app.route('/users').get(projectCtrl.getUsers)
+	app.route('/addProject').post(projectCtrl.addProject)
+	app.route('/delProject').put(projectCtrl.delProject)
+	app.route('/checkPKey').get(projectCtrl.getProjectKey)
+	app.route('/pForUpdate').get(projectCtrl.getProjectForUpdate)
+	app.route('/uForUpdate').get(projectCtrl.getUserForUpdate)
+	app.route('/getPieChart').get(projectCtrl.getPieChart)
+	app.route('/updProject').post(projectCtrl.updProject)
+	app.route('/getStackedChart').get(projectCtrl.getStackedChart)
+	app.route('/getStackedChartProjectType').get(projectCtrl.getStackedChartProjectType)
 
 	//issues route
 	//create by Quanha
@@ -92,4 +92,7 @@ module.exports = function (app) {
 	app.route('/getPreviousIssue')
 		.get(issueCtrl.getPreviousIssue)
 
-};
+	app.route('/delIssue')
+		.put(issueCtrl.delIssue)
+
+}

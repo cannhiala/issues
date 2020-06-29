@@ -531,4 +531,18 @@ module.exports = {
                 })
         })
     },
+
+    delIssue: (req, res) => {
+        let data = req.body
+        let issueId = data.issueId
+        pool.getConnection(function (err, connection) {
+            if (err) throw err;
+            connection.query('call issue_delete(?)', [issueId]
+                , function (error, results, fields) {
+                    connection.release();
+                    if (error) throw error;
+                    res.json(results);
+                })
+        })
+    },
 }

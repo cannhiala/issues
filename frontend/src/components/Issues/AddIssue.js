@@ -349,7 +349,7 @@ function AddIssue() {
                         .then(
                             (result) => {
                                 const outputIssueKey = result.issuekey
-                                history.push("/issues/usucess/" + outputIssueKey)
+                                history.push("/issues/usuccess/" + outputIssueKey)
                             },
                             (error) => {
                                 console.log(error)
@@ -366,7 +366,7 @@ function AddIssue() {
                         .then(
                             (result) => {
                                 const outputIssueKey = result[0].issuekey
-                                history.push("/issues/isucess/" + outputIssueKey)
+                                history.push("/issues/isuccess/" + outputIssueKey)
                             },
                             (error) => {
                                 console.log(error)
@@ -631,7 +631,7 @@ function AddIssue() {
 
                             <Col md={8}>{'\u00A0'}</Col>
                             <Form.Label className="col-md-4 control-label">
-                                <Button variant="success" type="Submit">{'\u00A0\u00A0'}Save{'\u00A0\u00A0'}</Button>
+                                <Button variant="success" type="Submit" onClick={saveIssue} >{'\u00A0\u00A0'}Save{'\u00A0\u00A0'}</Button>
                                 {'\u00A0\u00A0\u00A0'}
                                 <Button variant="primary" type="Submit">{'\u00A0\u00A0'}Save and continue{'\u00A0\u00A0'}</Button>
                                 {'\u00A0\u00A0\u00A0'}

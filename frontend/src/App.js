@@ -39,14 +39,14 @@ function App() {
         <PrivateRoute exact path='/' component={Home} />
         <PrivateRoute exact path='/home' component={Home} />
         <PrivateRoute exact path='/projects' component={Projects} />
-        <PrivateRoute exact path='/projects/:succes/:pId' component={Projects} />
+        <PrivateRoute exact path='/projects/:success/:pId' component={Projects} />
         <PrivateRoute exact path='/pDetail/:pId' component={ProjectDetail} />
         <PrivateRoute exact path='/newProject' component={CreateProject} />
-        <PrivateRoute exact path='/pEdit/:pId' component={CreateProject} />
+        <PrivateRoute exact path='/pEdit/:pId' component={EditProject} />
         <PrivateRoute exact path='/pOverview/:pId' component={ProjectOverview} />
-        <PrivateRoute exact path='/issueDetail/:pId' component={IssueDetail} />
+        <PrivateRoute exact path='/issueDetail/:issueId' component={IssueDetail} />
         <PrivateRoute exact path='/issues' component={IssueSearchForm} />
-        <PrivateRoute exact path='/issues/:success/:pId' component={IssueSearchForm} />
+        <PrivateRoute exact path='/issues/:success/:issuekey' component={IssueSearchForm} />
         <PrivateRoute exact path='/addIssue' component={AddIssue} />
         <PrivateRoute exact path='/editIssue/:pissueKey' component={AddIssue} />
       </Switch>

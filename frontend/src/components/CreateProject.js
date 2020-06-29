@@ -139,7 +139,7 @@ function CreateProject () {
                     <ul className="breadcrumb"><b>Create Project</b></ul>
                 </div>
                 <br /><br />
-                <form onSubmit={onSave}>
+                <form onSubmit={onSave} autocomplete='off'>
                   <div className="form-group row text-right">
                     <button type="submit" className="btn btn-primary" name="btnDelProject">Save</button>&nbsp;&nbsp;
                     <button type="submit" className="btn btn-primary" onClick={onBack} name="btnBack">Back</button>

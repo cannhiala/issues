@@ -1,16 +1,21 @@
 import React, { useState, useEffect } from 'react'
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table'
 import { Row, Col, Form, Button } from 'react-bootstrap'
-import { NavLink, useHistory } from 'react-router-dom'
+import { NavLink, useHistory, useParams } from 'react-router-dom'
 import DatePicker from 'react-datepicker'
 import Moment from 'moment'
 import './../../../node_modules/react-datepicker/dist/react-datepicker.css'
 import './../../../node_modules/react-bootstrap-table/dist/react-bootstrap-table-all.min.css'
 import { getUser } from './../../utils/Common'
+import Modal from 'react-bootstrap/Modal'
 
 function IssueSearchForm() {
     let history = useHistory()
-
+    const { issuekey } = useParams()
+    const { success } = useParams()
+    const isucces = 'isuccess'
+    const usucces = 'usuccess'
+    const dsucces = 'dsuccess'
 
     const initState = {
         error: { type: "", msg: "" },
@@ -47,6 +52,9 @@ function IssueSearchForm() {
     const [searchCondition, setSearchCondition] = useState(initState.formSearch)
     const [defaultSearch, setDefaultSearch] = useState(true)
     const [issueList, setIssueList] = useState([])
+    const [showISuccessPopup, setIShowSuccessPopup] = useState(false)
+    const [showUSuccessPopup, setUShowSuccessPopup] = useState(false)
+    const [showDSuccessPopup, setDShowSuccessPopup] = useState(false)
 
     const filter = function () {
         let filterParams = new URLSearchParams()
@@ -125,6 +133,17 @@ function IssueSearchForm() {
                 })
     }, [initState.userLoginId])
 
+    useEffect(() => {
+      switch (success) {
+        case isucces: return setIShowSuccessPopup(true)
+        case usucces: return setUShowSuccessPopup(true)
+        case dsucces: return setDShowSuccessPopup(true)
+      }
+    }, [])
+    const onIShowSuccessClose = () => setIShowSuccessPopup(false)
+    const onUShowSuccessClose = () => setUShowSuccessPopup(false)
+    const onDShowSuccessClose = () => setDShowSuccessPopup(false)
+
     const filterIssue = function (e) {
         e.preventDefault()
         filter()
@@ -155,7 +174,7 @@ function IssueSearchForm() {
             <span className={"pill-status pill-status-" + row.issue_status_id}>{row.status}</span>
         )
     }
-    
+
     const projectsKeyFormat  = function(cell, row) {
         return (
             <NavLink exact to={'/pDetail/' + row.project_id}> {row.projectskey} </NavLink>
@@ -181,6 +200,27 @@ function IssueSearchForm() {
                         <ul className="breadcrumb"><b>Issues</b></ul>
                     </div>
                     <br /><br />
+                      <Modal show={showISuccessPopup} onHide={onIShowSuccessClose} animation={false}>
+                        <Modal.Header closeButton>
+                          <Modal.Title>Inserted Success</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>Issue: {issuekey} had inserted successfull !</Modal.Body>
+                      </Modal>
+
+                      <Modal show={showUSuccessPopup} onHide={onUShowSuccessClose} animation={false}>
+                        <Modal.Header closeButton>
+                          <Modal.Title>Updated Success</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>Issue: {issuekey} had updated successfull !</Modal.Body>
+                      </Modal>
+
+                      <Modal show={showDSuccessPopup} onHide={onDShowSuccessClose} animation={false}>
+                        <Modal.Header closeButton>
+                          <Modal.Title>Deleted Success</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>Issue: {issuekey} had deleted successfull !</Modal.Body>
+                      </Modal>
+
                     <Form className="form-horizontal" onSubmit={filterIssue}>
                         <Row>
                             <Col md={12}>
@@ -334,25 +374,25 @@ function IssueSearchForm() {
                             <Button variant="primary" type="Submit" onClick={createNewIssue}>
                                 {'\u00A0\u00A0'}Create issue{'\u00A0\u00A0'}
                             </Button>
-                        </Col>                        
+                        </Col>
                     </Row>
                     <br />
                     <Row>
                         <Col md={12} style={{ overflowX: "auto" }}>
                             <div style={{ width: "2500px" }}>
-                                <BootstrapTable data={issueList} pagination={true} options={initState.tableoption} striped hover tableBodyClass='table-cursor'>                                    
+                                <BootstrapTable data={issueList} pagination={true} options={initState.tableoption} striped hover tableBodyClass='table-cursor'>
                                     <TableHeaderColumn width={'5%'} dataField='issuetypename' dataAlign='center' dataFormat={issueTypeDataFormat} dataSort={true}>Issue type</TableHeaderColumn>
-                                    <TableHeaderColumn width={'5%'} isKey dataField='key' dataSort={true} dataFormat={issueIdFormat}>Issue id</TableHeaderColumn>                                    
+                                    <TableHeaderColumn width={'5%'} isKey dataField='key' dataSort={true} dataFormat={issueIdFormat}>Issue id</TableHeaderColumn>
                                     <TableHeaderColumn dataField='name' dataSort={true}>Issue name</TableHeaderColumn>
-                                    <TableHeaderColumn width={'6%'} dataField='phase' dataSort={true}>Phase</TableHeaderColumn>                                    
-                                    <TableHeaderColumn width={'5%'} dataField='status' dataAlign='center' dataFormat={issueStatusFormat} dataSort={true}>Issue status</TableHeaderColumn>                                    
+                                    <TableHeaderColumn width={'6%'} dataField='phase' dataSort={true}>Phase</TableHeaderColumn>
+                                    <TableHeaderColumn width={'5%'} dataField='status' dataAlign='center' dataFormat={issueStatusFormat} dataSort={true}>Issue status</TableHeaderColumn>
                                     <TableHeaderColumn width={'5%'} dataField='projectskey' dataSort={true} dataFormat={projectsKeyFormat}>Project key</TableHeaderColumn>
                                     <TableHeaderColumn width={'12%'} dataField='projectsname' dataSort={true}>Project name</TableHeaderColumn>
                                     <TableHeaderColumn width={'6%'} dataField='assignee' dataSort={true}>Assignee</TableHeaderColumn>
                                     <TableHeaderColumn width={'4%'} dataField='priority' dataSort={true}>Priority</TableHeaderColumn>
                                     <TableHeaderColumn width={'6%'} dataField='startdate' dataAlign='center' dataSort={true}>Start date</TableHeaderColumn>
                                     <TableHeaderColumn width={'6%'} dataField='duedate' dataAlign='center' dataSort={true}>Due date</TableHeaderColumn>
-                                    <TableHeaderColumn width={'6%'} dataField='startdate' dataAlign='center' dataSort={true}>Start date</TableHeaderColumn>                                    
+                                    <TableHeaderColumn width={'6%'} dataField='startdate' dataAlign='center' dataSort={true}>Start date</TableHeaderColumn>
                                     <TableHeaderColumn width={'6%'} dataField='update_on' dataAlign='center' dataSort={true} dataFormat={updateOnFormat}>Updated date</TableHeaderColumn>
                                     <TableHeaderColumn width={'6%'} dataField='createby' dataSort={true}>Created by</TableHeaderColumn>
                                     <TableHeaderColumn hidden={true} dataField='issue_category_id'>Issue type Id</TableHeaderColumn>

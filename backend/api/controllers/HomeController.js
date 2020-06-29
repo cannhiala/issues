@@ -22,10 +22,12 @@ module.exports = {
 			let data = req.query
       let sql = 'SELECT `issues`.`issue_id`, '+
               		'`issues`.`project_id`, '+
+									'`issues`.`issue_category_id`, '+
               		'`issue_categories`.`name` `issuetype`, '+
               		'`issues`.`key`, '+
               		'`issues`.`name`, '+
                   '`projects`.`name` `projectname`, '+
+									'`issues`.`issue_status_id`, '+
               		'`issue_statuses`.`name` `issuestatus`, '+
               		'DATE_FORMAT(`issues`.`duedate`,\'%m/%d/%Y\') `duedate`, '+
               		'`issue_priorities`.`name` `issuepriority` '+

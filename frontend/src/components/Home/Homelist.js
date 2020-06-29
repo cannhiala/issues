@@ -17,6 +17,11 @@ function Homelist () {
           }).catch((err) => { console.log('Projects Error: ', err) })
   }, [userid])
 
+  const projectKeyLink = function(cell, row) {
+      let strLink = "/pDetail/" + row.project_id
+      return <NavLink exact to={strLink}> {row.key} </NavLink>
+  }
+
   const pOvewviewLink = function(cell, row) {
       let strLink = "/pOverview/" + row.project_id
       return <NavLink exact to={strLink}> Overview </NavLink>
@@ -25,8 +30,8 @@ function Homelist () {
   return (
             <div>
               <BootstrapTable data={ projects } trClassName='table table-striped table-bordered table-sm' pagination = {true}>
-                  <TableHeaderColumn width={'11%'} dataField='project_id' isKey={ true } dataFormat={pOvewviewLink} dataSort={ false }></TableHeaderColumn>
-                  <TableHeaderColumn width={'11%'} dataField='key' dataSort={ false }>Project Key</TableHeaderColumn>
+                  <TableHeaderColumn width={'11%'} dataField='project_id'  isKey={ true } dataFormat={pOvewviewLink} dataSort={ false }></TableHeaderColumn>
+                  <TableHeaderColumn width={'11%'} dataField='key' dataFormat={projectKeyLink} dataSort={ false }>Project Key</TableHeaderColumn>
                   <TableHeaderColumn width={'15%'} dataField='name' dataSort={ true }>Project Name</TableHeaderColumn>
                   <TableHeaderColumn width={'13%'} dataField='status' dataSort={ true }>Project Status</TableHeaderColumn>
                   <TableHeaderColumn width={'12%'} dataField='projecttype' dataSort={ true }>Project Type</TableHeaderColumn>
