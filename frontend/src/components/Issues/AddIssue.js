@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { Row, Col, Form, Button } from 'react-bootstrap'
 import Moment from 'moment'
-import { EditorState, ContentState, convertFromRaw, convertToRaw } from 'draft-js'
+import { EditorState, convertFromRaw, convertToRaw } from 'draft-js'
 import { Editor } from 'react-draft-wysiwyg'
 import { AsyncTypeahead } from 'react-bootstrap-typeahead'
 import DatePicker from 'react-datepicker'
